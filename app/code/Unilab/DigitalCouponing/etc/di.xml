@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<!--
+/** Banners di xml
+ * @category  Unilab
+ * @package   Unilab_Banners
+ * @author    Reyson Aquino
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- <preference for="Unilab\Grid\Api\Data\BannerInterface" type="Unilab\DigitalCouponing\Model\Banner" /> -->
+    <virtualType name="AsciiGridDataProvider" type="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider">
+        <arguments>
+            <argument name="collection" xsi:type="object" shared="false">Unilab\DigitalCouponing\Model\ResourceModel\Ascii\Collection</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="ascii_listing_data_source" xsi:type="string">Unilab\DigitalCouponing\Model\ResourceModel\Ascii\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+
+     <virtualType name="Unilab\DigitalCouponing\Model\ResourceModel\Ascii\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">unilab_dc_asciiequivalents</argument>
+            <argument name="resourceModel" xsi:type="string">Unilab\DigitalCouponing\Model\ResourceModel\Ascii</argument>
+        </arguments>
+    </virtualType>
+
+        <virtualType name="RemainderGridDataProvider" type="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider">
+        <arguments>
+            <argument name="collection" xsi:type="object" shared="false">Unilab\DigitalCouponing\Model\ResourceModel\Remainder\Collection</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="remainder_listing_data_source" xsi:type="string">Unilab\DigitalCouponing\Model\ResourceModel\Remainder\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+
+     <virtualType name="Unilab\DigitalCouponing\Model\ResourceModel\Remainder\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">unilab_dc_remainderequivs</argument>
+            <argument name="resourceModel" xsi:type="string">Unilab\DigitalCouponing\Model\ResourceModel\Remainder</argument>
+        </arguments>
+    </virtualType>
+
+        <virtualType name="UsedcouponGridDataProvider" type="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider">
+        <arguments>
+            <argument name="collection" xsi:type="object" shared="false">Unilab\DigitalCouponing\Model\ResourceModel\Usedcoupon\Collection</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="usedcoupon_listing_data_source" xsi:type="string">Unilab\DigitalCouponing\Model\ResourceModel\Usedcoupon\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+
+     <virtualType name="Unilab\DigitalCouponing\Model\ResourceModel\Usedcoupon\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">unilab_dc_usedcoupon</argument>
+            <argument name="resourceModel" xsi:type="string">Unilab\DigitalCouponing\Model\ResourceModel\Usedcoupon</argument>
+        </arguments>
+    </virtualType>
+
+</config>

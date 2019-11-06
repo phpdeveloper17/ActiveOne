@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * SmtpMailer extension
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Auriga License
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.aurigait.com/magento_extensions/license.txt
+ *
+ * @category      MageAurigaIT
+ * @package       MageAurigaIT_SmtpMailer
+ * @copyright     Copyright (c) 2017
+ * @license       http://www.aurigait.com/magento_extensions/license.txt Auriga License
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
+    <router id="admin">
+        <route id="ait_smtpmailer" frontName="ait_smtpmailer">
+            <module name="MageAurigaIT_SmtpMailer" before="Magento_Backend" />
+        </route>
+    </router>
+</config>

@@ -1,0 +1,252 @@
+<style>
+.main {
+	background: #fff !important;
+}
+
+.product-img-box {
+	width: 50%;	
+	padding: 5px 5px;
+}
+
+.product-collateral {
+	width: 60% ;
+	padding: 5px 5px;
+}
+
+.product-view-division {
+	display: inline-flex;
+}
+
+.product-name h1{
+	font-size: 20px !important;
+}
+
+.product-view .product-shop .availability,
+.product-view .product-shop .price-box{
+	margin: 2px 0;    font-size: 14px;
+}
+.product-info-view {
+    padding: 2rem;
+}
+</style>
+<!-- <div id="messages_product_view">
+
+<?php //echo $block->getMessagesBlock()->getGroupedHtml() ?>
+
+</div> -->
+<?php
+	$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+	$_catalogResourceEavAttribute = $objectManager->create('\Magento\Catalog\Model\ResourceModel\Eav\Attribute');
+	// $_productModel = $objectManager->
+	$_product = $block->getProduct();
+	$_helper = $this->helper('Magento\Catalog\Helper\Output');
+?>
+<div data-bind="scope: 'messages'">
+    <div data-bind="foreach: { data: cookieMessages, as: 'message' }" class="messages">
+        <div data-bind="attr: {
+            class: 'message-' + message.type + ' ' + message.type + ' message',
+            'data-ui-id': 'message-' + message.type
+        }">
+            <div data-bind="html: message.text"></div>
+        </div>
+    </div>
+</div>
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Magento_Ui/js/core/app": {
+                "components": {
+                        "messages": {
+                            "component": "Magento_Theme/js/view/messages"
+                        }
+                    }
+                }
+            }
+    }
+</script>
+<div class="product-view">
+	<div class="product-essential">
+		<form
+			action="<?php echo $block->getSubmitUrl($_product) ?>"
+			method="post"
+			id="product_addtocart_form"<?php if($_product->getOptions()): ?>
+			enctype="multipart/form-data"<?php endif; ?>>
+
+			<?= $block->getBlockHtml('formkey') ?>
+			<div class="no-display">
+				<input type="hidden" name="product" value="<?php echo $_product->getId() ?>" />
+				<input type="hidden" name="related_product" id="related-products-field" value="" />
+				<input type="hidden" name="actual_product" id="actual_product" value="<?php echo $_product->getId() ?>" />
+			</div>
+
+			<div class="product-view-division">
+				<div class="product-img-box">
+					<?php echo $block->getChildHtml('media') ?>
+					<?php if (!$_product->isAvailable()): ?>
+						<div class="sold_out">
+							<img width="80%" src="<?php echo $this->getViewFileUrl('images/sold_out.png'); ?>" />
+						</div>
+					<?php endif; ?>
+				</div>
+
+				<div class="clearer"></div>
+
+				<div class="product-collateral">
+					<div class="product-shop">
+						<div class="product-name">
+							<h1 style="margin:0;"><?php echo $_helper->productAttribute($_product, $_product->getName(), 'name') ?></h1>
+						</div>
+						<div class="add-to-wl">
+							<?php //echo $block->getChildHtml('addto') ?>
+						</div>
+						<?php if ($block->canEmailToFriend()): ?>
+							<p class="email-friend <?=$block->canEmailToFriend()?>">
+								<a href="<?php echo $this->helper('Magento\Catalog\Helper\Product')->getEmailToFriendUrl($_product) ?>">
+									<?php echo __('Email to Friend') ?>
+								</a>
+							</p>
+						<?php endif; ?>
+						<?php //echo $block->getReviewsSummaryHtml($_product, false, true)?>
+						<?php ///cho $block->getChildHtml('alert_urls') ?>
+						<?php //echo $block->getChildHtml('product_type_data') ?>
+						<?php //echo $block->getTierPriceHtml()?>
+						<?php //echo $block->getChildHtml('extrahint') ?>
+						<?php echo $block->getChildHtml('product_availability');?>
+						<?php echo $block->getChildHtml('product_info_custom_price')?>
+						<div class="generic-name">
+							<?php //echo "<pre>"; print_r($_product->getData());
+								$generic_name = $_product->getAttributeText('generic_name');
+								//$attribute = $_catalogResourceEavAttribute->loadByCode(Mage_Catalog_Model_Product::ENTITY, 'generic_name');
+								// $label     = $attribute->getFrontendLabel();
+								$label = $_product->getResource()->getAttribute('generic_name')->getFrontend()->getLabel($_product);
+							?>
+							<strong><?php echo $label . ":"; ?> </strong>&nbsp;&nbsp;<?php echo $generic_name; ?>
+						</div>
+
+						<div class="format">
+							<?php
+								$format = $_product->getAttributeText('unilab_format');
+								$formatDef = $_product->getResource()->getAttribute('unilab_format')->setStoreId(1)->getFrontend()->getValue($_product);
+								//$attribute = $_catalogResourceEavAttribute->loadByCode(Mage_Catalog_Model_Product::ENTITY, 'unilab_format');
+								// $label     = $attribute->getFrontendLabel();
+								$label = $_product->getResource()->getAttribute('unilab_format')->getFrontend()->getLabel($_product);
+							?>
+							<strong><?php echo $label . ":"; ?> </strong>&nbsp;&nbsp;<?php echo $formatDef; ?>
+
+						</div>
+
+						<?php if ($_product->getShortDescription()):?>
+							<div class="short-description">
+								<div class="std-desc">
+									<?php echo $_helper->productAttribute($_product, nl2br($_product->getShortDescription()), 'short_description') ?>
+								</div>
+							</div>
+						<?php endif;?>
+
+						<?php if(!$block->hasOptions()): ?>
+							<div class="add-to-box">
+								<?php if($_product->isSaleable()): ?>
+									<?=$block->getChildHtml('addtocart');?>
+								<?php endif; ?>
+							</div>
+						<?php endif;?>
+					</div>
+
+					<label class="lbl-prodinfo"><?php echo "Product Details"; ?></label><br>
+					<?php $_description = $_product->getDescription(); ?>
+
+					<div class="std">
+					<?php if ($_description): ?>
+						<?php echo $_helper->productAttribute($_product, nl2br($_description), 'description') ?>
+					<?php else:?>
+						<p>No product description.</p>
+					<?php endif;?>
+					</div>
+
+
+
+				</div>
+			</div>
+		</form>
+		<form action="" method="post" id="wishlist_form">
+			<input type="hidden" id="wishlist_product" name="product" >
+			<input type="hidden" id="wishlist_uenc"   name="uenc">
+			<?= $block->getBlockHtml('formkey') ?>
+		</form>
+	</div>
+</div>
+
+<!-- <div id="dc_Modal" class="modal">
+    <div class="modal-content">
+        <center>
+            <div class="modal-header">
+            <h2 class="modal-title" id="mod_title">Special Program</h2>
+            </div>
+        </center>
+        <div class="modal-body">
+            <center>
+            <p><span id="mod_body"></span></p>
+            <input type="text" class="input-dc" name="dcinput" id="dcinput" >
+            </center>
+        </div>
+        <div class="modal-footer">
+			<div class="row">
+                <div class="col-sm-12 col-xs-12 col-md-6">
+                    <button type="button" title="<?= __('Use Code') ?>" class="btn btn-primary btn-block" id="btn-apply" name="productid">
+                        <span id="mod_btn1"></span>
+                    </button>
+                </div>
+                <div class="col-sm-12 col-xs-12 col-md-6">
+                    <button type="button" title="<?= __('Cancel') ?>" class="btn btn-block" id="btn-dont" name="productid">
+                        <span id="mod_btn2">Cancel</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+<div id="dc_Modal" class="modal">
+    <div class="modal-content">
+            <div class="modal-header center">
+                <h1 class="modal-title" id="mod_title">Special Program</h1>
+            </div>
+        <div class="modal-body">
+            <p><span id="mod_body"></span></p>
+            <input type="text" class="input-dc" name="dcinput" id="dcinput"  >
+        </div>
+        <div class="modal-footer center">
+            <div class="row">
+                <div class="col-sm-12 col-xs-12 col-md-6">
+                    <button type="button" title="<?= __('Use Code') ?>" class="btn btn-primary btn-block" id="btn-apply" name="productid">
+                        <span id="mod_btn1"></span>
+                    </button>
+                </div>
+                <div class="col-sm-12 col-xs-12 col-md-6">
+                    <button type="button" title="<?= __('Cancel') ?>" class="btn btn-block" id="btn-dont" name="productid">
+                        <span id="mod_btn2">Cancel</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+	// var optionsPrice = new Product.OptionsPrice(<?php echo $block->getJsonConfig() ?>);
+	require([
+		'jquery',
+		'fancybox',
+		'mage/mage'
+	], function($,fancybox){
+
+		// var productAddToCartForm = $("#product_addtocart_form");
+
+		// productAddToCartForm.mage('validation',{
+
+		// });
+
+	});
+
+</script>

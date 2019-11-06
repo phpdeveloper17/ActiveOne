@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Unilab\Afptc\Api\Data\AfptcInterface" type="Unilab\Afptc\Model\Afptc" />
+
+    <type name="Unilab\Afptc\Model\ResourceModel\Afptc\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">aw_afptc_rules</argument>
+            <argument name="eventPrefix" xsi:type="string">unilab_afptc_grid_collection</argument>
+            <argument name="eventObject" xsi:type="string">unilab_afptc_grid_collection</argument>
+            <argument name="resourceModel" xsi:type="string">Unilab\Afptc\Model\ResourceModel\Afptc</argument>
+        </arguments>
+    </type>
+
+
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="afptc_listing_data_source" xsi:type="string">Unilab\Afptc\Model\ResourceModel\Afptc\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Unilab\Afptc\Logger\Handler">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+    <type name="Unilab\Afptc\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">afptc</argument>
+            <argument name="handlers"  xsi:type="array">
+                <item name="system" xsi:type="object">Unilab\Afptc\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

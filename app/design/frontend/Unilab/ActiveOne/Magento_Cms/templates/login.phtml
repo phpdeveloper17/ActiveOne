@@ -1,0 +1,533 @@
+<?php
+    $objectManager =  \Magento\Framework\App\ObjectManager::getInstance();
+    $storeManager = $objectManager->get('\Magento\Store\Model\StoreManagerInterface');
+    $store = $storeManager->getStore();
+?>
+<style type="text/css">
+	.form-error.invalid-feedback {
+        position: relative!important;
+	}
+	.notice-error {
+		background-color: red;
+		float: right;
+		padding: 2px 5px 2px 5px;
+		color: #fff;
+		border-radius: 0px 0px 2px 2px;
+		font-size: 11px;
+		/* width: 65% !important; */
+		top: -20px;
+		z-index: -1;
+	}
+	.err_msg {
+		color: red;
+		border: solid 1px red;
+		padding: 5px;
+		margin-bottom: 10px;
+	}
+	.modal-header {
+		padding: 10px 10px 10px 10px !important;
+		background-color: #353433;
+		color: #ffff;
+		border-top-right-radius: 0 !important;
+		border-top-left-radius: 0 !important;
+	}
+
+	.modal-title {
+		border-bottom: none !important;
+		padding-bottom: 0 !important;
+		font-size: 16px !important;
+		background-color:#353433!important;
+	}
+
+	.form-group>label.required::after {
+		content: " *";
+		color: red;
+	}
+
+	.modal-content {
+		padding-top: 3rem !important;
+		padding: 10px 10px 10px 10px !important;
+	}
+
+	.modal-popup .modal-inner-wrap {
+		width: 35% !important;
+	}
+
+	.login_form,
+	.emp-forgotpassword, .login_resendlink, .addemp_info, .ok_empinfo
+	{
+		display: none;
+	}
+	.form-error {
+        display: none;
+	}
+</style>
+<div id="popup-content" class="popup-content" style="display:none;">
+	<div class="justify-content-center">
+		<form id="emp_id_form" class="emp_idform col-md-12">
+			<div class="form-group">
+				<label for="exampleInputEmail1" class="required">Employee ID</label>
+				<input type="text" name="emp_id" class="form-control" id="emp_id" aria-describedby="emailHelp" placeholder="Employee ID"
+				 required>
+				<div class="form-error invalid-feedback">
+					<span class="notice-error">Please</span>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12 col-md-6 form-group">
+					<button id="btn-search-id" disabled type="submit" class="btn btn-primary btn-block">Submit</button>
+				</div>
+				<div class="col-xs-12 col-md-6 form-group">
+					<button class="btn btn-block btn-back">Refresh</button>
+				</div>
+				<!-- <button id="test">Test</button> -->
+			</div>
+		</form>
+
+		<div class="login_form col-md-12">
+			<form id="login_account">
+				<div class="form-group">
+					<label for="exampleInputEmail1" class="required">Password</label>
+					<input
+						type="password"
+						name="password"
+						class="form-control psswrd"
+						id="password" aria-describedby="emailHelp"
+						placeholder="Password"
+						required>
+					<input type="text" name="email" id="email"  class="readonly" style="display:none" value="" readonly/>
+					<div class="form-error invalid-feedback">
+						<span class="notice-error">Please</span>
+					</div>
+				</div>
+				<div class="form-group text-center">
+					<a class="forgotpassword" href="#">Forgot Password</a>
+				</div>
+				<div class="form-group row">
+					<div class="col-xs-12 col-md-6">
+						<button type="submit" class="btn btn-primary  btn-block">Login</button>
+					</div>
+					<div class="col-xs-12 col-md-6">
+						<button class="btn btn-block btn-back">Back</button>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div class="login_resendlink col-md-12">
+			<div class="form-group">
+				<div class="control-grp">
+					<div class="form-error invalid-feedback">
+						<span class="notice-error">Please</span>
+					</div>
+				</div>
+				<button class="btn  btn-primary btn-block btn-resend">Resend Link</button>
+				<button class="btn  btn-secondary btn-block btn-back">Back</button>
+			</div>
+		</div>
+
+		<form id="emp_forgotpass" class="emp-forgotpassword col-md-12">
+			<div class="form-group">
+				<label class="required" class="required">Email Address:</label>
+				<input type="email" name="forgotpass_email" placeholder="" id="forgotpass_email" value="" />
+				<div class="form-error invalid-feedback">
+					<span class="notice-error">Please</span>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<button type="submit" disabled class="btn-forgotpassword btn btn-primary  btn-block">Submit</button>
+			</div>
+		</form>
+
+		<!-- Employee Info Form -->
+		<form name="emp_info" id="emp_info" method="POST" class="addemp_info col-md-12" autocomplete="false">
+			<div class="form-group">
+				<label>Employee ID</label>
+				<input type="text" name="emp_id" class="readonly" value="" readonly />
+				<input type="hidden" name="id" value="" />
+				<input type="hidden" name="uploaded_by" value="" />
+				<input type="hidden" name="created_at" value="" />
+				<input type="hidden" name="company_id" value="" />
+				<input type="hidden" name="price_level" value="" />
+				<input type="hidden" name="gender" value="" />
+				<input type="hidden" name="civil_status" value="" />
+			</div>
+			<div class="form-group">
+				<label>First Name</label>
+				<input type="text" name="firstname" class="readonly" value="" readonly />
+			</div>
+			<div class="form-group">
+				<label>Last Name</label>
+				<input type="text" name="lastname" class="readonly" value="" readonly />
+				<input type="hidden" name="middlename" class="readonly" value="" readonly />
+			</div>
+			<hr>
+			<div class="form-group">
+				<label class="required">Email Address</label>
+				<input class="required" type="text" placeholder="Ex. juandelacruz@gmail.com" id="emp_email" name="email" value="" />
+			</div>
+			<div class="form-group">
+				<label class="required">Confirm Email Address</label>
+				<input data-validate='{"equalTo":"#emp_email"}' type="text" placeholder="Ex. juandelacruz@gmail.com" name="cemail" value="" />
+			</div>
+
+			<div class="form-group">
+				<label class="required">Password</label>
+				<input data-validate='{"minlength":8}' class="required" type="password" name="emp_password" id="emp_password" value="" />
+			</div>
+			<div class="form-group">
+				<label class="required">Confirm Password</label>
+				<input data-validate='{"equalTo":"#emp_password"}' class="required" type="password" name="emp_confirmpass" id="emp_confirmpass" value="" />
+			</div>
+
+			<!-- <div class="form-error" style="">
+				<label class="notice-error">Message</label>
+			</div> -->
+
+			<div class="form-group">
+				<label class="required">Birth Date</label>
+				<input class="required" type="text" placeholder="MM/DD/YYYY" name="bday" id="bday" value="" />
+			</div>
+			<div class="form-group">
+				<label class="required">Hired Date</label>
+				<input class="required" type="text" placeholder="MM/DD/YYYY" name="hiredate" id="hiredate" value="" />
+			</div>
+			<div class="form-group">
+				<label class="required">Contact Number</label>
+				<input class="required number" type="text" placeholder="Contact Number" name="contact_number" id="contact_number" maxlength="11" value="" />
+			</div>
+			<div class="form-group">
+				<button id="btn-save" type="submit" class="btn btn-primary  btn-block">Save</button>
+			</div>
+		</form>
+
+		<div class="ok_empinfo col-md-12">
+			<div class="form-group">
+				<button class="btn-ok btn  btn-primary btn-block">
+					OK
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	require(
+		['jquery', 'Magento_Ui/js/modal/modal', 'mage/calendar','mage/mage'],
+		function ($, modal) {
+			modal({
+				autoOpen: true,
+				responsive: true,
+				clickableOverlay: false,
+				modalClass: 'modal-custom',
+				title: 'Please enter your Employee ID',
+				keyEventHandlers: {
+					escapeKey: function (e) {
+						return false;
+					}
+				}
+			}, $("#popup-content"));
+
+			
+			var emp_info_form = $('#emp_info');
+
+			emp_info_form.mage('validation',{});
+
+			emp_info_form.submit(function (e) {
+				if(emp_info_form.validation('isValid')){
+					e . preventDefault();
+					
+					var emp_password 	= $('#emp_password').val();
+					var emp_confirmpass	= $('#emp_confirmpass').val();
+
+					if(emp_password!=emp_confirmpass){
+
+
+						$('.form-error').show();
+						$('.notice-error').html("Please enter the same Password as above.");
+						$('.notice-error').fadeIn()
+						.animate({top:0}, 500, function() {
+						});
+						$('.form_group').fadeIn();
+					}else
+					{
+
+						var passwordLen = $('#emp_password').val().length;
+						var alphanumaric = $('#emp_confirmpass').val();
+						var minchar = 8;
+						var regx = /\d/;
+						
+						if(passwordLen < minchar){
+							$('.err_msg').remove();
+							$('.modal-title').text('Password Length Error!');
+							$('.modal-content').prepend('<div class="err_msg">Minimum of '+minchar+' characters</div>');
+							return false;
+						}else{
+							var _bday = new Date($("#bday").val());
+							var _hiredate = new Date($("#hiredate").val());
+							if (_hiredate < _bday){
+								console.log(_bday);
+								console.log(_hiredate);
+								$('.err_msg').remove();
+								$('.modal-title').text('Error!');
+								$('.modal-content').prepend('<div class="err_msg">Please ensure that hire date is greater than your birth date!</div>');
+								return false;
+							}
+							if (regx.test(alphanumaric)){
+
+								//save account -------------------------------------------------
+									$('.form-error').hide();
+									$('.err_msg').hide();
+									$('.success_msg').hide();
+									$('.addemp_info').hide();
+
+									$('.save_empinfo').hide();
+									$('.modal-title').text('Validating...');
+
+									$('.modal-content').prepend('<div class="wait_msg"> Please wait...</div>');
+									
+									var emp_info = $("#emp_info").serialize();		
+									
+									$.post( "<?=$store->getBaseUrl().'benefits/customers/save'; ?>", 
+									
+									emp_info,							
+									function( data ) {					
+										// var data = $.parseJSON(data);				
+										if(data.success == true)			
+										{		
+											$('.modal-title').text('Saving...');	
+											$('.modal-content').empty();
+											$('.modal-content').prepend('<div class="wait_msg"> Updating your account. Please wait...</div>');
+											setTimeout(() => {
+												window.location.reload();
+											}, 1000);
+											// $('.ok_empinfo').fadeIn();
+											// $('.wait_msg').hide();
+											// $('.modal-title').html('Done!');
+											// $('.modal-content').prepend('<div class="success_msg"> '+data.error+'</div>');
+											//window.location.reload();
+										}
+										else
+										{
+											$('.success_msg').hide();
+											$('.wait_msg').hide();
+											$('.addemp_info').fadeIn();
+											$('.save_empinfo').fadeIn();
+											$('.modal-title').text('Error!');
+											$('.modal-content').prepend('<div class="err_msg">'+data.error+'</div>');
+										}
+									});
+
+								//--------------------------------------------------------------
+
+							}else{
+								$('.err_msg').remove();
+								$('.modal-title').text('Password Alpha Numeric!');
+								$('.modal-content').prepend('<div class="err_msg">Password Error. Alpha-numeric is required!</div>');
+								return false;
+							}
+
+						}
+					}
+				}else{
+					return false
+				}
+
+			});
+
+			$('.btn-back').on('click', function(e){
+                window . location . reload();
+			});
+			//Date inputs
+			$("#bday, #hiredate").calendar({
+                changeYear: true,
+                changeMonth: true,
+                yearRange: "1970:2050",
+                buttonText: "Select Date",
+            });
+
+			$(".modal-footer, .action-close").css("display", "none");
+
+			$("#emp_id").on("keyup", function (e) {
+				console.log($(this).val())
+				if ($(this).val() != "") {
+					$("#btn-search-id").prop("disabled", false);
+				} else {
+					$("#btn-search-id").prop("disabled", true);
+				}
+			});
+
+			$("#forgotpass_email").on("keyup", function (e) {
+				console.log($(this).val())
+				if ($(this).val() != "") {
+					$(".btn-forgotpassword").prop("disabled", false);
+				} else {
+					$(".btn-forgotpassword").prop("disabled", true);
+				}
+			});
+
+			// Check employee id
+			$("#emp_id_form").submit(function (e) {
+				e.preventDefault();
+
+				var emp_id = $("input[name=emp_id]").val();
+
+				$.ajax({
+					showLoader: true,
+					type: "POST",
+					url: '<?=$store->getBaseUrl() . "benefits/validate/checkid"?>',
+					dataType: 'JSON',
+					data: {
+						emp_id: emp_id
+					}
+				}).done(function (data) {
+					if (data.success == true) {
+						if (data.status == false) {
+							$("#emp_id_form").hide();
+							$('.addemp_info').fadeIn();
+							$('[name=emp_id]').val(data.emp_id);
+							$('[name=id]').val(data.id);
+							$('[name=price_level]').val(data.pricelevel);
+							$('[name=gender]').val(data.gender);
+							$('[name=civil_status]').val(data.civilstatus);
+							$('[name=firstname]').val(data.firstname);
+							$('[name=lastname]').val(data.lastname);
+							$('[name=middlename]').val(data.middlename);
+							$('[name=contact_number]').val(data.contact_number);
+							$('[name=company_id]').val(data.company_id);
+							$('[name=uploaded_by]').val(data.uploaded_by);
+							$('[name=created_at]').val(data.created_at);
+							$('[name=email]').focus();
+							$('.modal-title').text('Please complete personal information.');
+						}
+						else {
+							if (data.agree == false) {
+								if (data.isactive == false) {
+									$('.emp_idform').hide();
+									$('.form-error').hide();
+									// $('.login_form').fadeIn();
+									$('.login_empinfo').hide();
+									$('.psswrd').hide();
+									$('.ok_empinfo').show();
+									$('.login_resendlink').hide();
+									$('[name=email]').val(data.email);
+									$('[name=password]').focus();
+									$('.modal-title').text(data.error);
+									$('.modal-content').prepend('<div class="err_msg">' + data.agree_msg + '</div>');
+								}
+								else {
+									$('.psswrd').show();
+									$('.form-error').hide();
+									$('.login_empinfo').show();
+									$('.emp_idform').hide();
+									$('.login_form').fadeIn();
+									$('[name=email]').val(data.email);
+									$('.fgtpsswrd_link').show();
+									$('[name=password]').focus();
+									$('.modal-title').text(data.error);
+								}
+							}
+							else  {
+								$('.psswrd').show();
+								$('.form-error').hide();
+								$('.login_empinfo').show();
+								$('.emp_idform').hide();
+								$('.login_form').fadeIn();
+								$('[name=email]').val(data.email);
+								$('.fgtpsswrd_link').attr('href','/?forgotpassword='+data.emailencrypt)
+								$('[name=password]').focus();
+								$('.modal-title').text(data.error);
+							}
+						}
+					}
+					else {
+						// $('.wait_msg').remove();
+						$('.emp_idform').show();
+	//					$('.form-error').fadeIn();
+						$('[name=emp_id]').focus();
+						$('.form-error').show();
+						if(data.message) {
+							$('.notice-error').text(data.message);
+						}
+						else {
+							$('.notice-error').text(data.error);
+						}
+						$('.notice-error').fadeIn()
+						.animate({top:0}, 500, function() {
+						});
+						$('.form-group').fadeIn();
+					}
+				});
+			});
+
+			$('.btn-ok').click(function (){
+				window.location.reload();
+			});
+
+
+			// Save new account if customer_entity is_active = false
+
+
+			$("#login_account").submit(function(e) {
+                e . preventDefault();
+				var password = $("#password").val();
+				var email = $("input[name=email]").val();
+				$.ajax({
+					showLoader: true,
+					type: "POST",
+					url: '<?=$store->getBaseUrl() . "benefits/validate/login"?>',
+					dataType: 'JSON',
+					data: {
+                        email: email,
+						password: password
+					}
+				}).done(function (data) {
+                    if(!data.success) {
+						$('.form-error').show();
+						$('.notice-error').text(data.error);
+						$('.notice-error').fadeIn()
+						.animate({top:0}, 500, function() {
+						});
+						$('.form-group').fadeIn();
+					} else {
+						window.location = "<?=$store->getBaseUrl() . '?tnxtype=1';?>"
+					}
+				});
+			});
+
+			//click event on forgot password link
+			$('.forgotpassword').click(function (){
+				$('.login_form').hide();
+				$('.login_empinfo').hide();
+				// $('.fgtpsswrd_link').hide();
+				$('.emp-forgotpassword').show();
+				$('.modal-title').html('Forgot Password');
+			});
+
+			//
+			$('#emp_forgotpass').submit(function (e){
+                e.preventDefault();
+				var email = $("input[name=forgotpass_email]").val();
+				$.ajax({
+					showLoader: true,
+					type: "POST",
+					url: '<?=$store->getBaseUrl().'benefits/validate/forgotpassword'; ?>',
+					dataType: 'JSON',
+					data: {
+						email: email
+					}
+				}).done(function (data) {
+					console.log(data)
+					if(data.success) {
+						$('.emp-forgotpassword').hide();
+						$('.ok_empinfo').show();
+						$('.modal-content').prepend('<div class="success_msg"> '+data.error+'</div>');
+					} else {
+						$('.emp-forgotpassword').hide();
+				 		$('.modal-content').prepend('<div class="err_msg"> '+data.error+'</div>');
+					}
+				});
+			});
+		}
+	);
+</script>

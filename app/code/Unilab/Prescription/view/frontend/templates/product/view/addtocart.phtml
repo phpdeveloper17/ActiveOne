@@ -1,0 +1,112 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var $block \Magento\Catalog\Block\Product\View */
+?>
+
+<style>
+	#modal_wrapper
+	{
+		display:none;
+	}
+	.mod_header h1, .login_form, .mod_footer
+	{
+		text-align: left;
+	}
+
+	div#modal_wrapper{
+		/* top: 30%; */
+		position: fixed;
+	}
+</style>
+
+<?php $_product = $block->getProduct(); ?>
+<?php $buttonTitle = __('Add to Cart'); ?>
+<?php if ($_product->isSaleable()): ?>
+<div class="box-tocart">
+    <div class="fieldset">
+        <?php if ($block->shouldRenderQuantity()): ?>
+        <div class="field qty">
+            <label class="label" for="qty"><span><?= /* @escapeNotVerified */ __('Qty') ?></span></label>
+
+        <?php
+
+        $prescriptionHelper = $this->helper('Unilab\Prescription\Helper\Data');
+        $xQty = $_product->getData('unilab_moq') * 1; 
+        $unilabdc   = $_product->getData('unilab_dc');
+        $dc_enabled = $prescriptionHelper->getConfig('digitalcouponing/dcmaintenance/enabled');
+
+        ?>
+
+        <div id="modal_wrapper">
+			<div class="mod_header">
+				<h1 class="header_title">Invalid Quantity</h1>
+			</div>
+			<div class="mod_body">	
+				<div class="login_form">
+					<label class="message"></label>
+				</div>		
+						
+			</div>
+			
+			<div class="mod_footer">
+				<div class="save_empinfo">
+					<div class="form_group">
+						<button type="button" title="Add to Cart" class="button btn-cart btnok" >
+							<span><span>Ok</span></span>
+						</button>					
+					</div>
+				</div>	
+			</div>	
+		</div> 
+
+            <div class="control">
+                <input type="number"
+                       name="qty"
+                       id="qty" 
+                       maxlength="12" 
+                       value="<?= /* @escapeNotVerified */ $xQty ?>"
+                       title="<?= /* @escapeNotVerified */ __('Qty') ?>"
+                       class="input-text qty"
+                       data-validate="<?= $block->escapeHtml(json_encode($block->getQuantityValidators())) ?>" 
+                       <?php if($unilabdc == 1 && $dc_enabled == 1): echo 'readonly'; endif; ?>
+                       />
+            </div>
+        </div>
+        <?php endif; ?>
+        <div class="actions">
+            <button type="submit"
+                    title="<?= /* @escapeNotVerified */ $buttonTitle ?>"
+                    class="action primary tocart"
+                    id="product-addtocart-button">
+                <span><?= /* @escapeNotVerified */ $buttonTitle ?></span>
+            </button>
+            <?= $block->getChildHtml('', true) ?>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+<?php if ($block->isRedirectToCartEnabled()) : ?>
+<script type="text/x-magento-init">
+    {
+        "#product_addtocart_form": {
+            "Magento_Catalog/product/view/validation": {
+                "radioCheckboxClosest": ".nested"
+            }
+        }
+    }
+</script>
+<?php else : ?>
+<script type="text/x-magento-init">
+    {
+        "#product_addtocart_form": {
+            "Magento_Catalog/js/validate-product": {}
+        }
+    }
+</script>
+<?php endif; ?>

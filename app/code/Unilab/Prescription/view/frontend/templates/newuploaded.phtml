@@ -1,0 +1,8 @@
+<?php /* $rand_rx_id = md5(time());?>
+<div style="width:80px;float:left;position:relative;" id="<?php echo $rand_rx_id;?>">
+	<a href="<?php echo $this->getImageSource();?>" target="_blank"><img src="<?php echo $this->getImageSource();?>" width="70" height="70"></a>
+	<span style="position:absolute;right:10px;"><a href="javascript:void(0);" style="display: block; background-color:#FB3561; text-align: center; color: #FFFFFF; font-weight: bold; height: 15px; line-height: 15px; width: 17px;" onclick="removeRx('<?php echo $rand_rx_id;?>')">x</a></span>
+	<input type="hidden" value="<?php echo $this->getImageName();?>" name="prescription[scanned_rxs][<?php echo $rand_rx_id;?>]">
+</div> 
+ */?> 
+<?php echo $block->getImageSource();?>

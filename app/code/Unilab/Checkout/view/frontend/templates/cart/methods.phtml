@@ -1,0 +1,9 @@
+<div class="proceed-tocheckout">
+    <button type="button"
+            title="<?= $block->escapeHtml(__('Proceed to Checkout')) ?>"
+            class="continue button"
+            onclick="window.location.href='<?= $block->getUrl('checkout') ?>'"
+            >
+        <span><?= /* @escapeNotVerified */ __('Proceed to Checkout') ?></span>
+    </button>
+</div>

@@ -1,0 +1,104 @@
+
+<style type="text/css">
+	.form-error.invalid-feedback {
+        position: relative!important;
+	}
+	.notice-error {
+		background-color: red;
+		float: right;
+		padding: 2px 5px 2px 5px;
+		color: #fff;
+		border-radius: 0px 0px 2px 2px;
+		font-size: 11px;
+		/* width: 65% !important; */
+		top: -20px;
+		z-index: -1;
+	}
+	.err_msg {
+		color: red;
+		border: solid 1px red;
+		padding: 5px;
+		margin-bottom: 10px;
+	}
+	.modal-header {
+		padding: 10px 10px 10px 10px !important;
+		background-color: #353433;
+		color: #ffff;
+		border-top-right-radius: 0 !important;
+		border-top-left-radius: 0 !important;
+	}
+
+	.modal-title {
+		border-bottom: none !important;
+		padding-bottom: 0 !important;
+		font-size: 16px !important;
+	}
+
+	.form-group>label.required::after {
+		content: " *";
+		color: red;
+	}
+
+	.modal-content {
+		padding-top: 3rem !important;
+		padding: 10px 10px 10px 10px !important;
+	}
+
+	.login_form,
+	.emp-forgotpassword, .login_resendlink, .addemp_info, .ok_empinfo
+	{
+		display: none;
+	}
+	.form-error {
+        display: none;
+	}
+	.row {
+		margin: 0;
+	}
+	.modal-inner-wrap {
+		margin: 0 auto !important;
+		left: 0 !important;
+		width: 570px !important;
+    	font-weight: 700;
+		top: 100px;
+	}
+
+</style>
+<div id="popup-content" class="popup-content modal-insufficient" style="display:none;">
+	<div class="content">
+		<div class="form-group row">
+			<div class="col-xs-12">
+				<p class="err_msg">Insufficient Balance. Please remove any item(s) to proceed to checkout.</p>
+			</div>
+			<div class="col-xs-12 col-md-3">
+				<button type="button" class="btn btn-primary back-btn btn-block">Ok</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	require(
+		['jquery', 'Magento_Ui/js/modal/modal', 'mage/calendar','mage/mage'],
+		function ($, modal) {
+			modal({
+				autoOpen: true,
+				responsive: true,
+				clickableOverlay: false,
+				modalClass: 'modal-custom',
+				title: 'Insufficient Balance',
+				keyEventHandlers: {
+					escapeKey: function (e) {
+						return false;
+					}
+				}
+			}, $("#popup-content"));
+
+			$('.back-btn').click(function (){		
+				window.location.href = '<?= $block->getUrl('checkout/cart')?>';
+			});		
+		
+			$(".modal-footer, .action-close").css("display", "none");
+
+		}
+	);
+</script>

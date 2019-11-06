@@ -1,0 +1,172 @@
+
+
+<?php $skins = $block->getCheckoutSkinConfig(); ?>
+
+<style>
+	.container-wrapper {
+		display: inline-block;
+		width: 100%;
+		margin: 0 auto;
+		margin-bottom: 50px;
+	}
+	.left-section {
+		display: inline-block;
+		width: 35%;
+		float: left;
+		height: 405px;
+	}
+	.right-section {
+		display: inline-block;
+		width: 65%;
+		float: left;
+	}
+	.shippingaddress {
+	  padding: 5px 5px;
+	  width: 98%;
+	  display: inline-block;
+	}
+	.shippingmethod {
+		display: inline-block;
+		width: 48%;
+		float: left;
+		padding: 5px 5px;
+	}
+	.paymentmethod {
+		display: inline-block;
+		width: 49%;
+		/*float: right;	*/
+		padding: 5px 2px;
+
+	}
+	.items {
+		display: inline-block;
+		width: 98%;
+		padding: 5px 5px;
+	}
+	.continue {
+		/*display: inline-block;
+		width: 99%;
+		padding: 5px 3px;*/
+
+		display: inline;
+		padding: 5px 5px;
+		float: left;
+	}
+
+	.totals {
+	  /*display: inline-block;
+	  width: 99%;
+	  padding: 5px 3px;*/
+
+	  display: inline;
+	  float: right;
+	  margin-right: 20px;
+	}
+
+	.placeorder {
+	  display: inline;
+	  float: right;
+	  margin-right: 20px;
+
+	}
+
+	@media only screen and (max-width : 767px) {
+		
+        .left-section {
+            width: 100%;
+			margin-bottom: 10px;
+			height: auto;
+        }
+        .right-section {
+            width: 100%;
+        }
+        .paymentmethod {
+            width: 98%;
+            padding: 5px 0px;
+        }
+        .shippingmethod {
+            width: 98%;
+        }
+
+        .place_order {
+	        border: 1px solid red;
+	        width: 90%;
+	        padding: 5px;
+	        float: right;
+        }
+    }
+</style>
+
+<?php include ($block->getTemplateFile('Unilab_Checkout::style.phtml')) ?>
+
+<div id="checkout" class="container_wapper">
+		<div class="left-section">
+			<div class="shippingaddress">
+				<?php include ($block->getTemplateFile('Unilab_Checkout::forms/billingaddress.phtml')) ?>
+			</div>
+		</div>
+		<div class="right-section">
+			<div class="shippingmethod">
+			<?php include ($block->getTemplateFile('Unilab_Checkout::forms/shippingmethod.phtml')) ?>
+			</div>
+			<div class="paymentmethod">
+			<?php include ($block->getTemplateFile('Unilab_Checkout::forms/paymentmethod.phtml')) ?>
+			</div>
+			<div class="items">
+			<?php include ($block->getTemplateFile('Unilab_Checkout::cart/items.phtml')) ?>
+			</div>
+			<div class="continue">
+				<button id="continue_btn" type="submit" title="Continue Shopping" class="button btn-checkout" onclick="window.location.href='<?= $block->escapeUrl($block->getContinueShoppingUrl()) ?>'"> 
+					  <span><span>Continue Shopping</span></span>
+				</button>
+			</div>
+			<div class="totals">
+			<?php include ($block->getTemplateFile('Unilab_Checkout::totals/default.phtml')) ?>
+			</div>
+
+			<div class="placeorder">
+			<?php 
+				if($block->validateAmount()):
+					include ($block->getTemplateFile('Unilab_Checkout::forms/placeorder.phtml'));
+				endif;
+			?>
+			</div>
+
+		</div>
+		<div class="" style="clear:both;">
+
+		</div>
+		<script type="text/x-magento-init">
+			{
+				"#checkout": {
+					"Magento_Ui/js/core/app": <?= /* @escapeNotVerified */ $block->getJsLayout() ?>
+				}
+			}
+	</script>
+</div>
+<div class="invalid-amount-modal">
+		<?php 
+			if(!$block->validateAmount()):
+				include ($block->getTemplateFile('Unilab_Checkout::insufficientmodal.phtml'));
+			endif;
+		?>
+</div>
+
+<script type="text/javascript">
+  	window.checkoutConfig = <?= /* @escapeNotVerified */ $block->getSerializedCheckoutConfig() ?>;
+	window.customerData = window.checkoutConfig.customerData;
+	window.isCustomerLoggedIn = window.checkoutConfig.isCustomerLoggedIn;
+	window.address = null;
+	window.paymentMethods = <?= $block->serializedMethods() ?>;
+	window.defaultShipping = '<?= $block->defaultShippingMethod(); ?>';
+</script>
+<script>
+    require([
+        'mage/url',
+        'Magento_Ui/js/block-loader'
+    ], function(url, blockLoader) {
+        blockLoader("<?= /* @escapeNotVerified */ $block->getViewFileUrl('images/loader-1.gif') ?>");
+        return url.setBaseUrl('<?= /* @escapeNotVerified */ $block->getBaseUrl() ?>');
+    })
+</script>
+

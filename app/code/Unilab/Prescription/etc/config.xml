@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <digitalcouponing>
+            <dcmaintenance>
+                <enabled>1</enabled>
+            </dcmaintenance>
+        </digitalcouponing>
+        <imagecapture_section>
+            <imagecapture_group>
+                <imagecapture_active>1</imagecapture_active>
+            </imagecapture_group>
+        </imagecapture_section>
+    </default>
+</config>

@@ -1,0 +1,40 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<div class="block discount" id="block-discount">
+    <div class="title" data-role="title">
+        <strong class="title" id="block-discount-heading" role="heading"><?= /* @escapeNotVerified */ __('DISCOUNT CODES') ?></strong>
+    </div>
+    <div class="content" data-role="content" aria-labelledby="block-discount-heading">
+        <form id="discount-coupon-form"
+              action="<?= /* @escapeNotVerified */ $block->getUrl('checkout/cart/couponPost') ?>"
+              method="post"
+              data-mage-init='{"discountCode":{"couponCodeSelector": "#coupon_code",
+                                               "removeCouponSelector": "#remove-coupon",
+                                               "applyButton": "button.action.apply",
+                                               "cancelButton": "button.action.cancel"}}'>
+            <div class="fieldset coupon<?php  strlen($block->getCouponCode()) ? ' applied' : '' ?>">
+                <input type="hidden" name="remove" id="remove-coupon" value="0" />
+                <div>
+                    <label for="coupon_code" class="coupon-label"><span><?= /* @escapeNotVerified */ __('Enter your coupon code if you have one') ?></span></label>
+                    <input type="text" class="input-text" id="coupon_code" name="coupon_code" value="<?= $block->escapeHtml($block->getCouponCode()) ?>" />
+                    <div class="coupon-buttons">
+                        <?php if(!strlen($block->getCouponCode())) : ?>
+                        <button class="action apply button" type="button" value="<?= /* @escapeNotVerified */ __('Apply Coupon') ?>">
+                            <span><?= /* @escapeNotVerified */ __('Apply Coupon') ?></span>
+                        </button>
+                            <?php else: ?>
+                        <button  type="button" class="action cancel button" value="<?= /* @escapeNotVerified */ __('Cancel Coupon') ?>"><span><?= /* @escapeNotVerified */ __('Cancel Coupon') ?></span></button>
+                        <?php endif;?>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

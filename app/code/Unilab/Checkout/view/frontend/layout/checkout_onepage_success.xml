@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<body>
+    <referenceContainer name="content">
+        <block class="Unilab\Checkout\Block\Onepage\Success" name="order.details.success" template="Unilab_Checkout::success.phtml" after="-">     
+            <block class="Unilab\Checkout\Block\Onepage\Success" name="checkout.success.print.button" template="Unilab_Checkout::button.phtml"/>
+        </block>
+    </referenceContainer>
+    <referenceBlock name="page.main.title">
+        <action method="setPageTitle">
+            <argument translate="true" name="title" xsi:type="string">Your Order has been received.</argument>
+        </action>
+        <action method="setTemplate">
+                <argument name="template" xsi:type="string">Unilab_Checkout::checkout/title.phtml</argument>
+            </action>
+    </referenceBlock>
+    
+    <referenceBlock name="checkout.success" remove="true"/>
+</body>

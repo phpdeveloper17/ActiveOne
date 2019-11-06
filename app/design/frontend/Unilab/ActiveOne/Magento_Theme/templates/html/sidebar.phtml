@@ -1,0 +1,17 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<div class="sidebar-container">
+    <div class="sidebar">
+        <?= $block->getChildHtml() ?>
+        <p class="bugs"><?= /* @escapeNotVerified */ __('Help Us Keep Magento Healthy') ?> 
+        </p>
+        <address><?= /* @escapeNotVerified */ $block->getCopyright() ?></address>
+    </div>
+</div>

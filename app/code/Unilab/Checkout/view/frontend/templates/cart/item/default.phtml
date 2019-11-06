@@ -1,0 +1,380 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var $block \Magento\Checkout\Block\Cart\Item\Renderer */
+
+$_item = $block->getItem();
+$product = $_item->getProduct();
+$isVisibleProduct = $product->isVisibleInSiteVisibility();
+/** @var \Magento\Msrp\Helper\Data $helper */
+$helper = $this->helper('Magento\Msrp\Helper\Data');
+$canApplyMsrp = $helper->isShowBeforeOrderConfirm($product) && $helper->isMinimalPriceLessMsrp($product);
+?>
+<tbody class="cart item">
+    <tr class="item-info">
+        <td data-th="<?= $block->escapeHtml(__('Item')) ?>" class="col item">
+            <?php if ($block->hasProductUrl()):?>
+                <a href="<?= /* @escapeNotVerified */ $block->getProductUrl() ?>"
+                   title="<?= $block->escapeHtml($block->getProductName()) ?>"
+                   tabindex="-1"
+                   class="product-item-photo">
+            <?php else:?>
+                <span class="product-item-photo">
+            <?php endif;?>
+            <?= $block->getImage($block->getProductForThumbnail(), 'cart_page_product_thumbnail')->toHtml() ?>
+            <?php if ($block->hasProductUrl()):?>
+                </a>
+            <?php else: ?>
+                </span>
+            <?php endif; ?>
+        </td>
+        <td class="col description">
+            <div class="product-item-details">
+                <strong class="product-item-name">
+                    <?php if ($block->hasProductUrl()):?>
+                        <a href="<?= /* @escapeNotVerified */ $block->getProductUrl() ?>"><?=$product->getSku() ?>&nbsp;-&nbsp;<?= $block->escapeHtml($block->getProductName()) ?></a>
+                    <?php else: ?>
+                        <?= $block->escapeHtml($block->getProductName()) ?>
+                    <?php endif; ?>
+                </strong>
+                <?php if ($_options = $block->getOptionList()):?>
+                    <dl class="item-options">
+                        <?php foreach ($_options as $_option) : ?>
+                            <?php $_formatedOptionValue = $block->getFormatedOptionValue($_option) ?>
+                            <dt><?= $block->escapeHtml($_option['label']) ?></dt>
+                            <dd>
+                                <?php if (isset($_formatedOptionValue['full_view'])): ?>
+                                    <?= /* @escapeNotVerified */ $_formatedOptionValue['full_view'] ?>
+                                <?php else: ?>
+                                    <?= /* @escapeNotVerified */ $_formatedOptionValue['value'] ?>
+                                <?php endif; ?>
+                            </dd>
+                        <?php endforeach; ?>
+                    </dl>
+                <?php endif;?>
+                <?php if ($messages = $block->getMessages()): ?>
+                    <?php foreach ($messages as $message): ?>
+                        <div class="cart item message <?= /* @escapeNotVerified */ $message['type'] ?>"><div><?= $block->escapeHtml($message['text']) ?></div></div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+                <?php $addInfoBlock = $block->getProductAdditionalInformationBlock(); ?>
+                <?php if ($addInfoBlock): ?>
+                    <?= $addInfoBlock->setItem($_item)->toHtml() ?>
+                <?php endif;?>
+            </div>
+        </td>
+        <td class="col prescription">
+        <?php if ($block->getPrescriptionId($_item)) :?>
+            <a href="#" data-id="<?=$_item->getId()?>" class="edit-prescription">Edit </a>
+        <?php endif;?>
+        </td>
+
+        <?php if ($canApplyMsrp): ?>
+            <td class="col msrp" data-th="<?= $block->escapeHtml(__('Price')) ?>">
+                <span class="pricing msrp">
+                    <span class="msrp notice"><?= /* @escapeNotVerified */ __('See price before order confirmation.') ?></span>
+                    <?php $helpLinkId = 'cart-msrp-help-' . $_item->getId(); ?>
+                    <a href="#" class="action help map" id="<?= /* @escapeNotVerified */ ($helpLinkId) ?>" data-mage-init='{"addToCart":{"helpLinkId": "#<?= /* @escapeNotVerified */ $helpLinkId ?>","productName": "<?= /* @escapeNotVerified */ $product->getName() ?>","showAddToCart": false}}'>
+                        <span><?= /* @escapeNotVerified */ __("What's this?") ?></span>
+                    </a>
+                </span>
+            </td>
+        <?php else: ?>
+            <td class="col price" data-th="<?= $block->escapeHtml(__('Price')) ?>">
+                <?= $block->getUnitPriceHtml($_item) ?>
+            </td>
+        <?php endif; ?>
+        <td class="col qty" data-th="<?= $block->escapeHtml(__('Qty')) ?>">
+            <div class="field qty">
+                <label class="label" for="cart-<?= /* @escapeNotVerified */ $_item->getId() ?>-qty">
+                    <span><?= /* @escapeNotVerified */ __('Qty') ?></span>
+                </label>
+                <div class="control qty">
+                    <input id="cart-<?= /* @escapeNotVerified */ $_item->getId() ?>-qty"
+                           name="cart[<?= /* @escapeNotVerified */ $_item->getId() ?>][qty]"
+                           data-cart-item-id="<?= /* @escapeNotVerified */ $_item->getSku() ?>"
+                           value="<?= /* @escapeNotVerified */ $block->getQty() ?>"
+                           type="number"
+						   data-moq="<?= $block->getUnilabMoq($_item) ? $block->getUnilabMoq($_item) :  '1'?>"
+                           size="4"
+                           title="<?= $block->escapeHtml(__('Qty')) ?>"
+                           class="input-text qty moq-check"
+                           <?= $block->getUnilabDc($_item) ? 'disabled="disabled"' : ''?>
+                           data-validate="{required:true,'validate-greater-than-zero':true}"
+                           data-role="cart-item-qty"/>
+                </div>
+            </div>
+        </td>
+
+        <td class="col subtotal" data-th="<?= $block->escapeHtml(__('Subtotal')) ?>">
+            <?php if ($canApplyMsrp): ?>
+                <span class="cart msrp subtotal">--</span>
+            <?php else: ?>
+                <?= $block->getRowTotalHtml($_item) ?>
+            <?php endif; ?>
+        </td>
+        <td class="col removeitem" data-th="" >
+        <img src="<?=  $this->getViewFileUrl('images/btn_trash.gif'); ?>" 
+             title="<?= $block->escapeHtml(__('Remove item')) ?>"
+             class="remove-btn btn-remove-item" data-id="remove-product-<?= $_item->getId()?>">
+        <a href="#" id="remove-product-<?= $_item->getId()?>"
+            class="action action-delete"
+            data-post='<?= /* @escapeNotVerified */ $block->getDeletePostJson($_item) ?>'>
+        </a>
+
+        </td>
+    </tr>
+</tbody>
+<div id="qty-error" class="modal">
+	<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-title" id="">Quantity Error!</h2>
+			</div>
+		<div class="modal-body">
+			We’re sorry. We cannot process the quantity you requested. Kindly enter a quantity divisible by <span id="moq-text">4</span>. Thank you.
+		</div>
+		<div class="modal-footer center">
+			<div class="row">
+				<button type="button" title="<?= __('Cancel') ?>" class="btn btn-block btn-ok btn-primary" id="close-moq-modal" >
+					<span id="mod_btn2">Ok</span>
+				</button>
+			</div>
+		</div>
+	</div>
+	
+</div>
+<style>
+        .actions-secondary{
+            display: none !important;
+        }
+        #qty-error {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            padding-top: 150px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+        }
+    
+        .modal-content {
+            position: relative;
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border: 1px solid #888;
+            width: 30%;
+			z-index: inherit;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+            -webkit-animation-name: animatetop;
+            -webkit-animation-duration: 0.4s;
+            animation-name: animatetop;
+            animation-duration: 0.4s;
+            /* border-radius: 5px !important; */
+        }
+    
+        .modal-title {
+            margin-bottom: 0px;
+            margin-top: 0px;
+            color: white !important;
+            padding: 5px;
+            /* text-transform: uppercase; */
+            font-size: 16px;
+            font-weight: 400;
+            padding: 10px 10px;
+            /* border-top-left-radius: 5px;
+            border-top-right-radius: 5px; */
+        }
+    
+        .modal-body {
+            padding: 5px;
+            text-align: center;
+            margin-top: 10px;
+            font-weight: 700;
+        }
+        .center{
+            text-align: center;
+        }
+    
+        input.input-dc {
+            width: 40%;
+            padding: 5px;
+        }
+    
+        .modal-footer {
+            padding: 25px;
+        }
+    
+        /* .btn-apply, .btn-dont {
+            width: 35%;
+            /* background: #008081;
+            color: #f8fcfc;
+            border-radius: 5px;
+            font-weight: normal;
+            font-size: 12px;
+            margin-bottom: 3px; 
+            display: inline-block;
+        } */
+        .modal-header {
+            /* min-height: 16px; */
+            padding: 0;
+            border-bottom: 1px solid #e5e5e5;
+            /* padding: 10px 10px; */
+            background: #353433;
+            /* border-radius: 3px 3px 0 0; */
+        }
+        .modal-footer {
+            padding: 15px;
+            text-align: center;
+            border-top: 0;
+        }
+        .modal-body > center > p {
+            margin: 9px 0;
+            font-size: 14px;
+            font-weight: 700;
+        }
+        .btn-block {
+            margin: 10px 10px;
+            margin-top: 0;
+        }
+		.black_back {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100vh;
+			background-color: #000;
+			opacity: 0.8;
+		}
+		#close-moq-modal {
+			width: 35%;
+			margin: 0 auto !important;
+		}
+    </style>
+<script type="text/javascript"> 
+
+require(['jquery', 'fancybox'], function($, fancybox) {
+    var deleteTemplate = '<div style="margin: 20px 4px 10px 4px;">'+
+
+		'<h4 style="font-size:16px;text-align: center;">Are you sure you want to remove this item?</h4>'+
+
+		'<p style="text-align: center;margin: 0 auto;width: 224px;">'+	
+
+			' <input type="button" name="close" class="button alert-btn" id="confirmDeleteItemOnCart" value="Yes"/>'+
+
+			' <input type="button" name="close" class="button alert-btn" id="cancelConfirmDeleteItem" value="No"/>'+
+
+		'</p>'+
+
+    '</div>';
+    
+    var btnId;
+	$('.moq-check').on('focusin', function() {
+		$(this).data('val',$(this).val());
+	});
+	$('.moq-check').on('change', function() {
+		var btn = $(this);
+		if(btn.val() % btn.data('moq') != 0) {
+			$('#moq-text').text(btn.data('moq'));
+			$(this).val($(this).data('val'));
+			$('#qty-error').show();
+		}
+	});
+	$('#close-moq-modal').on('click', function() {
+		$('#qty-error').hide();
+	});
+    $('.remove-btn').on('click', function() {
+        btnId = $(this).data('id');
+        showDialog(deleteTemplate);    
+    });
+    $(document).on('click','#confirmDeleteItemOnCart',function() {
+        $('#' + btnId).click();
+    })
+    $(document).on('click','#cancelConfirmDeleteItem',function() {
+        $.fancybox.close();
+    })
+ 
+    function showDialog (_content) {	
+
+        $.fancybox({content: _content,
+            closeBtn: false,
+
+            closeClick: false,
+
+            helpers: { 
+                overlay : {
+                    closeClick : false,
+                    locked:	   true
+                }
+            }
+        }); 
+    }
+});
+require(['jquery', 'fancybox'], function($, fancybox) {
+    var deleteTemplate = '<div style="margin: 20px 4px 10px 4px;">'+
+
+		'<h4 style="font-size:16px;text-align: center;">Are you sure you want to remove this item?</h4>'+
+
+		'<p style="text-align: center;margin: 0 auto;width: 224px;">'+	
+
+			' <input type="button" name="close" class="button alert-btn" id="confirmDeleteItemOnCart" value="Yes"/>'+
+
+			' <input type="button" name="close" class="button alert-btn" id="cancelConfirmDeleteItem" value="No"/>'+
+
+		'</p>'+
+
+    '</div>';
+    
+    var btnId;
+	$('.moq-check').on('focusin', function() {
+		$(this).data('val',$(this).val());
+	});
+	$('.moq-check').on('change', function() {
+		var btn = $(this);
+		if(btn.val() % btn.data('moq') != 0) {
+			$('#moq-text').text(btn.data('moq'));
+			$(this).val($(this).data('val'));
+			$('#qty-error').show();
+		}
+	});
+	$('#close-moq-modal').on('click', function() {
+		$('#qty-error').hide();
+	});
+    $('.remove-btn').on('click', function() {
+        btnId = $(this).data('id');
+        showDialog(deleteTemplate);    
+    });
+    $(document).on('click','#confirmDeleteItemOnCart',function() {
+        $('#' + btnId).click();
+    })
+    $(document).on('click','#cancelConfirmDeleteItem',function() {
+        $.fancybox.close();
+    })
+ 
+    function showDialog (_content) {	
+
+        $.fancybox({content: _content,
+            closeBtn: false,
+
+            closeClick: false,
+
+            helpers: { 
+                overlay : {
+                    closeClick : false,
+                    locked:	   true
+                }
+            }
+        }); 
+    }
+});
+</script>
+

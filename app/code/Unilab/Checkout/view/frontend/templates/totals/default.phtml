@@ -1,0 +1,51 @@
+<?php $totals = $block->getTotals();?>
+<div class="total_wrapper">
+    <table id="shopping-cart-table2" class="data-table cart-table">
+        <tbody>
+
+            <tr>
+                <td id="checkout_totals" width="70%">Order Amount</td> 
+                <td class="a-right"><?= $block->formatPrice($totals['order_amount']) ?></td>
+            </tr>   
+            <?php if($totals['convenience'] > 0): ?>
+            <tr>
+                <td id="checkout_totals" width="70%">Convenience Fee</td>
+                <td class="a-right"><?= $block->formatPrice($totals['convenience']) ?></td>
+            </tr>	
+            <?php endif;?>
+
+            
+            <tr>
+                <td id="checkout_totals" width="80%">Shipping and Handling  (<span class="shipping-info"></span>)</td>
+                <td class="a-right shipping-info-value"><?= $block->formatPrice(0) ?></td>
+            </tr>
+
+            <tr>
+                <td id="checkout_totals" width="70%">VATable Sale</td> 
+                    
+                <td  class="a-right"><?= $block->formatPrice($totals['vatable_sale']) ?></td>
+ 
+            </tr>
+            
+            <tr>
+                <td id="checkout_totals" width="70%">VAT <?= number_format($totals['rate']) ?>%</td>
+                <td class="a-right" style="padding-left:10px;"><?= $block->formatPrice($totals['vat_amount']) ?></td>
+            </tr>
+
+            <tr>
+                <td id="checkout_totals" width="70%">VAT Exempt</td>
+                <td class="a-right"><?= $block->formatPrice($totals['vat_exempt']) ?></td>
+            </tr>
+        
+            <tr>
+                <td id="checkout_totals" width="70%">VAT ZERO Rate</td>	
+                <td class="a-right"><?= $block->formatPrice($totals['vat_zeroRate']) ?></td>
+            </tr>
+            
+            <tr>
+                <td id="checkout_totals" width="70%"><h4>Grand Total</h4></td>				
+                <td class="a-right"><h4 class="grand_total"><?= $block->formatPrice($totals['grand_total']) ?></h4></td>
+            </tr>
+        </tbody>
+    </table>
+</div>

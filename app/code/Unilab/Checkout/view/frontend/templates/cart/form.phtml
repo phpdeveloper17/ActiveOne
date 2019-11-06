@@ -1,0 +1,330 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+/**  @var $block \Magento\Checkout\Block\Cart\Grid */
+ 	$objectManager =  \Magento\Framework\App\ObjectManager::getInstance();
+	$this->_customerSession = $objectManager->create('\Magento\Customer\Model\Session');
+    $resourceConnection = $objectManager->get('\Magento\Framework\App\ResourceConnection');
+    $connection = $resourceConnection->getConnection(\Magento\Framework\App\ResourceConnection::DEFAULT_CONNECTION);
+    $customer = $this->_customerSession->getCustomer();
+    //Search entity_id from rra_emp_benefits
+    
+    $select 	=	$connection->select()->from('rra_emp_benefits', array('*'))
+    ->where('entity_id=?',$customer->getId())->where('is_active=?',1);
+    $benefits_items 	=	$connection->fetchRow($select);
+    
+    $limit 				= $benefits_items['purchase_cap_limit'];
+    $consumed 			= $benefits_items['consumed'];
+    $extension 	= $benefits_items['extension'];
+    $available  = 0;
+    $available 	= $benefits_items['available'];
+    $available += $extension;
+
+    $availablePcapAmount = $available;
+?>
+
+<?php include ($block->getTemplateFile('Unilab_Checkout::messages.phtml')) ?>
+<?php $mergedCells = ($this->helper('Magento\Tax\Helper\Data')->displayCartBothPrices() ? 2 : 1); ?>
+<form action="<?= /* @escapeNotVerified */ $block->getUrl('checkout/cart/updatePost') ?>"
+          method="post"
+          id="form-validate"
+          data-mage-init='{"validation":{}}'
+          class="form form-cart">
+    <?= $block->getBlockHtml('formkey') ?>
+    <div class="cart table-wrapper<?= $mergedCells == 2 ? ' detailed' : '' ?>">
+        <?php if ($block->getPagerHtml()): ?>
+            <div class="cart-products-toolbar cart-products-toolbar-top toolbar" data-attribute="cart-products-toolbar-top"><?= $block->getPagerHtml() ?></div>
+        <?php endif ?>
+        <table id="shopping-cart-table"
+               class="cart items data"
+               data-mage-init='{"shoppingCart":{"emptyCartButton": "action.clear",
+               "updateCartActionContainer": "#update_cart_action_container"}}'>
+            <caption role="heading" aria-level="2" class="table-caption"><?= /* @escapeNotVerified */ __('Shopping Cart Items') ?></caption>
+            <thead class="cart-header">
+                <tr>
+                    <th class="col item" scope="col"><span><?= /* @escapeNotVerified */ __('ITEMS') ?></span></th>
+                    <th class="col description" scope="col"><span><?= /* @escapeNotVerified */ __('DESCRIPTION') ?></span></th>
+                    <th class="col prescription" scope="col"><span><?= /* @escapeNotVerified */ __('PRESCRIPTION') ?></span></th>
+                    <th class="col price" scope="col"><span><?= /* @escapeNotVerified */ __('PRICE') ?></span></th>
+                    <th class="col qty" scope="col"><span><?= /* @escapeNotVerified */ __('QTY') ?></span></th>
+                    <th class="col subtotal" scope="col"><span><?= /* @escapeNotVerified */ __('TOTAL') ?></span></th>
+                    <th class="col action" scope="col"><span>&nbsp;&nbsp;</span></th>
+                </tr>
+            </thead>
+            <?php foreach ($block->getItems() as $_item): ?>
+                <?= $block->getItemHtml($_item) ?>
+            <?php endforeach ?>
+        </table>
+        <?php if ($block->getPagerHtml()): ?>
+            <div class="cart-products-toolbar cart-products-toolbar-bottom toolbar" data-attribute="cart-products-toolbar-bottom"><?= $block->getPagerHtml() ?></div>
+        <?php endif ?>
+    </div>
+    <div class="cart main actions">
+        <div class="">
+            <div class="action-left">
+                <?php if ($block->getContinueShoppingUrl()): ?>
+
+                        <button type="button"
+                                title="<?= $block->escapeHtml(__('Continue Shopping')) ?>"
+                                class="continue button"
+                                onclick="window.location.href='<?= $block->escapeUrl($block->getContinueShoppingUrl()) ?>'"
+                                >
+                            <span><?= /* @escapeNotVerified */ __('Continue Shopping') ?></span>
+                        </button>
+                    
+                <?php endif; ?>
+            </div>
+            <!-- <div style="clear:both;"></div> -->
+            <div class="action-right">
+                <!-- <div class="form-group"> -->
+                    <button type="submit"
+                            name="update_cart_action"
+                            data-cart-item-update=""
+                            value="update_qty"
+                            title="<?= $block->escapeHtml(__('Update Shopping Cart')) ?>"
+                            class="action button" id="update_cart_button">
+                        <span><?= /* @escapeNotVerified */ __('Update Shopping Cart') ?></span>
+                    </button>
+                <!-- </div>
+                <div class="form-group"> -->
+                    <button type="submit"
+                            name="update_cart_action"
+                            data-cart-empty=""
+                            value="empty_cart"
+                            title="<?= $block->escapeHtml(__('Clear Shopping Cart')) ?>"
+                            class="action clear button" id="empty_cart_button" disabled="true">
+                        <span><?= /* @escapeNotVerified */ __('Clear Shopping Cart') ?></span>
+                    </button>
+                <!-- </div> -->
+            </div>
+            <div style="clear:both;"></div>
+        </div>
+    </div>
+</form>
+<style>
+#empty_cartModal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        padding-top: 130px;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0.4);
+    }
+#empty_cartModal .modal-title{
+    margin-bottom: 0px;
+    margin-top: 0px;
+    color: white !important;
+    background: #353433;
+    padding: 5px;
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 700;
+    border-top-left-radius: 2px !important;
+    border-top-right-radius: 2px !important;
+    padding:20px;
+}
+#empty_cartModal .modal-footer {
+    text-align:center !important;
+    margin-left:0 !important;
+}
+#empty_cartModal .modal-body {
+    text-align: center !important;
+    font-size: 11px;
+    padding-top: 47px;
+    font-size: 15px;
+}
+#empty_cartModal .modal-content {
+    border-radius: 0 !important;
+}
+#pcap_Modal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        padding-top: 130px;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0.4);
+    }
+    #pcap_Modal .modal-title{
+        margin-bottom: 0px;
+        margin-top: 0px;
+        color: white !important;
+        background: #353433;
+        padding: 5px;
+        text-transform: uppercase;
+        font-size: 14px;
+        font-weight: 700;
+        border-top-left-radius: 0 !important;
+        border-top-right-radius: 0 !important;
+        padding:20px;
+    }
+    #pcap_Modal .modal-footer {
+        text-align:center !important;
+        margin-left:0 !important;
+    }
+    #pcap_Modal .modal-body {
+        text-align: center !important;
+        font-size:11px;
+    }
+    #pcap_Modal .modal-content {
+        border-radius: 0 !important;
+    }
+</style>
+<div id="empty_cartModal" class="modal">
+	<div class="modal-content">
+		<div class="modal-body">
+			<p><span id="mod_body">Are you sure you want to clear cart?</span></p>
+		</div>
+		<div class="modal-footer center">
+			<!-- <div class="form_group">
+
+				<button type="submit"
+						name="update_cart_action"
+						data-cart-empty=""
+						value="empty_cart"
+						title="<?= $block->escapeHtml(__('Yes')) ?>"
+						class="action clear button pcap_btn_yes" id="empty_cart_button" >
+					<span><span>Yes</span></span>
+				</button>
+				<button type="button" title="Add to Cart" class="button pcap_btn_no" >
+					<span><span>No</span></span>
+				</button>				
+			</div> -->
+            <div class="row">
+                <div class="col-sm-6 col-xs-12 col-md-6 form-group">
+                    <button style="margin:0px;" type="submit"
+    						name="update_cart_action"
+    						data-cart-empty=""
+    						value="empty_cart"
+    						title="<?= $block->escapeHtml(__('Yes')) ?>"
+    						class="btn btn-block action clear button pcap_btn_yes" id="empty_cart_button" >
+    					<span><span>Yes</span></span>
+    				</button>
+                </div>
+                <div class="col-sm-6 col-xs-12 col-md-6 form-group">
+                    <button style="margin:0px;" type="button" title="Add to Cart" class="btn btn-block button pcap_btn_no" >
+    					<span><span>No</span></span>
+    				</button>
+                </div>
+            </div>
+		</div>
+	</div>
+</div>
+<div id="pcap_Modal" class="modal">
+	<div class="modal-content">
+		<div class="modal-header center">
+			<h2 class="modal-title" id="mod_title">Error</h2>
+		</div>
+		<div class="modal-body">
+			<p><span id="mod_body">Insufficient purchase cap limit</span></p>
+		</div>
+		<div class="modal-footer center">
+			<div class="form_group">
+				<button type="button" title="Add to Cart" class="button btnok pcap_btn_ok" >
+					<span><span>Ok</span></span>
+				</button>					
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+        require(
+            [
+                'jquery',
+                'fancybox',
+                'ddaccordion',
+                'prototype',
+                'effects',
+                'controls',
+                'unilab',
+                'prescription-validation',
+                'validation',
+                'domReady!'
+            ],
+            function(
+                $,
+                fancybox
+            ) {
+				
+                var disable_submission   = false;
+                var prevent_submission   = false;
+				
+			   // After everything loads, remove the the "live" restriction via "die"
+				$(document).ready(function(){
+				  $("#empty_cart_button").removeAttr("disabled");  
+				});
+                $("#empty_cart_button").on('click', function(e) {
+                    $("#empty_cartModal").show();
+                    return false;
+                });
+                $(".pcap_btn_no").on("click",function(){
+                    $("#empty_cartModal").hide();
+                    return false;
+                });
+                $(".pcap_btn_yes").on("click",function(){
+                    $("#empty_cartModal").hide();
+					// $('.form-cart #empty_cart_button').click();
+                    $(".form-cart").submit();
+					 var dataExecURL = "<?php echo $this->getUrl('checkout/cart/updatePost') ?>";
+					 var datafiles=$(".form-cart").serialize();
+					 datafiles = datafiles + "&update_cart_action=empty_cart";
+
+					 $.ajax({
+                            showLoader: true,
+							type : 'POST',
+							data : datafiles,
+							url  : dataExecURL,
+							success: function()
+							{
+                                location.reload();
+							}
+                    });
+                });
+                $("#update_cart_button").click(function(e){
+					var _cartTable = $("#shopping-cart-table").find('tbody');
+					var _cartTotal = 0;
+					var _vat = 0;
+					var _cartTotalWVAT = 0;
+					$(_cartTable).each(function(_k,_v){
+						var _origPrice = $(_v).find('tr .col.price').find('.cart-price .price').text();
+							_origPrice = _origPrice.substring(1, _origPrice.length);
+							_origPrice = parseFloat(_origPrice)|| 0.00;
+						var _qty = $(_v).find('tr .col.qty').find('.field.qty .control.qty').find('input').val();
+							_qty = parseFloat(_qty)|| 0.00;
+							_cartTotal += _origPrice*_qty;
+						
+					});
+						// _vat = _cartTotal*0.12;
+						// _vat = _cartTotal;
+						_cartTotalWVAT = _cartTotal+_vat;
+					var _availablePcapAmount = <?php echo $availablePcapAmount?>;
+                        _availablePcapAmount = parseFloat(_availablePcapAmount)||0.00;
+						console.log(_cartTotalWVAT +'>'+ _availablePcapAmount);
+						if(_cartTotalWVAT > _availablePcapAmount){
+                            $("#pcap_Modal").show();
+                            e.stopImmediatePropagation();
+							return false;
+                        }
+						
+                });
+					$(".pcap_btn_ok").on("click",function(){
+						$("#pcap_Modal").hide();
+						return false;
+					})
+            }
+        );
+    </script>

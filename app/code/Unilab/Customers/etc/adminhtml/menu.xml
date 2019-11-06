@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+      
+        <add id="Unilab_Customers::customer_groups" title="Customer Groups" translate="title" module="Unilab_Customers" action="unilab_customers/group/index" resource="Unilab_Customers::customer_groups" dependsOnModule="Unilab_Customers" sortOrder="70" parent="Magento_Customer::customer"/>
+        <remove id="Magento_Customer::customer_group" />
+    </menu>
+</config>

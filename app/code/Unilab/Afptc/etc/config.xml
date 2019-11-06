@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <awafptc>
+            <general>
+                <enable>1</enable>
+                <allow_readd_to_cart>1</allow_readd_to_cart>
+            </general>
+            <popup>
+                <do_not_show_allowed>1</do_not_show_allowed>
+                <cookie_lifetime>86400</cookie_lifetime>
+            </popup>
+        </awafptc>
+    </default>
+</config>

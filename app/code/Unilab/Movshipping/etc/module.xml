@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+/** 
+ * Movshipping Module XMl.
+ * @category  Unilab
+ * @package   Unilab_Movshipping
+ * @author    Kristian Claridad
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
+   <module name="Unilab_Movshipping" setup_version="1.0.0">
+   </module>
+</config>

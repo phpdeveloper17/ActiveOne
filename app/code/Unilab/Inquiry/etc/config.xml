@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <inquiry>
+            <general>
+                <enabled>1</enabled>
+                <form_block>inquiry-form</form_block>
+                <form_enabled>1</form_enabled>
+                <recipient_email><![CDATA[phpdeveloper11@unilab.com.ph]]></recipient_email>
+                <sender_email_identity>custom2</sender_email_identity>
+                <email_template>inquiry_general_email_template</email_template>
+                <sender_copy>0</sender_copy>
+                <departments>
+                    <!-- <code>Doctor</code>
+                    <department>Medicine</department>
+                    <email>sample@unilab.com</email>
+                    <subject>SAMPLE</subject>
+                    <template>0</template>
+                    <sortorder>100</sortorder> -->
+                </departments>
+            </general>
+        </inquiry>
+    </default>
+</config>

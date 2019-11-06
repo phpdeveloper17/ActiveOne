@@ -1,0 +1,62 @@
+<?php
+/**
+ * Shopping cart template
+ *
+ * @var $block \Magento\Checkout\Block\Cart
+ */
+
+if ($block->getItemsCount()) {
+    echo $block->getChildHtml('with-items');
+} else {
+    echo $block->getChildHtml('no-items');
+}
+?>
+
+<script>
+    require(['jquery','fancybox'], function($) {
+        var confirmPrescriptionHtml = '';
+        var prescriptionResponse = '';
+
+        $(document).ready(function() {
+            $('.edit-prescription').on('click', function() {
+                var element = $(this);
+                var prescriptionEdit = '<?= $block->getUrl("prescription/index/editprescription/")?>';
+                // alert(prescriptionEdit);
+                $.ajax({
+                    url: prescriptionEdit,
+                    type: 'post',
+                    data : {item_id : element.data('id')},
+                    showLoader: true
+                }).success(function(data){
+                    showPrescription(data);
+                });
+
+            function showPrescription(data) {
+                showDialog(data.prescription_dialog);
+                prescriptionResponse = data;
+                confirmPrescriptionHtml = data.confirm_dialog;
+
+            }
+
+            function showDialog(_content) {
+                $.fancybox({
+                    content: _content,
+                    closeBtn: false,
+                    closeClick: false,
+                    helpers: {
+                        overlay: {
+                            closeClick : false,
+                            locked: true
+                        }
+                    }
+                });
+            }
+            });
+            $('#cancel_prescription').on('click', function() {
+                $.fancybox.close();
+            });
+            
+        });
+    });
+</script>
+

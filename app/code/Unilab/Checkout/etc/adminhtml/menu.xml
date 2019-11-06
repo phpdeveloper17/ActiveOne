@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<config 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+	
+	<menu>
+
+		<add id="Unilab_Checkout::manage_checkout" title="Manage Checkout" translate="title" module="Unilab_Checkout" resource="Unilab_Checkout::manage_checkout" dependsOnModule="Unilab_Checkout" parent="Unilab_Extensions::others" action="adminhtml/system_config/edit/section/ulcheckout" sortOrder="5"/>
+
+	</menu>
+
+</config>

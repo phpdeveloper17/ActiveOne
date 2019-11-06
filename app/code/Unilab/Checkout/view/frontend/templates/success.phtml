@@ -1,0 +1,239 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php /** @var $block \Magento\Checkout\Block\Onepage\Success */ ?>
+<div class="checkout-success">
+    <?php if ($block->getOrderId()):?>
+        <?php if ($block->getCanViewOrder()) :?>
+            <p><?= __('Your order number is %1.', sprintf('<a href="%s" class="order-number"><strong>%s</strong></a>', $block->escapeHtml($block->getViewOrderUrl()), $block->escapeHtml($block->getOrderId()))) ?></p>
+        <?php  else :?>
+            <p><?= __('Your order # is: <span>%1</span>.', $block->escapeHtml($block->getOrderId())) ?></p>
+        <?php endif;?>
+            <p><?= /* @escapeNotVerified */ __('You will receive an order confirmation email with details of your order and a link to track its progress.') ?></p>
+            <?= $block->getChildHtml('checkout.success.print.button') ?>
+    <?php endif;?>
+
+
+    <div class="summary">
+        <table class="data-table cart-table success-cart-table">
+            <thead>
+                <tr class="tr-head">
+                    <th class="col-sku a-left" width="5%">SKU</th>
+                    <th class="col-name a-left">Name</th>
+                    <th class="col-qty a-center" width="5%" >Qty</th>
+                    <th class="col-price a-left" width="10%">Price</th>
+                    <th class="col-total a-right" width="10%" >Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach($block->getOrderItems() as $item): ?>
+                <tr>
+                    <td data-th="SKU"><?= $item->getSku()?></td>
+                    <td data-th="Name"><?= $item->getName()?></td>
+                    <td data-th="Qty" class="a-center"><?= number_format($item->getQtyOrdered(), 0) ?></td>
+                    <td data-th="Price" class="a-left"><span class="price"><?= $block->formatPrice($item->getPrice())?></span></td>
+                    <td data-th="Total" class="a-right"><span class="price"><?= $block->formatPrice($item->getRowTotal())?></span></td>
+                </tr>
+                <?php endforeach;?>
+            </tbody>
+            <?php $totals = $block->getTotals();?>
+            <!-- <tfoot>
+                <tr>
+                    <td width="50%" colspan="3"></td>
+                    <td width="30%" align="right" class="a-right">Order Amount</td>
+                    <td align="right" class="a-right"><?= $block->formatPrice($totals['order_amount']) ?></td>
+                </tr>
+                <?php if($totals['convenience'] > 0): ?>
+                <tr>
+                    <td width="50%" colspan="3"></td>
+                    <td width="30%" align="right" class="a-right">Convenience Fee</td>
+                    <td align="right" class="a-right"><?= $block->formatPrice($totals['convenience']) ?></td>
+                </tr>
+                <?php endif;?>
+                <?php  $shipping = $totals['shipping']; ?>
+                <tr>
+                    <td width="50%" colspan="3"></td>
+                    <td width="30%" align="right" class="a-right"><span><?=$shipping['shipping_description']?></span></td>
+                    <td align="right" class="a-right"><?= $block->formatPrice($shipping['shipping_amount']) ?></td>
+                </tr>
+
+                <tr>
+                    <td width="50%" colspan="3"></td>
+                    <td width="30%" align="right" class="a-right">VATable Sale</td>
+                    <td align="right" class="a-right"><?= $block->formatPrice($totals['vatable_sale']) ?></td>
+                </tr>
+                <tr>
+                    <td width="50%" colspan="3"></td>
+                    <td width="30%" align="right" class="a-right">VAT <?= number_format($totals['rate']) ?>%</td>
+                    <td align="right" class="a-right"><?= $block->formatPrice($totals['vat_amount']) ?></td>
+                </tr>
+                <tr>
+                    <td width="50%" colspan="3"></td>
+                    <td width="30%" class="a-right" align="right">VAT Exempt</td>
+
+
+                    <td width="30%" align="right" class="a-right"><?= $block->formatPrice($totals['vat_exempt']) ?></td>
+
+                </tr>
+                <tr>
+                    <td width="50%" colspan="3"></td>
+                    <td width="30%" class="a-right" align="right">VAT ZERO Rate</td>
+
+                    <td align="right" class="a-right"><?= $block->formatPrice($totals['vat_zeroRate']) ?></td>
+                </tr>
+
+                <tr>
+                    <td width="50%" colspan="3"></td>
+                    <td width="30%" align="right" class="a-right"><strong>Grand Total</strong></td>
+                    <td align="right" class="a-right"><strong><?= $block->formatPrice($totals['grand_total']) ?></strong></td>
+                </tr>
+            </tfoot> -->
+        </table>
+        <table class="checkout-footer" style="background-color: #C3C1C1; margin-bottom: 10px;">
+            <tr>
+                <td class="cfm" width="50%" colspan="3"></td>
+                <td width="30%" align="right" class="cfw a-right">Order Amount</td>
+                <td align="right" class="a-right"><?= $block->formatPrice($totals['order_amount']) ?></td>
+            </tr>
+            <?php if($totals['convenience'] > 0): ?>
+            <tr>
+                <td class="cfm" width="50%" colspan="3"></td>
+                <td width="30%" align="right" class="cfw a-right">Convenience Fee</td>
+                <td align="right" class="a-right"><?= $block->formatPrice($totals['convenience']) ?></td>
+            </tr>
+            <?php endif;?>
+            <?php  $shipping = $totals['shipping']; ?>
+            <tr>
+                <td class="cfm" width="50%" colspan="3"></td>
+                <td width="30%" align="right" class="cfw a-right"><span><?=$shipping['shipping_description']?></span></td>
+                <td align="right" class="a-right"><?= $block->formatPrice($shipping['shipping_amount']) ?></td>
+            </tr>
+
+            <tr>
+                <td class="cfm" width="50%" colspan="3"></td>
+                <td width="30%" align="right" class="cfw a-right">VATable Sale</td>
+                <td align="right" class="a-right"><?= $block->formatPrice($totals['vatable_sale']) ?></td>
+            </tr>
+            <tr>
+                <td class="cfm" width="50%" colspan="3"></td>
+                <td width="30%" align="right" class="cfw a-right">VAT <?= number_format($totals['rate']) ?>%</td>
+                <td align="right" class="a-right"><?= $block->formatPrice($totals['vat_amount']) ?></td>
+            </tr>
+            <tr>
+                <td class="cfm" width="50%" colspan="3"></td>
+                <td width="30%" class="cfw a-right" align="right">VAT Exempt</td>
+
+
+                <td width="30%" align="right" class="a-right"><?= $block->formatPrice($totals['vat_exempt']) ?></td>
+
+            </tr>
+            <tr>
+                <td class="cfm" width="50%" colspan="3"></td>
+                <td width="30%" class="cfw a-right" align="right">VAT ZERO Rate</td>
+
+                <td align="right" class="a-right"><?= $block->formatPrice($totals['vat_zeroRate']) ?></td>
+            </tr>
+
+            <tr>
+                <td class="cfm" width="50%" colspan="3"></td>
+                <td width="30%" align="right" class="cfw a-right"><strong>Grand Total</strong></td>
+                <td align="right" class="a-right"><strong><?= $block->formatPrice($totals['grand_total']) ?></strong></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="actions-toolbar">
+        <div class="primary">
+            <a class="action button continue" href="<?= /* @escapeNotVerified */ $block->getContinueUrl() ?>"><span><?= /* @escapeNotVerified */ __('Continue Shopping') ?></span></a>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    @media (min-width:320px) and (max-width: 480px) {
+        .subtitle {
+            font-size: 12px;
+        }
+
+        .cfw {
+            width: 100%!important;
+        }
+        .cfm {
+            width: 0%!important;
+        }
+    }
+
+    @media (min-width: 640px) and (max-width: 960px) {
+        .cfw {
+            width: 100%!important;
+        }
+        .cfm {
+            width: 0%!important;
+        }
+    }
+
+    .page-title-wrapper {
+        padding: 15px;
+    }
+    .page-title {
+        font-size: 20px;
+        margin-bottom: 5px;
+    }
+    .subtitle {
+        font-size: 24px;
+        margin: 0 0 18px;
+    }
+    /* .checkout-success a {
+        color: #000;
+    } */
+    .button.continue {
+        border-radius: 3px;
+    }
+    .print-btn {
+        font-weight: bold;
+        color: #4C479B !important;
+    }
+    .print-btn:hover {
+        text-decoration: underline;
+    }
+    .checkout-success p{
+        font-size: 14px;
+    }
+    .tr-head th{
+        font-weight: 700;
+    }
+    tr.tr-head {
+        background: #e9e9e9;
+        border-bottom: 2px solid #89B84E;
+        border-top: 2px solid #89B84E;
+    }
+    .data-table tbody th {
+        padding: 3px 8px;
+        font-size: 11px;
+        font-weight: bold;
+        text-transform: none;
+        white-space: normal;
+    }
+    .a-right {
+        text-align:right;
+    }
+    .cart-table tfoot {
+        background-color: #C3C1C1;
+    }
+    .cart-table {
+        margin-bottom: 20px;
+    }
+    .cart-table tfoot td {
+        padding: 9px 10px;
+    }
+    .summary {
+        margin-top: 10px;
+    }
+</style>

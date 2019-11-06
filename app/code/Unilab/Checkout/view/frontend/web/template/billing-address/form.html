@@ -1,0 +1,176 @@
+
+<ul class="form-list" style="list-style:none;">
+	<form action="" id="billing_address_form">
+	
+		<li class="wide">
+			<label for="company_address_id">Select Shipping / Billing Address</label>
+			<div class="input-box">
+				<select name="company_address_id" id="company_address_id" class="address_select"  
+					title="Select your Billing Address" autocomplete="off" 
+					data-bind="options: customerAddresses,
+							   optionsText: function(item) {
+								   return item.street
+							   },
+							   value: selectedAddress
+							   "></select>
+				<input type="hidden" id="billing_address_id" name="billing_address_id" value="" >
+			</div>
+		</li>
+
+		<li class="fields">
+			<div class="customer-name">
+				<div class="name-firstname">
+					<label for="billing_firstname" class="required">First Name<em>*</em></label>
+					<div class="input-box">
+						<input type="text" 
+							   id="billing_firstname" 
+							   name="billing[firstname]" 
+							   readonly
+							   title="First Name" 
+							   class="input-text required-entry absolute-advice validation-passed" 
+							   autocomplete="off"
+							   data-bind="value: selectedAddress().firstname">
+					</div>
+				</div>
+				<div class="name-lastname">
+					<label for="billing_lastname" class="required">Last Name<em>*</em></label>
+					<div class="input-box">
+						<input type="text" 
+							   id="billing_lastname" 
+							   name="billing[lastname]" 
+							   readonly
+							   title="Last Name" 
+							   class="input-text required-entry absolute-advice validation-passed" 
+							   autocomplete="off"
+							   data-bind="value: selectedAddress().lastname">
+					</div>
+				</div>
+			</div>
+		</li> 
+
+
+		<li class="wide">
+			<label for="billing_street1" class=" required ">Address<em>*</em></label>
+			<div class="input-box">
+				<input type="text" 
+					   title="Street Address" 
+					   name="billing[street][]" 
+					   id="billing_street1" 
+					   readonly 
+					   class=" input-text required-entry absolute-advice " 
+					   autocomplete="off"
+					   data-bind="value: selectedAddress().street">
+			</div>
+		</li>
+		
+		<li class="fields telephone-mobile">
+			<div class="field-telephone  field-first ">
+				<label for="billing_city" class=" required ">City<em>*</em></label>
+				<div class="input-box billing_city">
+					<input type="text"  
+						   name="billing[city]" 
+						   id="billing_city"
+						   class=" input-text required-entry absolute-advice " 
+						   readonly 
+						   data-bind="value: selectedAddress().city">
+				</div>
+			</div>
+			<div class="field-mobile  field-last ">
+				<label for="billing_country_id" class="required">Country<em>*</em></label>
+				<div class="input-box input-box-country billing-country">
+					
+					<input type="text" 
+						   id="billing_country_id2" 
+						   name="billing[country_id2]" 
+						   readonly 
+						   class="input-text required-entry absolute-advice" 
+						   data-bind="value: getCountryName(selectedAddress().countryId)">
+				
+					<input type="hidden" id="cod_city_id" readonly>
+					
+				</div>
+				
+				
+			</div>
+		</li> 
+
+
+		<li class="fields telephone-mobile">
+			<div class="field-telephone  field-first ">
+				<label for="billing_postcode" class=" required ">Zip/Postal<em>*</em></label>
+				<div class="input-box billing_postcode">
+					<input type="text" 
+						   name="billing[postcode]" 
+						   id="billing_postcode"
+						   readonly 
+						   title="Zip/Postal" 
+						   class=" input-text required-entry absolute-advice " 
+						   autocomplete="off"
+						   data-bind="value: selectedAddress().postcode">
+				</div>
+			</div>
+			<div class="field-mobile  field-last ">
+				<label for="billing_region_id" class=" required ">State/Province<em>*</em></label>
+				<div class="input-box input-box-country billing-country">
+					<select id="billing_region_id2" name="billing[region_id2]" title="State/Province" class="input-text required-entry absolute-advice validate-select" defaultvalue="" autocomplete="off" style="display: none;">
+
+						
+					</select>
+					<input type="text" 
+						   id="billing_region_id" 
+						   name="billing[region_id]" 
+						   readonly title="State/Province" 
+						   class="input-text required-entry absolute-advice" 
+						   autocomplete="off"
+						   data-bind="value: selectedAddress().region">
+					<input type="text" id="billing_region" name="billing[region]" value="" readonly title="State/Province" class="input-text required-entry absolute-advice" style="display: none;" autocomplete="off">
+					<input type="hidden" id="cod_region_id" readonly>
+				</div>
+			</div>
+		</li> 			
+		
+		<li class="fields">
+			<div class="customer-name">
+				<div class="name-firstname">
+					<label for="billing_telephone" class=" required ">Contact Number<em>*</em></label>
+					<div class="input-box">
+					<input type="text" 
+						   name="billing[telephone]" 
+						   id="billing_telephone"
+						   readonly title="Telephone" 
+						   class=" input-text required-entry absolute-advice " 
+						   autocomplete="off"
+						   data-bind="value: selectedAddress().telephone">
+					</div>
+				</div>
+
+			</div>
+		</li> 
+		
+		<li style="display:none;">
+			<style>
+
+				img.ui-datepicker-trigger{
+				position:absolute;
+				top:5px; 
+				right: 0px;
+
+				}
+			</style>
+
+			<label for="dob" class="required">Date of Birth<em>*</em></label>
+			<div class="input-box customer-dob field-row" style="position:relative;">
+			<input type="text" id="billing_dob" name="billing[dob]" value="" readonly="readonly" title="Day" class="dob input-text required-entry"/>
+			   <div class="validation-advice" style="display:none;"></div>
+			</div> 
+
+
+		</li>
+		
+
+		<li class="control control-stta" style="display:none">
+			<input type="checkbox" name="billing[use_for_shipping]" id="billing_use_for_shipping_yes" value="" class="radio" autocomplete="off">
+			<label for="billing_use_for_shipping_yes">Ship to this address</label>
+		</li>
+	</form>			
+</ul>

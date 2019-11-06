@@ -1,0 +1,357 @@
+<?php 
+	$objectManager =  \Magento\Framework\App\ObjectManager::getInstance();
+	$storeManager = $objectManager->get('\Magento\Store\Model\StoreManagerInterface');
+    $store = $storeManager->getStore();
+	$customerSession = $objectManager->create('\Magento\Customer\Model\Session');
+	$resourceConnection = $objectManager->get('\Magento\Framework\App\ResourceConnection');
+    $connection = $resourceConnection->getConnection(\Magento\Framework\App\ResourceConnection::DEFAULT_CONNECTION);
+    $customerGroup = $objectManager->get('\Magento\Customer\Model\Group');
+    $customer = $customerSession->getCustomer();
+    $emp_id = $customer->getEmployeeId();
+	$groupname = $customerGroup->load($customer->getGroupId())->getCustomerGroupCode();
+	$companyStatus = $customerGroup->load($customer->getGroupId())->getIsActive();
+	$select 			=	$connection->select()->from('rra_emp_benefits', array('*'))->where('entity_id=?', $customer->getId()); 
+	$benefits_items 	=	$connection->fetchAll($select);
+	
+?>
+<style>
+    .form-error.invalid-feedback {
+        position: relative!important;
+	}
+	.notice-error {
+		background-color: red;
+		float: right;
+		padding: 2px 5px 2px 5px;
+		color: #fff;
+		border-radius: 0px 0px 2px 2px;
+		font-size: 11px;
+		/* width: 65% !important; */
+		top: -20px;
+		z-index: -1;
+	}
+	.err_msg {
+		color: red;
+		border: solid 1px red;
+		padding: 5px;
+		margin-bottom: 10px;
+	}
+	.modal-header {
+		padding: 10px 10px 10px 10px !important;
+		background-color: #353433;
+		color: #ffff;
+		border-top-right-radius: 0 !important;
+		border-top-left-radius: 0 !important;
+	}
+
+	.modal-title {
+		border-bottom: none !important;
+		padding-bottom: 0 !important;
+		font-size: 16px !important;
+	}
+
+	.form-group>label.required::after {
+		content: " *";
+		color: red;
+	}
+
+	.modal-content {
+		padding-top: 3rem !important;
+		padding: 10px 10px 10px 10px !important;
+	}
+
+	.modal-popup .modal-inner-wrap {
+		width: 50% !important;
+		overflow-x:hidden!important;
+		font-size: 12px;
+	}
+	td
+	{
+		padding: 5px 10px 5px 10px;
+		
+	}
+	.cls_details
+	{
+		
+		border-right:solid 1px #000;	
+		border-left:solid 1px #000;	
+		padding: 0px 0px 0px 5px;
+		vertical-align: middle;
+	}
+	.cls_details_right
+	{
+		
+		text-align: right;
+		border-right:solid 1px #000;	
+		border-left:solid 1px #000;
+	}
+	.cls_details_lasttd
+	{
+		border-right:solid 1px #000;	
+		border-left:solid 1px #000;	
+		border-bottom:solid 1px #000;
+		padding: 0px 0px 0px 0px;		
+	}
+	th
+	{
+		border:solid 1px #000;
+		background-color:#ccc;
+		padding: 5px 10px 5px 10px;
+		font-weight:bold;
+	}
+	.cms-homepage .mod_body {
+   	 height: 305px;
+	}
+	.cls_txntype
+	{
+	
+	  cursor:pointer;
+		
+	}
+	.cls_txntype:hover
+	{
+		background-color:#EAEAEA;	
+	}
+	.cls_txnname
+	{
+	  color: #006CC7;	
+	  font-weight: bold;
+	}
+	.cls_info
+	{
+	  color: #008002;
+	  font-weight: bold;
+	}
+	/* .login_form
+	{
+		overflow:auto;
+	} */
+	.item_wrapper
+	{
+		background-color: #FFF;
+		padding: 5px 5px 5px 10px;
+		color: #000;
+		margin: 5px 0px;
+		border: solid #ccc 1px;
+		box-shadow: 0px 0px 2px #ccc;
+		border-radius: 5px;
+	}
+	
+	.item_wrapper .title
+	{
+		position: relative;
+		top: -2px;
+		font-size: 14px;
+	}
+	.item_info
+	{
+		 padding: 5px 15px 5px 20px;
+		 display: none;
+		 font-size: 14px;
+	}
+	#ordernow
+	{
+		display:none;
+		cursor: pointer;
+		/* border: solid #ccc 1px;
+		text-align: center;
+		border-radius: 5px;
+		padding: 3px 15px 3px 15px; */
+	}
+	#radiob
+	{
+		vertical-align: -2px;
+	}
+
+	table > thead > tr > th, table > thead > tr > td {
+		vertical-align: middle !important;
+	}
+</style>
+
+<div id="popup-content" class="popup-content" style="display:none;">
+	<div class="row">
+        <div class="col-md-12">
+            <table cellpadding="0" cellpadding="0" border="0" style="width: auto;">
+                <tr>
+                    <td><strong>Employee name :</strong></td>
+                    <td class="cls_info"><?php echo $customer->getName();?></td>
+                </tr>
+                <tr>
+                    <td><strong>Company name :</strong></td>
+                    <td class="cls_info"> <?php echo $groupname; ?> </td>
+                </tr>				
+            </table>
+        </div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<div style="overflow-x: auto;">
+				<table cellpadding="0" cellpadding="0" border="0"  style="min-width: 100%;">
+					<thead>
+						<th style="min-width:150px;">Transaction Type</th>
+						<th>Purchase Cap Limit</th>
+						<th>Consumed</th>
+						<th>Available</th>
+						<th>Tender Type</th>
+					</thead>
+					<tbody>
+						<?php
+
+							foreach($benefits_items as $_items):
+
+								//Search purchase_cap_id from rra_emp_purchasecap
+								$selecttxn 		=	$connection->select()->from('rra_emp_purchasecap', array('*'))->where('id=?',$_items['purchase_cap_id']);
+								$tnxitem 		=	$connection->fetchRow($selecttxn);
+								
+
+								$tnxid 			=	$tnxitem['tnx_id'];
+								
+								$benefits_id 	= 	$_items['id'];
+								
+								//Search tender_type from rra_transaction_type
+								$selecttxnname 		=	$connection->select()->from('rra_transaction_type', array('*'))->where('id=?',$tnxid); 
+								$tnxitemname 		=	$connection->fetchRow($selecttxnname);
+								//echo "<span style='color:red;fontweight:bold'>Devs working on this page";
+								//echo "<pre>";
+								//print_r($tnxitem);
+								//echo "</pre>";
+								$transaction_name 	=	$tnxitemname['transaction_name'];
+								//$transaction_name 	=	$tnxitem['purchase_cap_des'];
+								$tender_type 		=	$tnxitemname['tender_type'];
+								
+								//Search id from rra_tender_type
+								$selecttxnname 		=	$connection->select()->from('rra_tender_type', array('*'))->where('id=?',$tender_type); 
+								$tnxitemname 		=	$connection->fetchRow($selecttxnname);
+								
+								//$tender_name 		=	$tnxitemname['tender_name'];
+								$tender_name		= null;
+							
+								echo "<tr class='cls_txntype' data-id='$benefits_id'>";						
+								echo "<td class='cls_details cls_txnname'>";
+
+								$disableTn = '';
+								$disableStyle= '';
+								if($companyStatus == 0){
+									$txnName = trim(strtolower($transaction_name));
+									if($txnName == 'medicine benefits' || $txnName == 'salary deduction' || $txnName == 'clinic purchase'){
+										$disableTn = 'disabled';
+										$disableStyle= 'style="
+										color: gray;
+										font-weight: normal;"';
+									}else{
+										$disableTn = '';
+										$disableStyle= '';
+									}
+								}
+									?>
+									<span id="radiob"><input type="radio" id="<?php echo $benefits_id ?>" class='cls_trans' name='benid' value='<?php echo $benefits_id; ?>' payment_method_code = '<?php echo $tnxitemname['payment_method_code']?>' <?php echo $disableTn?>>
+									</span>&nbsp;
+									<?php
+								echo "<label for='$benefits_id' $disableStyle>$transaction_name</label>";
+								echo "</td>";
+								echo "<td class='cls_details_right'>".number_format($_items ['purchase_cap_limit'],2)."</td>";
+								//echo "<td class='cls_details_right'>".number_format($_items ['extension'],2)."</td>";
+								echo "<td class='cls_details_right'>".number_format($_items ['consumed'],2)."</td>";
+								echo "<td class='cls_details_right'>".number_format($_items ['available'] + $_items ['extension'],2)."</td>";
+								
+								
+								//Search id from rra_tender_type
+								foreach(explode(",",$tender_type) as $_id):
+								
+									if(!empty($_id)):
+										$selecttxnname 		=	$connection->select()->from('rra_tender_type', array('*'))->where('id=?',$_id); 
+										$tnxitemname 		=	$connection->fetchRow($selecttxnname);
+										$tender_name 		.=	" <b>&#x2713;</b>".$tnxitemname['tender_name'] . "<br>";
+										
+									endif;
+									
+								endforeach;
+								
+								echo "<td class='cls_details'>".$tender_name."</td>";
+								echo "</tr>";
+
+							endforeach;
+								
+								echo "<tr><td class='cls_details_lasttd' colspan='6'></td></tr>";
+						?>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="col-md-12">
+			<div class="form-group" style="margin-top: 1.5rem;">
+				<button class="btn-ordernow" id="ordernow">
+					Order Now
+				</button>
+				<button class="btn-logout">
+					Logout
+				</button>
+			</div>			
+		</div>
+    </div>
+</div>
+
+<script>
+    require(
+		['jquery', 'Magento_Ui/js/modal/modal', 'mage/calendar'],
+		function ($, modal) {
+			modal({
+				autoOpen: true,
+				responsive: true,
+				clickableOverlay: false,
+				modalClass: 'modal-custom',
+				title: 'Select Transaction Type',
+				keyEventHandlers: {
+					escapeKey: function (e) {
+						return false;
+					}
+				}
+			}, $("#popup-content"));
+			var benefits_id = $("input:radio:checked").val();
+			if(benefits_id) {
+				$(".btn-ordernow").show();
+			}
+
+            //Hide modal footer
+            $(".modal-footer, .action-close").css("display", "none");
+			
+			//show order now on radio click
+			$(".cls_trans").click(function(e) {
+				$(".btn-ordernow").show();
+			});
+
+			//order now functionality
+			// $(".btn-ordernow").click(function(e) {
+			// 	var benefits_id = $("input:radio:checked").val();
+			// 	var benurl = "<?=$store->getBaseUrl()?>" + "benefits/customers/activetransaction/?tnxid=" + benefits_id + "&cusid=<?php echo $customer->getId() ?>";		
+			// 	window.location = benurl;
+			// });
+
+			$(".btn-ordernow").click(function(e) {
+                e . preventDefault();
+				var benefits_id = $("input:radio:checked").val();
+				var _paymethod = $("input:radio:checked").attr('payment_method_code');
+				
+				var customerId = <?php echo $customer->getId() ?>;
+				$.ajax({
+					showLoader: true,
+					type: "POST",
+					url: '<?=$store->getBaseUrl() . "benefits/customers/activetransaction"?>',
+					dataType: 'JSON',
+					data: {
+                        tnxid: benefits_id,
+						cusid: customerId,
+						paymethod:_paymethod
+					}
+				}).done(function (data) {
+					var benurl = "<?=$store->getBaseUrl()?>";		
+					window.location.href = benurl;
+                   
+				});
+			});
+			//Logout customer 
+			$('.btn-logout').click(function (){		
+				window.location.href = "<?=$store->getBaseUrl()?>customer/account/logout";
+			});	
+        }	
+    );
+</script>

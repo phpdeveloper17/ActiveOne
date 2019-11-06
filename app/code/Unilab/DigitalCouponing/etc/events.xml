@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <!-- <event name="checkout_cart_save_after">
+        <observer name="digital_couponing_save_dc_cart" instance="Unilab\DigitalCouponing\Observer\SaveCart" />
+    </event> -->
+    <event name="sales_order_save_after">
+        <observer name="digital_couponing_update_quote_item_dc" instance="Unilab\DigitalCouponing\Observer\SaveCoupon" />
+    </event>
+    <event name="checkout_cart_product_add_after">
+        <observer name="digital_couponing_cart_update" instance="Unilab\DigitalCouponing\Observer\UpdateQuote"/>
+    </event>
+</config>

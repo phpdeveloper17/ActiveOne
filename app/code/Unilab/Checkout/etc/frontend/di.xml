@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\Checkout\Block\Onepage" type="Unilab\Checkout\Block\Checkout" />
+    <preference for="Magento\Checkout\Controller\Checkout" type="Unilab\Checkout\Controller\Checkout" />
+    <preference for="Magento\Checkout\Controller\Onepage" type="Unilab\Checkout\Controller\Onepage" />
+    <preference for="Magento\Checkout\Controller\Onepage\Success" type="Unilab\Checkout\Controller\Onepage\Success" />
+    <preference for="Magento\Checkout\Controller\Cart" type="Unilab\Checkout\Controller\Cart" />
+    <preference for="Magento\Checkout\Controller\Cart\Index" type="Unilab\Checkout\Controller\Cart\Index" />
+    <type name="Magento\Checkout\Model\CompositeConfigProvider">
+        <arguments>
+            <argument name="configProviders" xsi:type="array">
+                <item name="checkout_default_config_provider" xsi:type="object">Magento\Checkout\Model\DefaultConfigProvider</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

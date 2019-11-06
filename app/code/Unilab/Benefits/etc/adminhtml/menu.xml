@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        
+        <add
+            id="Unilab_Benefits::employeebenefits"
+            title="Employee Benefits" 
+            action="unilab_benefits/EmployeeBenefitsController" 
+            resource="Unilab_Benefits::employeebenefits"
+            module="Unilab_Benefits" 
+            parent="Unilab_Benefits::benefits"
+            sortOrder="20"
+            />
+
+        <add
+            id="Unilab_Benefits::tendertype"
+            title="Tender Type" 
+            action="unilab_benefits/TenderTypeController" 
+            resource="Unilab_Benefits::tendertype"
+            module="Unilab_Benefits" 
+            parent="Unilab_Benefits::benefits"
+            sortOrder="20"
+            />
+
+        <add
+            id="Unilab_Benefits::transactiontype"
+            title="Transaction Type" 
+            action="unilab_benefits/TransactionTypeController" 
+            resource="Unilab_Benefits::transactiontype"
+            module="Unilab_Benefits" 
+            parent="Unilab_Benefits::benefits"
+            sortOrder="20"
+            />
+
+        <add
+            id="Unilab_Benefits::purchasecaplimit"
+            title="Purchase Cap Limit" 
+            action="unilab_benefits/PurchaseCapController" 
+            resource="Unilab_Benefits::purchasecaplimit"
+            module="Unilab_Benefits" 
+            parent="Unilab_Benefits::benefits"
+            sortOrder="20"
+            />
+
+        <add
+            id="Unilab_Benefits::companybranch"
+            title="Company Branch Address" 
+            action="unilab_benefits/CompanyBranchController" 
+            resource="Unilab_Benefits::companybranch"
+            module="Unilab_Benefits" 
+            parent="Unilab_Benefits::benefits"
+            sortOrder="20"
+            />
+        <add
+            id="Unilab_Benefits::pricelevel"
+            title="Manage Price Level" 
+            action="unilab_benefits/pricelevel" 
+            resource="Unilab_Benefits::pricelevel"
+            module="Unilab_Benefits" 
+            parent="Unilab_Extensions::Price"
+            sortOrder="20"
+            />
+            <add
+            id="Unilab_Benefits::productpricelist"
+            title="Manage Product Price List" 
+            action="unilab_benefits/productpricelist" 
+            resource="Unilab_Benefits::productpricelist"
+            module="Unilab_Benefits" 
+            parent="Unilab_Extensions::Price"
+            sortOrder="20"
+            />
+      
+    </menu>
+</config>

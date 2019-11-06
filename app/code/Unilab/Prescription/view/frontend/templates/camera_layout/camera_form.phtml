@@ -1,0 +1,128 @@
+<style>
+	/*.capture, .cancel_capture {
+		background: #1db0ed;
+		color: #fff;
+		font-size: 16px;
+		padding: 5px 15px;
+		transition: background .4s;
+		transition-timing-function: linear;
+		-webkit-transition: background .4s;
+		-webkit-transition-timing-function: linear;
+		-moz-transition: background .4s;
+		-moz-transition-timing-function: linear;
+		border: none;
+		font-family: 'ubuntu',sans-serif;
+		cursor: pointer;
+		font-family: 'ubuntu',sans-serif;
+	}*/
+	.p-body  .button
+	{
+		margin-right: 5px !important;
+	}
+	#camera_frame
+	{
+		background-color:transparent;
+	}
+	
+	#result_image
+	{
+		width: 480px;
+		height: 320px;
+		display:none;
+		
+	}
+	
+</style>
+<input type="hidden" value="<?php echo $block->getStoreManager()->getStore()->getBaseUrl() ?>" name="base_url" id="base_url" />
+<param name="wmode" value="transparent" />
+	<center>
+		<br/>
+		<div id="result_image"></div>
+		<div id="camera_frame"></div>
+	
+		<script type="text/javascript" src="<?=$block->getAssetRepository()->createAsset('js/js_camera/webcam.js')->getUrl()?>"></script>
+		<script type="text/javascript" src="<?=$block->getAssetRepository()->createAsset('js/js_camera/capture_image.js')->getUrl()?>"></script>
+
+		<script>
+			
+			
+				
+				jQuery('#radio_Camera').click(function (){
+
+					Webcam.set({
+							width: 480,
+							height: 320,
+							image_format: 'jpeg',
+							jpeg_quality: 90
+						});
+						
+					Webcam.attach('#camera_frame');
+					jQuery('.capture').show();
+					Webcam.on( 'error', function(err) {
+						// an error occurred (see 'err')
+						console.log(err);
+					} );
+				});
+
+				function take_snapshot() {
+					jQuery('#preloader').show();
+					Webcam.snap( function(data_uri) {
+						jQuery("#file_attacher_capture").find('input:file').val(data_uri);
+						//jQuery('#upload_camera').find('#file_attacher_capture').val(data_uri);
+						document.getElementById('result_image').innerHTML = 
+							'<img id ="captureImageresult" src="'+data_uri+'"/>';
+							hide_frame();
+						
+					} );
+				}
+				
+				
+				function hide_frame()
+				{
+					jQuery('#camera_frame').hide();
+					jQuery('.capture').hide();
+				
+					jQuery('#result_image').show();
+					save_image();
+				}
+				
+				function show_snapshot()
+				{
+					jQuery('.cancel_capture').hide();
+					jQuery('#preloader').show();
+					jQuery('#grp-btn').hide();
+					jQuery.post( '<?php echo $block->getStoreManager()->getStore()->getBaseUrl() ?>imagecapture/index/deletecaptured', 
+					{ 
+						url_img: jQuery('.cancel_capture').attr('data-url')
+					},
+					
+					function (data)
+					{
+						var dataobj = data;
+						if(dataobj.success == true)
+						{
+							jQuery('#preloader').hide();
+							jQuery('#camera_frame').show();
+							jQuery('.capture').show();
+							jQuery('#result_image').hide();
+							jQuery('#grp-btn').hide();	
+							jQuery('.webcam_upload').hide();
+							jQuery('.webcam_cancel').hide();
+							jQuery('.capture_btn').val('Recapture');
+						}
+					
+					});	
+
+				}
+
+
+			
+			
+		
+
+		</script>
+		<br/>
+	</center>
+	
+	
+	

@@ -1,0 +1,113 @@
+<style media="screen">
+    h1.page-title {
+        margin: 10px 0 !important;
+    }
+
+    h1.page-title .base {
+        font-size: 20px !important;
+    }
+
+    .column.main {
+        padding: 10px;
+    }
+
+    .required > em , p.required{
+        color: red;
+        margin-right: 5px;
+    }
+
+    p.required {
+        font-size: 11px;
+        margin: 10px;
+        font-weight: bold;
+    }
+
+    .button-set {
+        display: inline-flex;
+    }
+
+    .buttons-set button, .buttons-set p.required {
+        float: left;
+    }
+
+    h2.legend {
+        font-size: 24px;
+    }
+    .page-title-wrapper{
+        width: 75%;
+        margin: 0 auto;
+    }
+</style>
+
+    <?php
+    $readonly = "";
+
+    if($block->customerIsLoggedIn())
+        {
+            $readonly = "readonly";
+        }
+    ?>
+    <form action="<?php echo $block->getFormAction(); ?>" id="inquiryForm" method="post">
+        <h2 class="legend"><?php echo __('Personal Information') ?></h2>
+        <?php include($block->getTemplateFile('Unilab_Checkout::messages.phtml'));?>
+        <div class="fieldset">
+        	<ul class="form-list">
+        		<li class="fields row">
+        			<div class="field col-md-6 col-sm-6 col-xs-12">
+        				<label for="name" class="required"><em>*</em><?php echo __('Name') ?></label>
+        		        <div class="input-box">
+        			        <input class="required" name="name" id="name" title="<?php echo __('Name') ?>" value="<?php echo $block->getUserName() ?>" class="input-text required-entry" type="text" <?php echo $readonly;?>/>
+        			    </div>
+        			</div>
+        			<div class="field col-md-6 col-sm-6 col-xs-12">
+        				<label for="email" class="required"><em>*</em><?php echo __('Email Address') ?></label>
+        				<div class="input-box">
+        				    <input class="required" name="email" id="email" title="<?php echo __('Email') ?>" value="<?php echo $block->getUserEmail() ?>" class="input-text required-entry validate-email" type="text" <?php echo $readonly;?>/>
+        				</div>
+        			</div>
+    			</li>
+    			<li class="fields">
+
+    				<?php if ($departmentHtmlSelect = $block->getDepartmentHtmlSelect($block->getFormData('department'), 'validate-select')): ?>
+    				<div class="field">
+    					<label for="department" class="required"><em>*</em><?php echo __('Reason') ?> </label>
+    					<div class="input-box">
+    						<?php echo $departmentHtmlSelect ?>
+    				        </div>
+    				</div>
+    				<?php endif ?>
+    			</li>
+    			<li class="wide">
+    				<label for="comment" class="required"><em>*</em><?php echo __('Message') ?></label>
+    				<div class="input-box">
+    					<textarea class="required" name="comment" id="comment" title="<?php echo __('Message') ?>" class="required-entry input-text" cols="5" rows="3"></textarea>
+    				</div>
+    			</li>
+    		</ul>
+    	</div>
+    	<div class="buttons-set">
+    		<button type="submit" title="<?php echo __('Submit') ?>" class="button"><span><span><?php echo __('Submit') ?></span></span></button>
+    	    <p class="required"><?php echo __('* Required Fields') ?></p>
+    	    <input type="text" name="hideit" id="hideit" value="" style="display:none !important;" />
+            <div style="clear:both">
+
+            </div>
+    	</div>
+    </form>
+</div>
+<script type="text/javascript">
+    require([
+        'jquery',
+        'mage/mage'
+    ], function($) {
+        var inquiryForm = $("#inquiryForm");
+
+        inquiryForm.mage('validation',{});
+
+        inquiryForm.submit(function(e) {
+            if(!inquiryForm.validation('isValid')){
+                return false;
+            }
+        });
+    });
+</script>

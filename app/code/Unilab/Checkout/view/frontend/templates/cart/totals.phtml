@@ -1,0 +1,55 @@
+<?php $totals = $block->getTotals();?>
+<div class="total_wrapper">
+    <table  class="shopping-cart-totals">
+        <tbody style="font-size:12px">
+
+            <tr>
+                <td class="checkout_totals" width="70%"><strong>Order Amount</strong></td>
+                <td class="a-right"><?= $block->formatPrice($totals['order_amount']) ?></td>
+            </tr>
+            <?php if($totals['convenience'] > 0): ?>
+            <tr>
+                <td class="checkout_totals" width="70%">Convenience Fee</td>
+                <td class="a-right"><?= $block->formatPrice($totals['convenience']) ?></td>
+            </tr>
+            <?php endif;?>
+
+            <?php
+                $shipping = $totals['shipping'];
+                if($totals['shipping'] && $shipping->getShippingDescription() != '') :
+            ?>
+            <tr>
+                <td class="checkout_totals" width="80%">Shipping and Handling  (<span class="shipping-info"><?=$shipping->getShippingDescription()?></span>)</td>
+                <td class="a-right shipping-info-value"><?= $block->formatPrice($shipping->getShippingAmount()) ?></td>
+            </tr>
+            <?php endif; ?>
+            <tr>
+                <td class="checkout_totals" width="70%">VATable Sale</td>
+
+                <td  class="a-right"><?= $block->formatPrice($totals['vatable_sale']) ?></td>
+
+            </tr>
+
+            <tr>
+                <td class="checkout_totals" width="70%">VAT <?= number_format($totals['rate']) ?>%</td>
+                <td class="a-right" style="padding-left:10px;"><?= $block->formatPrice($totals['vat_amount']) ?></td>
+            </tr>
+
+            <tr>
+                <td class="checkout_totals" width="70%">VAT Exempt</td>
+                <td class="a-right"><?= $block->formatPrice($totals['vat_exempt']) ?></td>
+            </tr>
+
+            <tr>
+                <td class="checkout_totals" width="70%">VAT ZERO Rate</td>
+                <td class="a-right"><?= $block->formatPrice($totals['vat_zeroRate']) ?></td>
+            </tr>
+
+            <tr>
+                <td class="checkout_totals" width="70%"><strong>Grand Total</strong></td>
+                <td class="a-right"><?= $block->formatPrice($totals['grand_total']) ?></td>
+            </tr>
+        </tbody>
+    </table>
+    <?= $block->getChildHtml('cartmethods') ?>
+</div>

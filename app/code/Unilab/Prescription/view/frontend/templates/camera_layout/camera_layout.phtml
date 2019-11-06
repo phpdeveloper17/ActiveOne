@@ -1,0 +1,22 @@
+<!--
+    <script src="<?php echo  $baseUrl; ?>js/jquery.min.js" type="text/javascript"></script>
+-->
+
+<link href="<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_SKIN);?>frontend/default/camera_skin/style.css" rel="stylesheet" />
+<div id="camwrapper">
+	<video id="video"></video>
+	<canvas id="canvas"></canvas>
+	<div id="controls">
+		<img src="<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA);?>camera_images/searching.gif" />
+		<p id="status">
+		</p>
+		<button id="capture_button" title="Capture Prescription"></button>
+	</div>
+</div>
+
+<script src="<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_JS);?>js_camera/connect-camera.js" type="text/javascript"></script>
+<script src="<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_JS);?>js_camera/capture_image.js" type="text/javascript"></script>
+
+<div id="scanned_prescription_lists"> 
+</div>
+

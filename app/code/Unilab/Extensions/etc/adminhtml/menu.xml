@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<config 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+	
+	<menu>
+		<add id="Unilab_Extensions::modules" title="Unilab Modules" translate="title" module="Unilab_Extensions" resource="Unilab_Extensions::modules" dependsOnModule="Unilab_Extensions" sortOrder="70"/>
+
+		<add id="Unilab_Benefits::benefits" title="Benefits" translate="title" sortOrder="1" module="Unilab_Extensions" parent="Unilab_Extensions::modules" resource="Unilab_Extensions::others"/>
+
+		<add id="Unilab_Extensions::others_title" title="Others" translate="title" module="Unilab_Extensions" sortOrder="50" parent="Unilab_Extensions::modules"  resource="Unilab_Prescription::others"/>
+
+		<!-- <add id="Unilab_Extensions::manage_inquiries" title="Manage Inquiries" translate="title" module="Unilab_Extensions" resource="Unilab_Extensions::manage_inquiries" dependsOnModule="Unilab_Extensions" parent="Unilab_Extensions::others" action="unilab/prescription/camera" sortOrder="4"/>  -->
+
+		<add id="Unilab_Extensions::Price" title="Price" translate="title" sortOrder="5" module="Unilab_Extensions" parent="Unilab_Extensions::modules" resource="Unilab_Extensions::Price"/>
+ 		
+		 <add id="Unilab_Extensions::Reports" title="Reports" translate="title" sortOrder="4" module="Unilab_Extensions" parent="Unilab_Extensions::modules" resource="Unilab_Extensions::Reports"/>
+		
+ 		<add id="Unilab_Extensions::others" title="Others" translate="title" sortOrder="10" module="Unilab_Extensions" parent="Unilab_Extensions::modules" resource="Unilab_Extensions::others"/>
+<!--
+		<add id="Unilab_Extensions::Webservice" title="Webservice" translate="title" sortOrder="8" module="Unilab_Extensions" parent="Unilab_Extensions::modules" resource="Unilab_Extensions::Webservice"/>	
+		-->
+	
+		<add id="Unilab_Extensions::Webservice" title="Webservice" translate="title" sortOrder="13" module="Unilab_Extensions" parent="Unilab_Extensions::modules" resource="Unilab_Extensions::Webservice"/> 
+		
+
+	</menu>
+
+</config>

@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * BpiSecurepay View XML.
+ * @category  Unilab
+ * @package   BpiSecurepay
+ * @author    Kristian Claridad
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    
+    <!-- <preference for="Unilab\BpiSecurepay\Api\Data\BpiSecurepayInterface" type="Unilab\BpiSecurepay\Model\Api" /> -->
+
+    <type name="Magento\Checkout\Model\CompositeConfigProvider">
+        <arguments>
+            <argument name="configProviders" xsi:type="array">
+                <item name="bpisecurepay_gateway_config_provider" xsi:type="object">Unilab\BpiSecurepay\Model\Ui\ConfigProvider</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Unilab\BpiSecurepay\Block\Info">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item xsi:type="string" name="is_secure_mode">1</item>
+            </argument>
+        </arguments>
+    </type>
+    <!-- <type name="Unilab\BpiSecurepay\Model\Api">
+        <plugin name="bpisecurepayApi" type="Unilab\BpiSecurepay\Model\Api" />
+    </type> -->
+</config>

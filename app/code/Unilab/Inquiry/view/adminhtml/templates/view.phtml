@@ -1,0 +1,113 @@
+<?php
+    //echo "<pre>";
+    // var_dump($block->getInquiry()->getData());
+    //var_dump($block->getInquiryDepartment()->getDepartmentEmail());
+    //echo "</pre>";
+?>
+<style>
+    h4 {
+        margin-bottom: 0!important;
+        color: #fff!important;
+    }
+
+    .entry-edit .entry-edit-head {
+        background: #6f8992;
+        padding: 2px 10px;
+    }
+    .log-details {
+        border: 1px solid #d6d6d6;
+        padding: 15px;
+        background: #fafafa;
+        margin: 0 0 15px;
+    }
+
+    .log-details table th, .log-details table td {
+        padding-top: 4px;
+        padding-bottom: 4px;
+        vertical-align: middle;
+    }
+
+    .log-details table th {
+        font-weight: bold;
+        padding-right: 30px;
+        white-space: nowrap;
+        text-align: left;
+    }
+</style>
+
+
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-edit-form fieldset-legend"><?php echo __('Detail(s)'); ?></h4>
+    </div>
+    <div id="log_details_fieldset" class="log-details">
+        <table cellspacing="0" class="log-info table">
+            <col width="15%" />
+            <col />
+            <tbody>
+
+
+            	<tr>
+            		<th><?php echo __('Store'); ?></th>
+            		<td><b><?php echo  $block->getStoreName(); ?></b></td>
+            	</tr>
+
+            	<tr>
+            		<th><?php echo __('Reason'); ?></th>
+            		<td><b><?php echo sprintf("%s (%s)" ,$block->getInquiryDepartment()->getName(),$block->getInquiry()->getDepartmentEmail()) ?></b></td>
+            	</tr>
+
+            	<tr>
+            		<th><?php echo __('Customer Type'); ?></th>
+            		<?php if($block->getInquiry()->getCustomerId()==0) : ?>
+            			<td><span style="color:red;font-weight: bold;"><?php echo __('GUEST')?></span></td>
+            		<?php else: ?>
+            			<td><span style="color:blue;font-weight: bold;"><?php echo __('REGISTERED')?></span></td>
+            		<?php endif;?>
+            	</tr>
+
+                <tr>
+                    <th><?php echo __('Customer'); ?></th>
+
+                    <?php if($block->getInquiry()->getCustomerId()==0) : ?>
+                    	<td><?php echo sprintf("%s (%s)",$block->getInquiry()->getName(),$block->getInquiry()->getEmailAddress())?></td>
+                    <?php else: ?>
+                    	<td>
+                            <?php echo sprintf("<a href=\"".$block->getBackendUrlHelper()->getUrl('customer/edit/',array('id'=>$block->getInquiry()->getCustomerId()))."\" target=\"_blank\">%s</a> (%s)",$block->getInquiry()->getName(),$block->getInquiry()->getEmailAddress())?></td>
+                    <?php endif; ?>
+
+                </tr>
+
+                <tr>
+                    <th valign="top"><?php echo __('Message/Concern'); ?></th>
+                    <td><?php echo html_entity_decode($block->getInquiry()->getConcern()) ?></td>
+                </tr>
+
+                <tr>
+                    <th valign="top"><?php echo __('Is Read'); ?></th>
+                    <td><?php echo $block->getInquiry()->getIsRead() ? __('Yes') : __('No'); ?></td>
+                </tr>
+
+                <tr>
+                    <th><?php echo __('Created At'); ?></th>
+                    <td><?php echo $block->getFormattedDate(); ?></td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+    // require(['jquery'], function ($) {
+    //     $(".delete-inquiry").on("click", function (e) {
+    //         var bool = confirm("Are you sure you want to do this?");
+    //
+    //         if(bool) {
+    //             alert("Deleted!");
+    //         }
+    //     });
+    // })
+</script>

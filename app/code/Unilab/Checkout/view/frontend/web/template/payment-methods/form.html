@@ -1,0 +1,17 @@
+<input type="hidden" name="" data-bind="value: paymentMethod()">
+<div data-bind="scope: 'payment'">
+    <!-- ko template: getTemplate() --><!-- /ko -->
+</div>
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Magento_Ui/js/core/app": {
+                "components": {
+                    "payment": {
+                        "component": "Unilab_BpiSecurepay/js/view/payment/method-renderer/bpisecurepay"
+                    }
+                }
+            }
+        }
+    }
+</script>

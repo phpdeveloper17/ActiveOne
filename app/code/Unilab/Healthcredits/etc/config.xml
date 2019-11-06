@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+ * Unilab_Healthcredits
+ * Stores->Payment Methods->Healthcredits
+ * @category  Unilab
+ * @package   Unilab_Healthcredits
+ * @author    Kristian Claridad
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <healthcredits>
+                <debug>1</debug>
+                <active>0</active>
+                <title>Charge to Company</title>
+                <gateway_url>http://clickhealth.ecomqa.com/ritemed/testapi.php</gateway_url>
+				<merchant_test>UNILABTEST02061983</merchant_test>
+				<merchant_live></merchant_live>
+				<merchant_accesscode_test>UNILABTEST</merchant_accesscode_test>
+				<merchant_accesscode_live></merchant_accesscode_live>
+				<merchant_secure_hash_secret_test>R206R1983D2005R922A08012010NRD</merchant_secure_hash_secret_test>
+				<merchant_secure_hash_secret_live></merchant_secure_hash_secret_live>
+                <order_status>pending</order_status>
+                <model>\Unilab\Healthcredits\Model\Method\Payment</model>
+            </healthcredits>
+        </payment>
+    </default>
+</config>

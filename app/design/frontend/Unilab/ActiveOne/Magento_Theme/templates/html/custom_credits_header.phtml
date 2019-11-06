@@ -1,0 +1,51 @@
+<?php
+	$objectManager =  \Magento\Framework\App\ObjectManager::getInstance();
+	$customerSession = $objectManager->create('\Magento\Customer\Model\Session');
+	$resourceConnection = $objectManager->get('\Magento\Framework\App\ResourceConnection');
+    $connection = $resourceConnection->getConnection(\Magento\Framework\App\ResourceConnection::DEFAULT_CONNECTION);
+	$customer = $customerSession->getCustomer();
+	//Search entity_id from rra_emp_benefits
+
+	$select 	=	$connection->select()->from('rra_emp_benefits', array('*'))
+	->where('entity_id=?',$customer->getId())->where('is_active=?',1); 
+	$benefits_items 	=	$connection->fetchRow($select);
+
+	$limit 				= $benefits_items['purchase_cap_limit'];
+	$consumed 			= $benefits_items['consumed'];
+	
+	$available 	= $benefits_items['available'];
+	
+	$extension 	= $benefits_items['extension'];
+	$limit 		= $this->helper('Magento\Framework\Pricing\Helper\Data')->currency($limit,true,false);
+	$consumed	= $this->helper('Magento\Framework\Pricing\Helper\Data')->currency($consumed,true,false);
+	$available 	= $this->helper('Magento\Framework\Pricing\Helper\Data')->currency($available + $extension,true,false);
+	$extension 	= $this->helper('Magento\Framework\Pricing\Helper\Data')->currency($extension,true,false);
+?>
+<div class="credits">
+<style>
+	.tbl_body{border:solid 1px #ccc;background-color: inherit;}
+	td{ padding: 5px;}
+	th{padding: 5px;background-color: #fff;color: #000000;}
+	.cls_price{text-align:right;}
+</style>
+	<table width="100%">
+		<thead>
+			<tr><th colspan="4"><strong>Purchase Cap Details</strong></th>
+		</tr></thead>
+		<tbody class="tbl_body">
+			<tr>
+				<td>Limit</td>
+				<td class="cls_price"><?= $limit ?></td>
+				<td>Consumed</td>
+				<td class="cls_price"><?= $consumed ?></td>
+				
+			</tr>
+			<tr>
+				<td style="padding-top:0px"><!--Extension--></td>
+				<td style="padding-top:0px" class="cls_price"></td>
+				<td style="padding-top:0px">Available</td>
+				<td style="padding-top:0px" class="cls_price"><?= $available ?></td>
+			</tr>
+		</tbody>
+	</table>    
+</div>

@@ -1,0 +1,141 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+/**
+ * @var $block \Magento\Sales\Block\Order\Totals
+ * @see \Magento\Sales\Block\Order\Totals
+ */
+?>
+<?php
+//move discount below subtotal
+if($discount = $block->getTotal('discount'))
+{
+    $block->removeTotal('discount');
+    $block->addTotal($discount, 'subtotal');
+}
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $currencyHelper = $this->helper('Magento\Framework\Pricing\Helper\Data'); 
+    
+    $order = $this->getOrder();
+    $customer_id 	= $order->getCustomerId();
+
+	$groupId 			= $order->getCustomerGroupId();
+	$Taxtype 			= $objectManager->create('\Magento\Customer\Model\Group')->load($groupId)->getTaxClassId();	
+
+	$tax 				= $objectManager->create('Magento\Tax\Model\Calculation');
+	$Customerrates 		= $tax->load($Taxtype, 'customer_tax_class_id');
+	$taxRateID 			= $Customerrates->getData();	 
+    
+    $resourceConnection = $objectManager->get('\Magento\Framework\App\ResourceConnection');
+    $connection         = $resourceConnection->getConnection(\Magento\Framework\App\ResourceConnection::DEFAULT_CONNECTION);
+	$SqlTaxClass		= $connection->select()->from('tax_class', array('*')) 
+						->where('class_id=?',$Taxtype);     
+	$TaxClass 			= $connection->fetchRow($SqlTaxClass);
+	$ClassName			= $TaxClass['class_name'];	
+	
+	$subTotal        	= $order->getSubtotal(); 
+	$subTotalVat     	= $order->getBase_tax_amount(); 
+	
+	$ConvenienceFee  	= $order->getBase_convenience_fee(); 
+	$conFeeLessVat   	= $order->getConvenienceFee(); 
+	$conFeeVat       	= $ConvenienceFee - $conFeeLessVat;
+	
+    if(empty($ConvenienceFee))
+    {
+        $conFeeLessVat   = 0;
+        $conFeeVat       = 0;	
+    }
+        
+    if($ClassName=='VAT Inclusive')
+    {
+        $vatSales        = $subTotal + $conFeeLessVat ;
+        $vat             = $subTotalVat  + $conFeeVat ;
+        $vatExempt		 = 0;
+        $vatZeroRate	 = 0;
+        
+    }
+    else if($ClassName=='VAT Exempt')
+    {
+        $conFeeLessVat   = 0;
+        $vatSales		 = 0;
+        $vat             = 0;
+        $vatExempt		 = $subTotal + $conFeeLessVat;
+        $vatZeroRate	 = 0;
+    }
+    else if($ClassName=='VAT Zero Rated')
+    {
+        $conFeeLessVat   = 0;
+        $vatSales		 = 0;
+        $vat             = 0;
+        $vatExempt		 = 0;
+        $vatZeroRate	 = $subTotal + $conFeeLessVat;
+    }
+    
+    $shippingamt  	     = $order->getShippingAmount();
+    $shippingdesc        = $order->getShippingDescription();
+    $discountamount      = $order->getDiscountAmount();
+    $grandTotal          = $order->getGrandTotal();
+?>
+<tr>
+        <td width="65%"></td> 
+		<td align="right" width="20%">Order Amount</td> 
+        <td align="right" style="padding-right:10px;"><?php echo $currencyHelper->currency($subTotal,true,false); ?></td>
+    </tr>
+	
+	<?php if ($conFeeLessVat > 0): ?>
+    <tr>
+        <td width="65%"></td> 
+		<td align="right" width="20%">Convenience Fee</td>
+        <td align="right" style="padding-right:10px;"><?php echo $currencyHelper->currency($conFeeLessVat,true,false); ?></td>
+    </tr>
+    <?php endif; ?>
+	
+	<tr>
+        <td width="65%"></td> 
+		<td align="right" width="20%">Shipping and Handling (<?php echo $shippingdesc; ?>)</td>
+        <td align="right" style="padding-right:10px;"><?php echo $currencyHelper->currency($shippingamt,true,false); ?></td>
+    </tr>
+	
+	<tr>
+        <td width="65%"></td> 
+		<td align="right" width="20%">VATable Sale</td> 
+        <td align="right" style="padding-right:10px;"><?php echo $currencyHelper->currency($vatSales,true,false); ?></td>
+    </tr>
+	
+	<tr>
+    	<td width="65%"></td> 
+		<td align="right" width="20%">VAT (12%)</td>
+        <td align="right" style="padding-right:10px;"><?php echo $currencyHelper->currency($vat,true,false); ?></td>
+    </tr>
+	
+    <tr>
+   		<td width="65%"></td> 
+		<td align="right" width="20%">VAT Exempt</td>
+		<td align="right" style="padding-right:10px;"><?php echo $currencyHelper->currency($vatExempt,true,false); ?></td>
+    </tr>
+	
+    <tr>
+    	<td width="65%"></td> 
+		<td align="right" width="20%">VAT Zero Rate</td>
+        <td align="right" style="padding-right:10px;"><?php echo $currencyHelper->currency($vatZeroRate,true,false); ?></td>
+    </tr>
+	
+    <?php if ($discountamount > 0): ?>
+    <tr>
+        <td width="65%"></td> 
+		<td align="right" width="20%">Discount Amount</td>
+        <td align="right" style="padding-right:10px;"><?php echo $currencyHelper->currency($discountamount,true,false); ?></td>
+    </tr>
+    <?php endif; ?>
+    
+    <tr>
+    	<td width="65%"></td> 
+		<td align="right" width="20%"><strong>Grand Total</strong></td>
+        <td align="right" style="padding-right:10px;"><strong><?php echo $currencyHelper->currency($grandTotal,true,false); ?></strong></td>
+    </tr>
+

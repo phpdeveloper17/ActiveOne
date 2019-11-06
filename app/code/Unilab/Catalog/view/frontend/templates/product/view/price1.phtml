@@ -1,0 +1,49 @@
+<?php
+$_priceHelper = $this->helper('Magento\Framework\Pricing\Helper\Data');
+$_weeeHelper = $this->helper('Magento\Weee\Helper\Data');
+$_taxHelper  = $this->helper('Magento\Tax\Helper\Data');
+$_catalogHelper = $this->helper('Magento\Catalog\Helper\Data');
+$_helper = $this->helper('Magento\Catalog\Helper\Output');
+
+$_product = $this->getProduct();
+
+$_storeId = $_product->getStoreId();
+$_id = $_product->getId();
+$_weeeSeparator = '';
+$_simplePricesTax = ($_taxHelper->displayPriceIncludingTax() || $_taxHelper->displayBothPrices());
+$_minimalPriceValue = $_product->getMinimalPrice();
+$_minimalPrice = $_catalogHelper->getTaxPrice($_product, $_minimalPriceValue, $_simplePricesTax);
+$_specialPriceStoreLabel = $_product->getResource()->getAttribute('special_price')->getStoreLabel();
+?>
+
+
+<?php if(!$_product->getTypeID() == 'grouped'): ?>
+    <?php
+        $_weeeTaxAmount = $_weeeHelper->getAmountForDisplay($_product);
+
+        if ($_weeeHelper->typeOfDisplay($_product, array(\Magento\Weee\Model\Tax::DISPLAY_INCL_DESCR, \Magento\Weee\Model\Tax::DISPLAY_EXCL_DESCR_INCL, 4)))
+        {
+            $_weeeTaxAmount = $_weeeHelper->getAmount($_product);
+            $_weeeTaxAttributes = $_weeeHelper->getProductWeeeAttributesForDisplay($_product);
+        }
+				$_weeeTaxAmountInclTaxes = $_weeeTaxAmount;
+				if($_weeeHelper->isTaxable() && !$_taxHelper->priceIncludesTax($_storeId)){
+					$_attributes = $_weeeHelper->getProductWeeeAttributesForRenderer($_product, null, null, null, true);
+					$_weeeTaxAmountInclTaxes = $_weeeHelper->getAmountInclTaxes($_attributes);
+				}
+    ?>
+<?php endif;?>
+
+<div class="price-box">
+    <span class="regular-price">
+    <?= $block->getProductPriceHtml(
+        $_product,
+        \Magento\Catalog\Pricing\Price\FinalPrice::PRICE_CODE,
+        \Magento\Framework\Pricing\Render::ZONE_ITEM_VIEW,
+        [
+            'price_id_suffix' => '_clone'
+        ]
+    ) ?>
+
+    </span>
+</div>

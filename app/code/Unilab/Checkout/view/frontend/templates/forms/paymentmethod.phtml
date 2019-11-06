@@ -1,0 +1,47 @@
+<?php
+$payments = $block->getPaymentComponent();
+?>
+
+<div class="payment_method_wraper">
+    <div class="heading">
+        <div class="cls_number">3</div>
+        <h1 class="cls_header">Payment Method</h1>
+    </div>
+    <div class="cls_body">		
+        <?php foreach($payments as $payment): ?>
+        
+       <div data-bind="scope: '<?= $payment['methodcode'] ?>'">
+        <!-- ko template: getTemplate() --><!-- /ko -->
+        </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+
+<?php foreach($payments as $payment): ?>
+<script type="text/x-magento-init">
+        {
+            "*": {
+                "Magento_Ui/js/core/app": {
+                    "components": {
+                        "<?= $payment['methodcode'] ?>": {
+                            "component": "<?= $payment['component']['component'] ?>",
+                            "template": "Unilab_Checkout/placeorder",
+                            "tenderName" : " <?= $payment['methodcode'] ?>"
+                        }
+                    }
+                }
+            }
+        }
+</script>
+
+<?php endforeach; ?>
+
+<?php 
+if(count($payments) < 2):
+?>
+<style>
+.payment-radio {
+    display: none;
+}
+</style>
+<?php endif; ?>

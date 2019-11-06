@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!--
+/** 
+ * City Menu XML.
+ * @category  Unilab
+ * @package   Unilab_City
+ * @author    Ron Mark Peroso Rudas   
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Unilab_City::city_manager" title="Manage Philippine Cities" translate="title" module="Unilab_City" resource="Unilab_Extensions::manage_cities" dependsOnModule="Unilab_City" parent="Unilab_Extensions::others" action="manage_cities/city" sortOrder="3"/>
+    </menu>
+</config>

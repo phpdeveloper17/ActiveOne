@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<config
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+
+	<menu>
+
+		<add id="Unilab_Inquiry::manage_inquiries" title="Manage Inquiries" translate="title" module="Unilab_Inquiry" resource="Unilab_Extensions::manage_inquiries" dependsOnModule="Unilab_Inquiry" parent="Unilab_Extensions::others" action="unilab_inquiry/inquiry" sortOrder="4"/>
+
+	</menu>
+
+</config>

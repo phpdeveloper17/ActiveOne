@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!--
+ * Unilab_BpiSecurepay
+ * Stores->Payment Methods->Bpi Securepay
+ * @category  Unilab
+ * @package   Unilab_BpiSecurepay
+ * @author    Kristian Claridad
+-->
+    <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <bpisecurepay>
+                <!-- For API configuration -->
+                <active>1</active>
+                <title>Credit Card</title>
+                <enable_testmode>1</enable_testmode>
+                <!-- Live API Configuration -->
+                <merchant_live>LIVE-001278233986</merchant_live>
+                <merchant_secure_hash_secret_live>LIVE-E979E59165C469541F7E62268578F8DD</merchant_secure_hash_secret_live>
+                <merchant_accesscode_live>LIVE-7DC32619</merchant_accesscode_live>
+                <!-- END Live API Configuration -->
+
+                <merchant_test>TEST073002601001</merchant_test>
+                <merchant_secure_hash_secret_test>4DF5149192F6AA91C550FACD877DBB17</merchant_secure_hash_secret_test>
+                <merchant_accesscode_test>3C9345FC</merchant_accesscode_test>
+                             
+                <order_status>pending</order_status>
+                <allowspecific>0</allowspecific>
+                <payment_action>authorize</payment_action>
+                <!-- <model>BpisecurepayPaymentGatewayFacade</model> -->
+                <model>Unilab\BpiSecurepay\Model\Method\Payment</model>
+            </bpisecurepay>
+        </payment>
+    </default>
+</config>

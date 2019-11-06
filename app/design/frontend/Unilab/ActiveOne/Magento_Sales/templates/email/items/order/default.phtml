@@ -1,0 +1,141 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var $block \Magento\Sales\Block\Order\Email\Items\DefaultItems */
+
+/** @var $_item \Magento\Sales\Model\Order\Item */
+$_item = $block->getItem();
+$_order = $_item->getOrder();
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$simple_product = $objectManager->create('Magento\Catalog\Model\Product')->load($_item->getProduct()->getId());
+$_product = $simple_product;
+$storeManager = $objectManager->create('\Magento\Store\Model\StoreManagerInterface');
+if($simple_product->getTypeId() == 'simple') {
+    $parent = $objectManager->create('Magento\ConfigurableProduct\Model\Product\Type\Configurable');
+    $parentIdsArray = $parent->getParentIdsByChild( $simple_product->getId() );
+    if (!empty($parentIdsArray) && isset($parentIdsArray[0])) {
+        
+        $_product = $objectManager->create('Magento\Catalog\Model\Product')
+                        ->setStoreId($storeManager->getStore()->getStoreId())
+                        ->load($parentIdsArray[0]);
+        
+    }
+}
+?>
+<tr>
+    <td align="center" valign="middle" style="color:#000; font-size:11px; padding:3px 9px; border:1px solid #000; background:#FFFFFF;">	
+	        <?php echo $simple_product->getSku();?>
+	</td>
+	<td align="center" valign="top" style="font-size:11px; padding:3px 9px; border:1px solid #000; background:#FFFFFF;">
+        <strong style="font-size:12px; color:#000;"><?php echo $this->escapeHtml($_item->getName()) ?></strong>
+		<br />	<strong style="font-size:10px;color:#000;"><?php echo $_product->getGenericName(); ?></strong>
+    </td>
+	<!--qty-->
+    <td align="center" valign="middle" style="color:#000; font-size:11px; padding:3px 9px; border:1px solid #000; background:#FFFFFF;"><?php echo $_item->getQtyOrdered()*1 ?></td>
+    
+	<!--price-->
+	<td align="right" valign="middle" style="color:#000; font-size:11px; padding:3px 9px; border:1px solid #000; background:#FFFFFF;">
+    <?php echo //$_order->formatPrice($_item->getOriginalPrice());
+        /* @escapeNotVerified */  $block->getItemPrice($_item) 
+    ?>
+    </td>
+    
+    <td align="right" valign="middle" style="color:#000; font-size:11px; padding:3px 9px; border:1px solid #000; background:#FFFFFF;">
+        <?php if ($this->helper('Magento\Tax\Helper\Data')->displaySalesPriceExclTax($_order->getStore()) || $this->helper('Magento\Tax\Helper\Data')->displaySalesBothPrices($_order->getStore())): ?>
+            <?php if ($this->helper('Magento\Tax\Helper\Data')->displaySalesBothPrices($_order->getStore())): ?>
+                <span class="label"><?php echo $this->helper('Magento\Tax\Helper\Data')->__('Excl. Tax'); ?>:</span>
+            <?php endif; ?>
+            <?php if ($this->helper('Magento\Weee\Helper\Data')->typeOfDisplay($_item, array(0, 1, 4), 'email', $_order->getStore())): ?>
+                <?php echo $_order->formatPrice($_item->getRowTotal()+$_item->getWeeeTaxAppliedRowAmount()+$_item->getWeeeTaxRowDisposition()); ?>
+            <?php else: ?>
+                <?php echo $_order->formatPrice($_item->getRowTotal()) ?>
+            <?php endif; ?>
+
+
+            <?php if ($this->helper('Magento\Weee\Helper\Data')->getApplied($_item)): ?>
+                <br />
+                <?php if ($this->helper('Magento\Weee\Helper\Data')->typeOfDisplay($_item, 1, 'email', $_order->getStore())): ?>
+                    <small>
+                    <?php foreach ($this->helper('Magento\Weee\Helper\Data')->getApplied($_item) as $tax): ?>
+                        <span class="nobr"><?php echo $tax['title']; ?>: <?php echo $_order->formatPrice($tax['row_amount'],true,true); ?></span><br />
+                    <?php endforeach; ?>
+                    </small>
+                <?php elseif ($this->helper('Magento\Weee\Helper\Data')->typeOfDisplay($_item, 2, 'email', $_order->getStore())): ?>
+                    <?php foreach ($this->helper('Magento\Weee\Helper\Data')->getApplied($_item) as $tax): ?>
+                        <span class="nobr"><small><?php echo $tax['title']; ?>: <?php echo $_order->formatPrice($tax['row_amount_incl_tax'],true,true); ?></small></span><br />
+                    <?php endforeach; ?>
+                <?php elseif ($this->helper('Magento\Weee\Helper\Data')->typeOfDisplay($_item, 4, 'email', $_order->getStore())): ?>
+                    <small>
+                    <?php foreach ($this->helper('Magento\Weee\Helper\Data')->getApplied($_item) as $tax): ?>
+                        <span class="nobr"><?php echo $tax['title']; ?>: <?php echo $_order->formatPrice($tax['row_amount_incl_tax'],true,true); ?></span><br />
+                    <?php endforeach; ?>
+                    </small>
+                <?php endif; ?>
+
+                <?php if ($this->helper('Magento\Weee\Helper\Data')->typeOfDisplay($_item, 2, 'email', $_order->getStore())): ?>
+                    <br />
+                    <span class="nobr"><?php echo $this->helper('Magento\Weee\Helper\Data')->__('Total'); ?>:<br /> <?php echo $_order->formatPrice($_item->getCalculationPrice()+$_item->getWeeeTaxAppliedRowAmount()+$_item->getWeeeTaxRowDisposition()); ?></span>
+                <?php endif; ?>
+            <?php endif; ?>
+        <?php endif; ?>
+
+
+        <?php if ($this->helper('Magento\Tax\Helper\Data')->displaySalesPriceInclTax($_order->getStore()) || $this->helper('Magento\Tax\Helper\Data')->displaySalesBothPrices($_order->getStore())): ?>
+            <?php if ($this->helper('Magento\Tax\Helper\Data')->displaySalesBothPrices($_order->getStore())): ?>
+                <br /><span class="label"><?php echo $this->helper('Magento\Tax\Helper\Data')->__('Incl. Tax'); ?>:</span>
+            <?php endif; ?>
+            <?php $_incl = $this->helper('checkout')->getSubtotalInclTax($_item); ?>
+                <?php if ($this->helper('Magento\Weee\Helper\Data')->typeOfDisplay($_item, array(0, 1, 4), 'email', $_order->getStore())): ?>
+                    <?php echo $_order->formatPrice($_incl+$_item->getWeeeTaxAppliedRowAmount()); ?>
+                <?php else: ?>
+                    <?php echo $_order->formatPrice($_incl-$_item->getWeeeTaxRowDisposition()) ?>
+                <?php endif; ?>
+            <?php if ($this->helper('Magento\Weee\Helper\Data')->getApplied($_item)): ?>
+                <br />
+                <?php if ($this->helper('Magento\Weee\Helper\Data')->typeOfDisplay($_item, 1, 'email', $_order->getStore())): ?>
+                    <small>
+                    <?php foreach ($this->helper('Magento\Weee\Helper\Data')->getApplied($_item) as $tax): ?>
+                        <span class="nobr"><?php echo $tax['title']; ?>: <?php echo $_order->formatPrice($tax['row_amount'],true,true); ?></span><br />
+                    <?php endforeach; ?>
+                    </small>
+                <?php elseif ($this->helper('Magento\Weee\Helper\Data')->typeOfDisplay($_item, 2, 'email', $_order->getStore())): ?>
+                    <?php foreach ($this->helper('Magento\Weee\Helper\Data')->getApplied($_item) as $tax): ?>
+                        <span class="nobr"><small><?php echo $tax['title']; ?>: <?php echo $_order->formatPrice($tax['row_amount_incl_tax'],true,true); ?></small></span><br />
+                    <?php endforeach; ?>
+                <?php elseif ($this->helper('Magento\Weee\Helper\Data')->typeOfDisplay($_item, 4, 'email', $_order->getStore())): ?>
+                    <small>
+                    <?php foreach ($this->helper('Magento\Weee\Helper\Data')->getApplied($_item) as $tax): ?>
+                        <span class="nobr"><?php echo $tax['title']; ?>: <?php echo $_order->formatPrice($tax['row_amount_incl_tax'],true,true); ?></span><br />
+                    <?php endforeach; ?>
+                    </small>
+                <?php endif; ?>
+
+                <?php if ($this->helper('Magento\Weee\Helper\Data')->typeOfDisplay($_item, 2, 'email', $_order->getStore())): ?>
+                    <span class="nobr"><?php echo $this->helper('Magento\Weee\Helper\Data')->__('Total incl. tax'); ?>:<br /> <?php echo $_order->formatPrice($_incl+$_item->getWeeeTaxAppliedRowAmount()); ?></span>
+                <?php endif; ?>
+            <?php endif; ?>
+        <?php endif; ?>
+    </td>
+</tr>
+<?php if ($_item->getGiftMessageId() && $_giftMessage = $this->helper('Magento\GiftMessage\Helper\Message')->getGiftMessage($_item->getGiftMessageId())): ?>
+<tr>
+    <td colspan="3" class="item-extra">
+        <table class="message-gift">
+            <tr>
+                <td>
+                    <h3><?= /* @escapeNotVerified */  __('Gift Message') ?></h3>
+                    <strong><?= /* @escapeNotVerified */  __('From:') ?></strong> <?= $block->escapeHtml($_giftMessage->getSender()) ?>
+                    <br /><strong><?= /* @escapeNotVerified */  __('To:') ?></strong> <?= $block->escapeHtml($_giftMessage->getRecipient()) ?>
+                    <br /><strong><?= /* @escapeNotVerified */  __('Message:') ?></strong>
+                    <br /><?= $block->escapeHtml($_giftMessage->getMessage()) ?>
+                </td>
+            </tr>
+        </table>
+    </td>
+</tr>
+<?php endif; ?>

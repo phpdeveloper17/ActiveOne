@@ -1,0 +1,27 @@
+<?php 
+$objectManager =  \Magento\Framework\App\ObjectManager::getInstance();
+$customerSession = $objectManager->create('\Magento\Customer\Model\Session');
+$tnxtype = $this->getRequest()->getParam('tnxtype');
+$resetpassword = $this->getRequest()->getParam('resetpassword');
+$token = $this->getRequest()->getParam('token');
+$email = $this->getRequest()->getParam('forgotpassword');
+
+if($customerSession->isLoggedIn() && $tnxtype) {
+	if(!isset($_COOKIE)) {
+		?><script>window.location.reload()</script><?php
+	}
+}
+if(!$customerSession->isLoggedIn()) {
+	// if(!empty($resetpassword)):
+	// 	echo $this->getLayout()->createBlock('core/template')->setTemplate('loginpage/resetpassword.phtml')->toHtml();
+	// elseif(!empty($token)):
+	// 	echo $this->getLayout()->createBlock('core/template')->setTemplate('loginpage/newpassword.phtml')->toHtml();
+	// elseif(!empty($email)):
+	///	echo $this->getLayout()->createBlock("Magento\Framework\View\Element\Template")->setTemplate('loginpage/forgotpassword.phtml')->toHtml();				
+	echo $this->getLayout()->createBlock("Magento\Framework\View\Element\Template")->setTemplate("Magento_Cms::login.phtml")->toHtml();
+}
+else {
+	if($tnxtype) {
+		echo $this->getLayout()->createBlock("Magento\Framework\View\Element\Template")->setTemplate("Magento_Cms::tenderType.phtml")->toHtml();
+	}
+}

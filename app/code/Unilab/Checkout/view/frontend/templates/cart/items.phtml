@@ -1,0 +1,63 @@
+
+<div class="items_wrapper">
+	<div class="heading">
+		<div class="cls_number">&#x2713;</div>
+		<h1 class="cls_header">Order Overview</h1>
+	</div>
+	<div class="cls_body">
+		<div class="glc-col">
+			<table id="shopping-cart-table-overview" class="data-table cart-table">
+				<thead>
+					<tr>
+						<th rowspan="1"><?= __('SKU') ?></th>
+						<th rowspan="2"><span class="nobr"><?= __('Product Name') ?></span></th>
+						<th class="a-center" colspan="1"><span class="nobr"><?= __('Unit Price') ?></span></th>
+						<th rowspan="1" class="a-center"><?= __('Qty') ?></th>
+						<th class="a-center" colspan="1"><?= __('Subtotal') ?></th>
+					</tr>
+				</thead>
+				<tbody>
+				<?php 
+				
+                    $quote = $block->getCheckoutSession()->getQuote();
+					
+					foreach ($quote->getAllVisibleItems() as $item):
+					
+
+
+				?>
+					<tr>
+						<td>
+							<p class="orderview_item">
+								<?= $item->getSku(); ?> 
+							</p>
+						</td>
+						<td>
+							<p class="orderview_item">
+								<?= $item->getName()?> 
+							</p>
+						</td>
+						<td class="a-right">
+							<p class="orderview_item">
+								<?= $block->formatPrice($item->getPrice())?> 
+							</p>
+						</td>
+						<td class="a-center">
+							<p class="orderview_item">
+								<?= $item->getQty()?> 
+							</p>
+						</td>
+						<td class="a-right">
+							<p class="orderview_item"> 
+								<?= $block->formatPrice($item->getRowTotal())?>
+							</p> 
+						</td>
+					</tr>
+					
+				<?php endforeach; ?>
+				
+				</tbody>
+			</table>
+		</div>	
+	</div>
+</div>

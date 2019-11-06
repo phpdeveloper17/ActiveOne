@@ -1,0 +1,557 @@
+<?php
+date_default_timezone_set('Asia/Taipei');
+$this->_objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+$_priceHelper = $this->helper('Magento\Framework\Pricing\Helper\Data');
+$_weeeHelper = $this->helper('Magento\Weee\Helper\Data');
+$_taxHelper  = $this->helper('Magento\Tax\Helper\Data');
+$_catalogHelper = $this->helper('Magento\Catalog\Helper\Data');
+$_helper = $this->helper('Magento\Catalog\Helper\Output');
+
+$_product = $block->getSaleableItem();
+$_storeId = $_product->getStoreId();
+
+$_id = $_product->getId();
+
+$_weeeSeparator = '';
+$_simplePricesTax = ($_taxHelper->displayPriceIncludingTax() || $_taxHelper->displayBothPrices());
+$_minimalPriceValue = $_product->getMinimalPrice();
+$_minimalPrice = $_catalogHelper->getTaxPrice($_product, $_minimalPriceValue, $_simplePricesTax);
+$_specialPriceStoreLabel = $_product->getResource()->getAttribute('special_price')->getStoreLabel();
+?>
+
+
+<?php if($_product->getTypeID() != 'grouped'): ?>
+    <?php
+        $_weeeTaxAmount = $block->getAmountForDisplay($_product);
+
+        if ($_weeeHelper->typeOfDisplay($_product, array(\Magento\Weee\Model\Tax::DISPLAY_INCL_DESCR, \Magento\Weee\Model\Tax::DISPLAY_EXCL_DESCR_INCL, 4)))
+        {
+            $_weeeTaxAmount = $block->getAmount($_product);
+            $_weeeTaxAttributes = $_weeeHelper->getProductWeeeAttributesForDisplay($_product);
+        }
+				$_weeeTaxAmountInclTaxes = $_weeeTaxAmount;
+				if($_weeeHelper->isTaxable() && !$_taxHelper->priceIncludesTax($_storeId)){
+					$_attributes = $_weeeHelper->getProductWeeeAttributesForRenderer($_product, null, null, null, true);
+					$_weeeTaxAmountInclTaxes = $_weeeHelper->getAmountInclTaxes($_attributes);
+				}
+
+        $customer         = $this->_objectManager->create("\Magento\Customer\Model\Session")->getCustomer();
+        $_price = $_catalogHelper->getTaxPrice($_product, $_product->getPrice());
+        $_regularPrice = $_catalogHelper->getTaxPrice($_product, $_product->getPrice(), $_simplePricesTax);
+        $_finalPrice = $_catalogHelper->getTaxPrice($_product, $_product->getFinalPrice());
+
+        $this->_resource = $this->_objectManager->get("\Magento\Framework\App\ResourceConnection");
+        $connection = $this->_resource->getConnection('core_write');
+
+        $rule_price		= null;
+		$dnow 			= date("Y-m-d");
+		$Tday			= date("l");
+		$is_Ctime 		= false;
+		$day_isactive 	= false;
+		$dateis_active	= false;
+		$discount_in_amount  =	0;
+		$discount_in_percent =	0;
+
+        $customerLevelID = $customer->getPriceLevel();
+        $query 				= "SELECT * FROM catalogrule WHERE '$dnow' BETWEEN from_date AND to_date AND price_level_id='$customerLevelID' AND is_active=1";
+        
+        $rowCatalogRule 	= $connection->fetchRow($query);
+        
+		$from_date 			=	$rowCatalogRule ['from_date'];
+		$to_date 			=	$rowCatalogRule ['to_date'];
+		$limit_days 		=	$rowCatalogRule ['limit_days'];
+		$limit_time_from 	=	$rowCatalogRule ['limit_time_from'];
+		$limit_time_to 		=	$rowCatalogRule ['limit_time_to'];
+		$is_active 			=	$rowCatalogRule ['is_active'];
+		$price_level_id 	=	$rowCatalogRule ['price_level_id'];
+		$pricelist_id 		=	$rowCatalogRule ['name'];
+		$rule_price 		=	$rowCatalogRule ['rule_id'];
+
+        //Search Group ID by Rule ID
+		$selectGrpID 	=	$connection->select()->from('catalogrule_customer_group', array('*'))->where('rule_id=?',$rule_price);
+		$RwGrpID 	=$connection->fetchAll($selectGrpID);
+		$is_group 	= false;
+        
+		foreach($RwGrpID as $key=>$value):
+			if($key == 'customer_group_id'):
+				if($customer->getGroupId() == $value['customer_group_id']):
+					$is_group 	= true;
+				endif;
+			endif;
+		endforeach;
+
+        if(!empty($from_date) && !empty($to_date)):
+			$frm_date 			=	date("Y-m-d", strtotime($from_date));
+			$t_date 			=	date("Y-m-d", strtotime($to_date));
+
+            if($dnow >= $frm_date && $dnow <= $t_date):
+				$dateis_active	= true;
+			endif;
+		else:
+			$dateis_active	= true;
+		endif;
+
+		//Search rule_price from catalogrule_product_price
+		$selectPricelevel 		=	$connection->select()->from('rra_pricelevelmaster', array('*'))->where('id=?',$price_level_id);
+		$priceRW 				=	$connection->fetchRow($selectPricelevel);
+		$price_level_isactive 	=	$priceRW ['is_active'];
+        
+		if($price_level_isactive == true):
+			if($limit_time_from == '00:00:00' && $limit_time_to == '00:00:00'):
+				$is_Ctime 	= true;
+			elseif (time() >= strtotime($limit_time_from) && time() <= strtotime($limit_time_to)):
+				$is_Ctime 	= true;
+			endif;
+            $limitdays_exp = explode(",",$limit_days);
+            
+            foreach($limitdays_exp as $_tday):
+                
+				if(strtolower($Tday) == strtolower($_tday)):
+					$day_isactive = true;
+				elseif(strtolower($_tday) == 'everyday'):
+					$day_isactive = true;
+				endif;
+			endforeach;
+		endif;
+        
+        
+        if($is_active == true && $day_isactive == true && $is_Ctime == true && $dateis_active == true && $is_group == true):
+            
+			if(!empty($rule_price)):
+				//Search Unit Price from catalogrule_product_price
+				$selectUnitPrice 	=	$connection->select()->from('rra_pricelistproduct', array('*'))
+				->where('pricelist_id=?',$pricelist_id)
+				->where('product_sku=?',$_product->getSku());
+
+                
+				$UnitpriceRW 		 =	$connection->fetchRow($selectUnitPrice);
+				$unit_price 		 =	$UnitpriceRW ['unit_price'];
+				$discount_in_amount  =	$UnitpriceRW ['discount_in_amount'];
+				$discount_in_percent =	$UnitpriceRW ['discount_in_percent'];
+				$from_date 			 =	$UnitpriceRW ['from_date'];
+				$to_date 			 =	$UnitpriceRW ['to_date'];
+				$from_date			= strtotime($UnitpriceRW['from_date']);
+				$from_date 			= date('Y-m-d',$from_date);
+				$to_date			= strtotime($UnitpriceRW['to_date']);
+				$to_date 			= date('Y-m-d',$to_date);
+				$TodayDate			= date('Y-m-d');
+                
+				if(strtotime($TodayDate)  >= strtotime($from_date) && strtotime($TodayDate)  <= strtotime($to_date)):
+					if(!empty($unit_price) || $unit_price > 0):
+						$final_amount		 = $unit_price;
+						if($discount_in_percent > 0 || !empty($discount_in_percent) ):
+							$discount_percent 	= $unit_price * ($discount_in_percent /100);
+							$final_amount 		= $unit_price - $discount_percent;
+						endif;
+						if($discount_in_amount > 0 || !empty($discount_in_amount) ):
+							$final_amount 		= $unit_price - $discount_in_amount;
+						endif;
+						$_finalPrice 	= $_catalogHelper->getTaxPrice($_product, $final_amount);
+					else:
+						$_finalPrice 	= $_catalogHelper->getTaxPrice($_product, $rule_price);
+					endif;
+				endif;
+				if($_finalPrice <=0):
+					$_finalPrice =$_regularPrice ;
+					$_finalPrice =$_price;
+				else:
+					$_regularPrice 	= $_finalPrice;
+					$_price 		= $_finalPrice;
+				endif;
+			endif;
+		else:
+			if($_finalPrice < $_price):
+				$_finalPrice = $_price;
+			endif;
+		endif;
+    ?>
+    <?php $_finalPriceInclTax = $_catalogHelper->getTaxPrice($_product, $_product->getFinalPrice(), true) ?>
+    <?php $_weeeDisplayType = $_weeeHelper->getPriceDisplayType(); ?>
+    <div class="price-box">
+        <?php if ($_finalPrice >= $_price): ?>
+            <?php if ($_taxHelper->displayBothPrices()): ?>
+                <?php if ($_weeeTaxAmount && $_weeeHelper->typeOfDisplay($_product, 0)): // including ?>
+                    <span class="price-excluding-tax">
+                        <span class="label"><?php echo __('Excl. Tax:') ?></span>
+                        <span class="price" id="price-excluding-tax-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                            <?php echo $_priceHelper->currency($_price + $_weeeTaxAmount, true, false) ?>
+                        </span>
+                    </span>
+                    <span class="price-including-tax">
+                        <span class="label"><?php echo __('Incl. Tax:') ?></span>
+                        <span class="price" id="price-including-tax-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                            <?php echo $_priceHelper->currency($_finalPriceInclTax + $_weeeTaxAmountInclTaxes, true, false) ?>
+                        </span>
+                    </span>
+                <?php elseif ($_weeeTaxAmount && $_weeeHelper->typeOfDisplay($_product, 1)): // incl. + weee ?>
+                    <span class="price-excluding-tax">
+                        <span class="label"><?php echo __('Excl. Tax:') ?></span>
+                        <span class="price" id="price-excluding-tax-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                            <?php echo $_priceHelper->currency($_price + $_weeeTaxAmount, true, false) ?>
+                        </span>
+                    </span>
+                    <span class="weee">(
+                    <?php foreach ($_weeeTaxAttributes as $_weeeTaxAttribute): ?>
+                        <?php echo $_weeeSeparator; ?>
+                        <?php echo $_weeeTaxAttribute->getName(); ?>: <?php echo $_priceHelper->currency($_weeeTaxAttribute->getAmount(), true, true); ?>
+                        <?php $_weeeSeparator = ' + '; ?>
+                        <?php endforeach; ?>
+                    )</span>
+                    <span class="price-including-tax">
+                        <span class="label"><?php echo __('Incl. Tax:') ?></span>
+                        <span class="price" id="price-including-tax-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                            <?php echo $_priceHelper->currency($_finalPriceInclTax + $_weeeTaxAmountInclTaxes, true, false) ?>
+                        </span>
+                    </span>
+                <?php elseif ($_weeeTaxAmount && $_weeeHelper->typeOfDisplay($_product, 4)): // incl. + weee ?>
+                    <span class="price-excluding-tax">
+                        <span class="label"><?php echo __('Excl. Tax:') ?></span>
+                        <span class="price" id="price-excluding-tax-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                            <?php echo $_priceHelper->currency($_price + $_weeeTaxAmount, true, false) ?>
+                        </span>
+                    </span>
+                    <span class="price-including-tax">
+                        <span class="label"><?php echo __('Incl. Tax:') ?></span>
+                        <span class="price" id="price-including-tax-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                            <?php echo $_priceHelper->currency($_finalPriceInclTax + $_weeeTaxAmountInclTaxes, true, false) ?>
+                        </span>
+                        <span class="weee">(
+                            <?php foreach ($_weeeTaxAttributes as $_weeeTaxAttribute): ?>
+                                <?php echo $_weeeSeparator; ?>
+                                <?php echo $_weeeTaxAttribute->getName(); ?>: <?php echo $_priceHelper->currency($_weeeTaxAttribute->getAmount() + $_weeeTaxAttribute->getTaxAmount(), true, true); ?>
+                                <?php $_weeeSeparator = ' + '; ?>
+                            <?php endforeach; ?>
+                            )</span>
+                    </span>
+                <?php elseif ($_weeeTaxAmount && $_weeeHelper->typeOfDisplay($_product, 2)): // excl. + weee + final ?>
+                    <span class="price-excluding-tax">
+                        <span class="label"><?php echo __('Excl. Tax:') ?></span>
+                        <span class="price" id="price-excluding-tax-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                            <?php echo $_priceHelper->currency($_price, true, false) ?>
+                        </span>
+                    </span>
+                    <?php foreach ($_weeeTaxAttributes as $_weeeTaxAttribute): ?>
+                        <span class="weee">
+                            <?php echo $_weeeTaxAttribute->getName(); ?>: <?php echo $_priceHelper->currency($_weeeTaxAttribute->getAmount(), true, true); ?>
+                        </span>
+                    <?php endforeach; ?>
+                    <span class="price-including-tax">
+                        <span class="label"><?php echo __('Incl. Tax:') ?></span>
+                        <span class="price" id="price-including-tax-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                            <?php echo $_priceHelper->currency($_finalPriceInclTax + $_weeeTaxAmountInclTaxes, true, false) ?>
+                        </span>
+                    </span>
+                <?php else: ?>
+                    <span class="price-excluding-tax">
+                        <span class="label"><?php echo __('Excl. Tax:') ?></span>
+                        <span class="price" id="price-excluding-tax-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                            <?php if ($_finalPrice == $_price): ?>
+                                <?php echo $_priceHelper->currency($_price, true, false) ?>
+                            <?php else: ?>
+                                <?php echo $_priceHelper->currency($_finalPrice, true, false) ?>
+                            <?php endif; ?>
+                        </span>
+                    </span>
+                    <span class="price-including-tax">
+                        <span class="label"><?php echo __('Incl. Tax:') ?></span>
+                        <span class="price" id="price-including-tax-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                            <?php echo $_priceHelper->currency($_finalPriceInclTax, true, false) ?>
+                        </span>
+                    </span>
+                <?php endif; ?>
+            <?php else: ?>
+                <?php if ($_weeeTaxAmount && $_weeeHelper->typeOfDisplay($_product, 0)): // including ?>
+                    <span class="regular-price" id="product-price-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                        <?php echo $_priceHelper->currency($_price + $_weeeTaxAmount, true, true) ?>
+                    </span>
+                <?php elseif ($_weeeTaxAmount && $_weeeHelper->typeOfDisplay($_product, 1)): // incl. + weee ?>
+                    <span class="regular-price" id="product-price-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                        <?php echo $_priceHelper->currency($_price + $_weeeTaxAmount, true, true) ?>
+                    </span>
+                    <span class="weee">(
+                        <?php foreach ($_weeeTaxAttributes as $_weeeTaxAttribute): ?>
+                            <?php echo $_weeeSeparator; ?>
+                            <?php echo $_weeeTaxAttribute->getName(); ?>: <?php echo $_priceHelper->currency($_weeeTaxAttribute->getAmount(), true, true); ?>
+                            <?php $_weeeSeparator = ' + '; ?>
+                        <?php endforeach; ?>
+                        )</span>
+                <?php elseif ($_weeeTaxAmount && $_weeeHelper->typeOfDisplay($_product, 4)): // incl. + weee ?>
+                    <span class="regular-price" id="product-price-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                        <?php echo $_priceHelper->currency($_price + $_weeeTaxAmount, true, true) ?>
+                    </span>
+                    <span class="weee">(
+                        <?php foreach ($_weeeTaxAttributes as $_weeeTaxAttribute): ?>
+                            <?php echo $_weeeSeparator; ?>
+                            <?php echo $_weeeTaxAttribute->getName(); ?>: <?php echo $_priceHelper->currency($_weeeTaxAttribute->getAmount() + $_weeeTaxAttribute->getTaxAmount(), true, true); ?>
+                            <?php $_weeeSeparator = ' + '; ?>
+                        <?php endforeach; ?>
+                        )</span>
+                <?php elseif ($_weeeTaxAmount && $_weeeHelper->typeOfDisplay($_product, 2)): // excl. + weee + final ?>
+                    <span class="regular-price"><?php echo $_priceHelper->currency($_price,true,true) ?></span><br />
+                    <?php foreach ($_weeeTaxAttributes as $_weeeTaxAttribute): ?>
+                        <span class="weee">
+                            <?php echo $_weeeTaxAttribute->getName(); ?>: <?php echo $_priceHelper->currency($_weeeTaxAttribute->getAmount(), true, true); ?>
+                        </span>
+                    <?php endforeach; ?>
+                    <span class="regular-price" id="product-price-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                        <?php echo $_priceHelper->currency($_price + $_weeeTaxAmount, true, true) ?>
+                    </span>
+                <?php else: ?>
+                    <span class="regular-price" id="product-price-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                        <?php if ($_finalPrice == $_price): ?>
+                            <?php echo $_priceHelper->currency($_price, true, true) ?>
+                        <?php else: ?>
+                            <?php echo $_priceHelper->currency($_finalPrice, true, true) ?>
+                        <?php endif; ?>
+                    </span>
+                <?php endif; ?>
+            <?php endif; ?>
+        <?php else: /* if ($_finalPrice == $_price): */ ?>
+            <?php $_originalWeeeTaxAmount = $_weeeHelper->getOriginalAmount($_product); ?>
+
+            <?php if ($_weeeTaxAmount && $_weeeHelper->typeOfDisplay($_product, 0)): // including ?>
+                <p class="old-price">
+                    <span class="price-label"><?php echo __('Regular Price:') ?></span>
+                    <span class="price" id="old-price-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                        <?php echo $_priceHelper->currency($_regularPrice + $_originalWeeeTaxAmount, true, false) ?>
+                    </span>
+                </p>
+
+                <?php if ($_taxHelper->displayBothPrices()): ?>
+                    <p class="special-price">
+                        <span class="price-label"><?php echo $_specialPriceStoreLabel ?></span>
+                        <span class="price-excluding-tax">
+                            <span class="label"><?php echo __('Excl. Tax:') ?></span>
+                            <span class="price" id="price-excluding-tax-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                                <?php echo $_priceHelper->currency($_finalPrice + $_weeeTaxAmount, true, false) ?>
+                            </span>
+                        </span>
+                    <span class="price-including-tax">
+                        <span class="label"><?php echo __('Incl. Tax:') ?></span>
+                        <span class="price" id="price-including-tax-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                            <?php echo $_priceHelper->currency($_finalPriceInclTax + $_weeeTaxAmountInclTaxes, true, false) ?>
+                        </span>
+                    </span>
+                    </p>
+                <?php else: ?>
+                <p class="special-price">
+                    <span class="price-label"><?php echo $_specialPriceStoreLabel ?></span>
+                    <span class="price" id="product-price-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                        <?php echo $_priceHelper->currency($_finalPrice + $_weeeTaxAmountInclTaxes, true, false) ?>
+                    </span>
+                </p>
+                <?php endif; ?>
+
+            <?php elseif ($_weeeTaxAmount && $_weeeHelper->typeOfDisplay($_product, 1)): // incl. + weee ?>
+                <p class="old-price">
+                    <span class="price-label"><?php echo __('Regular Price:') ?></span>
+                    <span class="price" id="old-price-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                        <?php echo $_priceHelper->currency($_regularPrice + $_originalWeeeTaxAmount, true, false) ?>
+                    </span>
+                </p>
+
+            <p class="special-price">
+                <?php if ($_taxHelper->displayBothPrices()): ?>
+                    <span class="price-label"><?php echo $_specialPriceStoreLabel ?></span>
+                    <span class="price-excluding-tax">
+                        <span class="label"><?php echo __('Excl. Tax:') ?></span>
+                        <span class="price" id="price-excluding-tax-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                          <?php echo $_priceHelper->currency($_finalPrice + $_weeeTaxAmount, true, false) ?>
+                        </span>
+                    </span>
+                    <span class="weee">(
+                        <?php foreach ($_weeeTaxAttributes as $_weeeTaxAttribute): ?>
+                            <?php echo $_weeeSeparator; ?>
+                            <?php echo $_weeeTaxAttribute->getName(); ?>
+                            : <?php echo $_priceHelper->currency($_weeeTaxAttribute->getAmount(), true, true); ?>
+                            <?php $_weeeSeparator = ' + '; ?>
+                            <?php endforeach; ?>
+                        )</span>
+                    <span class="price-including-tax">
+                    <span class="label"><?php echo __('Incl. Tax:') ?></span>
+                    <span class="price" id="price-including-tax-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                        <?php echo $_priceHelper->currency($_finalPriceInclTax + $_weeeTaxAmountInclTaxes, true, false) ?>
+                    </span>
+                    </span>
+                <?php else: ?>
+                    <p class="special-price">
+                    <span class="price-label"><?php echo __('Special Price:') ?></span>
+                    <span class="price" id="product-price-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                        <?php echo $_priceHelper->currency($_finalPrice + $_weeeTaxAmountInclTaxes, true, false) ?>
+                    </span>
+                    </p>
+                    <span class="weee">(
+                    <?php foreach ($_weeeTaxAttributes as $_weeeTaxAttribute): ?>
+                        <?php echo $_weeeSeparator; ?>
+                        <?php echo $_weeeTaxAttribute->getName(); ?>
+                        : <?php echo $_priceHelper->currency($_weeeTaxAttribute->getAmount(), true, true); ?>
+                        <?php $_weeeSeparator = ' + '; ?>
+                        <?php endforeach; ?>
+                    )</span>
+                <?php endif; ?>
+            </p>
+            <?php elseif ($_weeeTaxAmount && $_weeeHelper->typeOfDisplay($_product, 4)): // incl. + weee ?>
+                <p class="old-price">
+                    <span class="price-label"><?php echo __('Regular Price:') ?></span>
+                    <span class="price" id="old-price-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                        <?php echo $_priceHelper->currency($_regularPrice + $_originalWeeeTaxAmount, true, false) ?>
+                    </span>
+                </p>
+
+                <p class="special-price">
+                    <span class="price-label"><?php echo $_specialPriceStoreLabel ?></span>
+                    <span class="price-excluding-tax">
+                        <span class="label"><?php echo __('Excl. Tax:') ?></span>
+                        <span class="price" id="price-excluding-tax-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                            <?php echo $_priceHelper->currency($_finalPrice + $_weeeTaxAmount, true, false) ?>
+                        </span>
+                    </span>
+                <span class="weee">(
+                    <?php foreach ($_weeeTaxAttributes as $_weeeTaxAttribute): ?>
+                        <?php echo $_weeeSeparator; ?>
+                        <?php echo $_weeeTaxAttribute->getName(); ?>: <?php echo $_priceHelper->currency($_weeeTaxAttribute->getAmount() + $_weeeTaxAttribute->getTaxAmount(), true, true); ?>
+                        <?php $_weeeSeparator = ' + '; ?>
+                    <?php endforeach; ?>
+                    )</span>
+                <span class="price-including-tax">
+                    <span class="label"><?php echo __('Incl. Tax:') ?></span>
+                    <span class="price" id="price-including-tax-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                        <?php echo $_priceHelper->currency($_finalPriceInclTax + $_weeeTaxAmountInclTaxes, true, false) ?>
+                    </span>
+                </span>
+                </p>
+            <?php elseif ($_weeeTaxAmount && $_weeeHelper->typeOfDisplay($_product, 2)): // excl. + weee + final ?>
+                <p class="old-price">
+                    <span class="price-label"><?php echo __('Regular Price:') ?></span>
+                    <span class="price" id="old-price-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                        <?php echo $_priceHelper->currency($_regularPrice, true, false) ?>
+                    </span>
+                </p>
+
+                <p class="special-price">
+                    <span class="price-label"><?php echo $_specialPriceStoreLabel ?></span>
+                    <span class="price-excluding-tax">
+                        <span class="label"><?php echo __('Excl. Tax:') ?></span>
+                        <span class="price" id="price-excluding-tax-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                            <?php echo $_priceHelper->currency($_finalPrice, true, false) ?>
+                        </span>
+                    </span>
+                    <?php foreach ($_weeeTaxAttributes as $_weeeTaxAttribute): ?>
+                        <span class="weee">
+                            <?php echo $_weeeTaxAttribute->getName(); ?>: <?php echo $_priceHelper->currency($_weeeTaxAttribute->getAmount(), true, true); ?>
+                        </span>
+                    <?php endforeach; ?>
+                    <span class="price-including-tax">
+                        <span class="label"><?php echo __('Incl. Tax:') ?></span>
+                        <span class="price" id="price-including-tax-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                            <?php echo $_priceHelper->currency($_finalPriceInclTax + $_weeeTaxAmountInclTaxes, true, false) ?>
+                        </span>
+                    </span>
+                </p>
+            <?php else: // excl. ?>
+                <p class="old-price">
+                    <span class="price-label"><?php echo __('Regular Price:') ?></span>
+                    <span class="price" id="old-price-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                        <?php echo $_priceHelper->currency($_regularPrice, true, false) ?>
+                    </span>
+                </p>
+
+                <?php if ($_taxHelper->displayBothPrices()): ?>
+                    <p class="special-price">
+                        <span class="price-label"><?php echo $_specialPriceStoreLabel ?></span>
+                        <span class="price-excluding-tax">
+                            <span class="label"><?php echo __('Excl. Tax:') ?></span>
+                            <span class="price" id="price-excluding-tax-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                                <?php echo $_priceHelper->currency($_finalPrice, true, false) ?>
+                            </span>
+                        </span>
+                        <span class="price-including-tax">
+                            <span class="label"><?php echo __('Incl. Tax:') ?></span>
+                            <span class="price" id="price-including-tax-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                                <?php echo $_priceHelper->currency($_finalPriceInclTax, true, false) ?>
+                            </span>
+                        </span>
+                    </p>
+                <?php else: ?>
+                <p class="special-price">
+                    <span class="price-label"><?php echo $_specialPriceStoreLabel ?></span>
+                    <span class="price" id="product-price-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                        <?php echo $_priceHelper->currency($_finalPrice, true, false) ?>
+                    </span>
+                </p>
+                <?php endif; ?>
+            <?php endif; ?>
+
+        <?php endif; /* if ($_finalPrice == $_price): */ ?>
+
+        <?php if ($block->getDisplayMinimalPrice() && $_minimalPriceValue && $_minimalPriceValue < $_product->getFinalPrice()): ?>
+
+            <?php $_minimalPriceDisplayValue = $_minimalPrice; ?>
+            <?php if ($_weeeTaxAmount && $_weeeHelper->typeOfDisplay($_product, array(0, 1, 4))): ?>
+                <?php $_minimalPriceDisplayValue = $_minimalPrice + $_weeeTaxAmount; ?>
+            <?php endif; ?>
+
+            <?php if ($block->getUseLinkForAsLowAs()):?>
+                <a href="<?php echo $_product->getProductUrl(); ?>" class="minimal-price-link">
+            <?php else:?>
+            <span class="minimal-price-link">
+            <?php endif?>
+                <span class="label"><?php echo __('As low as:') ?></span>
+                <span class="price" id="product-minimal-price-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                    <?php echo $_priceHelper->currency($_minimalPriceDisplayValue, true, false) ?>
+                </span>
+            <?php if ($block->getUseLinkForAsLowAs()):?>
+            </a>
+            <?php else:?>
+            </span>
+                <?php endif?>
+        <?php endif; /* if ($this->getDisplayMinimalPrice() && $_minimalPrice && $_minimalPrice < $_finalPrice): */ ?>
+    </div>
+<?php else: /* if (!$_product->isGrouped()): */ ?>
+    <?php
+        $showMinPrice = $block->getDisplayMinimalPrice();
+        if ($showMinPrice && $_minimalPriceValue) {
+            $_exclTax = $_catalogHelper->getTaxPrice($_product, $_minimalPriceValue);
+            $_inclTax = $_catalogHelper->getTaxPrice($_product, $_minimalPriceValue, true);
+            $price    = $showMinPrice ? $_minimalPriceValue : 0;
+        } else {
+            $price    = $_product->getFinalPrice();
+            $_exclTax = $_catalogHelper->getTaxPrice($_product, $price);
+            $_inclTax = $_catalogHelper->getTaxPrice($_product, $price, true);
+        }
+    ?>
+    <?php if ($price): ?>
+        <div class="price-box">
+            <p<?php if ($showMinPrice): ?> class="minimal-price"<?php endif ?>>
+                <?php if ($showMinPrice): ?>
+                <span class="price-label"><?php echo __('Starting at:') ?></span>
+                <?php endif ?>
+                <?php if ($_taxHelper->displayBothPrices()): ?>
+                    <span class="price-excluding-tax">
+                        <span class="label"><?php echo __('Excl. Tax:') ?></span>
+                        <span class="price" id="price-excluding-tax-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                            <?php echo $_priceHelper->currency($_exclTax, true, false) ?>
+                        </span>
+                    </span>
+                    <span class="price-including-tax">
+                        <span class="label"><?php echo __('Incl. Tax:') ?></span>
+                        <span class="price" id="price-including-tax-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                            <?php echo $_priceHelper->currency($_inclTax, true, false) ?>
+                        </span>
+                    </span>
+                <?php else: ?>
+                    <?php
+                    $_showPrice = $_inclTax;
+                    if (!$_taxHelper->displayPriceIncludingTax()) {
+                        $_showPrice = $_exclTax;
+                    }
+                    ?>
+                <span class="price" id="product-minimal-price-<?php echo $_id ?><?php echo $block->getIdSuffix() ?>">
+                    <?php echo $_priceHelper->currency($_showPrice, true, false) ?>
+                </span>
+                <?php endif; ?>
+            </p>
+        </div>
+    <?php endif; /* if ($this->getDisplayMinimalPrice() && $_minimalPrice): */ ?>
+<?php endif;?>

@@ -1,0 +1,92 @@
+
+<?php echo $this->getLayout()->createBlock('Unilab\Prescription\Block\Adminhtml\Order\View\Tab\Prescriptions')->toHtml(); ?>
+
+<div id="prescription-modal" style="display:none">
+
+</div>
+
+<script>
+    require(
+        [
+            'jquery',
+            'Magento_Ui/js/modal/modal'
+        ],
+        function(
+            $,
+            modal
+        ) {
+            var options = {
+                type: 'slide',
+                responsive: true,
+                innerScroll: true,
+                title: '<h2 id="modal-title">TITLE</h2>',
+                buttons: [{
+                    text: $.mage.__('Cancel'),
+                    class: "",
+                    click: function () {
+                        this.closeModal();
+                    }
+                }, {
+                    text: $.mage.__('Save Prescription'),
+                    class: "primary save-prescription",
+                    click: function () {
+
+                    }
+                }]
+            };
+
+            var popup = modal(options, $('#prescription-modal'));
+
+            $(".open-prescription-modal").on('click',function(){ 
+
+                $("#prescription-modal").modal("openModal");
+
+                var id = $(this).data('id');
+                
+                $('#modal-title').text('Prescription "' + id + '"');
+                
+
+                $.ajax({
+                    url: '<?=$this->getBaseUrl().'admin/prescription/prescription/edit/';?>' + id +'/',
+                    type: 'post',
+                    data: {form_key: window.FORM_KEY, id: id},
+                    showLoader: true
+                }).then(data => {
+                    $('#prescription-modal').html('<?= $block->getHeaderText(); ?>' + data);
+                });
+                
+            });
+
+            $('.save-prescription').on('click', function() {
+                
+                var form = $('#edit_form');
+                        
+                var data = form.serialize();
+
+                $.ajax({
+                    url: form.attr('action'),
+                    type: 'post',
+                    showLoader: true,
+                    data: data
+                }).then(response => {
+
+                    if($('#messages').length < 1) 
+                        
+                        $('.modal-header').append('<div id="messages"><div class="messages"></div></div>');
+
+                    $('#messages .messages').html('<p class="message" data-message></p>');
+                    
+                    var message = $('[data-message]');
+
+                    message.text(response.message);
+
+                    message.addClass(response.status);
+                });
+            });
+        }
+    );
+
+ 
+    
+ 
+</script>

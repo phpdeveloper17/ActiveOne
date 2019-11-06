@@ -1,0 +1,557 @@
+<?php
+#Custom Footer
+$path   = $block->getUrl().'bot/';
+$botData = json_decode(file_get_contents($path."bot_controller.php?query=getBotData"), true);
+
+// $skinurl = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_SKIN);
+
+?>
+<link rel="stylesheet" type="text/css" href="http://medexpress.ecomqa.com/skin/frontend/default/unilab2/css/bot.css">
+<input type="hidden" name="filepath" class="filepath" value="http://localhost/activeone/">
+<div class="col-md-3 bot-chat-container2">
+    <div class="col-md-12 chat-header">
+        <img src="" class="bot-image">
+        <label>Ask <?php echo $botData['bots']['name']; ?> | Your Virtual Assistant</label>
+        
+    </div>
+    <div class="col-md-12 chat-body">
+        <div class="col-md-12 chat-box-content">
+            <div class="col-md-12 bot-chat-content-body">
+                <div class="col-md-12 bot-chat-div">
+                    <div class="col-md-10 bot-chat-container">
+                        <p class="bot-chat-name"><?php echo $botData['bots']['name']; ?></p>
+                        <p class="bot-chat-message"><?php echo $botData['initialMessages'][0]['message']; ?></p>
+                        <div class="bot-pointer pointerLeft"></div>
+                        <div class="bot-pointerBorder pointerBorderLeft"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 chat-box">
+            <textarea class="form-control message-chat" rows="2" placeholder="Type your message here..." attr-status="1" attr-isMenuDriven='0' attr-yesno="0" attr-numonly="1"></textarea>
+            <button class="submit-message"><img src="http://medexpress.ecomqa.com/skin/frontend/default/unilab2/images/send-button.png"></button>
+        </div>
+    </div>
+    
+</div>
+<div class="" style="display: none;">
+    <?php
+
+        foreach ($botData['initialMessages'] as $key => $value) {
+            if($key!=0){
+    ?>
+    <div class="bot-chat-div-<?=$key?>">
+            <?php echo $val = $value['message']; ?>
+    </div>
+        <?php           
+            }
+        }
+    ?>
+    <div class="hid_options">
+        
+    </div>
+    <div class="col-md-3">
+        <input type="hidden" name="hid-initialMessages-count" class="hid-initialMessages-count" value="<?php echo count($botData['initialMessages']);?>" attr-active="0">
+        <input type="hidden" name="guest-number" class="guest-number">
+        <input type="hidden" name="guest-name" class="guest-name">
+        <input type="hidden" name="guest-id" class="guest-id">
+    </div>
+</div>
+<div class="footer-highlight">
+	<div class="footer-wrapper">
+		<div class="row flex">
+			<div class="footer-featured col-md-3 col-sm-3">
+				<h3>Customer Service</h3>
+					<ul>
+						<li><a href="contact-us">Contact Us</a></li>
+						<li><a href="faqs">FAQs</a></li>
+						<li><a href="delivery-policy">Delivery Policy</a></li>
+						<li><a href="return-policy">Return Policy</a></li>
+					</ul>
+			</div>
+	
+			<div class="footer-featured col-md-3 col-sm-3">
+				<h3>About Us</h3>
+				<ul>
+					<li><a href="aboutus">ActiveOneRx</a></li>
+					<li><a href="terms-and-condition">Terms and Condition</a></li>
+					<li><a href="privacy-policy">Privacy Policy</a></li>
+				</ul>
+			</div>
+	
+			<div class="footer-featured col-md-3 col-sm-3 fl-right">
+				<h3>Secured Payment Methods</h3>
+				<ul>
+					<li><img src="<?php echo $this->getViewFileUrl('images/icon-securepay.png'); ?>"></li>
+					<li><img style="width:141px;height:41px" src="<?php echo $this->getViewFileUrl('images/logo_dragonpay.png'); ?>"></li>
+				</ul>
+			</div>
+	
+			<div class="footer-featured col-md-3 col-sm-3">
+				<h3>Shipping Method</h3>
+				<ul>
+					<li>
+						<a href="http://new.xend.com.ph/" target="_blank">
+							<img src="<?php echo $this->getViewFileUrl('images/icon-xend.png'); ?>"/>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<!-- <div class="row">
+			
+		</div> -->
+	</div>
+</div>
+<?php echo $this->getChildHtml("copyright") ?>
+
+<script type="text/javascript">
+require(
+        [
+            'jquery',
+        ],
+        function(
+            jQuery
+        ) {
+			jQuery(document).ready(function(){
+
+			var filepath = jQuery('.filepath').val();
+
+				jQuery(document).on('click', '.chat-header', function() {
+					jQuery('.chat-body').slideToggle('slow');
+					jQuery('.message-chat').focus();
+				})
+
+				jQuery(document).on('keyup', '.message-chat', function() {
+					if(this.value.length<1) {
+						jQuery('.submit-message').css({'opacity':'.7','cursor':'default'});
+					}
+					else{
+						jQuery('.submit-message').css({'opacity':'1','cursor':'pointer'});
+					}
+				});
+
+				jQuery(document).on('click', '.submit-message', function(e) {
+					// Add validation
+						var if_empty = jQuery('.message-chat').val();
+
+						if(if_empty == "" || if_empty == "Type your message here..."){
+
+						}else{
+							jQuery('.message-chat').attr('attr-numonly',0);
+							submitMessage();
+						}
+				});
+
+				jQuery(document).on('click', '.bot-chat-download', function() {
+					var filename = jQuery(this).attr('attr-file');
+					location.href = filepath+'bot/bot_controller.php?query=download&file='+filename;
+				});
+
+
+				function submitMessage() {
+					var message = jQuery.trim(jQuery('.message-chat').val());
+					var bot_status = jQuery('.message-chat').attr('attr-status');
+					var is_menuDriven = jQuery('.message-chat').attr('attr-isMenuDriven');
+					jQuery('.message-chat').attr('disabled',true);
+					var yesno = jQuery('.message-chat').attr('attr-yesno');
+					if(yesno==1){
+						//append user message
+						var htm = '';
+						htm += '<div class="col-md-12 guest-chat-div">';
+							htm += '<div class="col-md-10 guest-chat-container">';
+								htm += '<p class="guest-chat-message">'+message+'</p>';
+								htm += '<div class="bot-pointer pointerRight"></div>';
+								htm += '<div class="bot-pointerBorder pointerBorderRight"></div>';
+							htm += '</div>';
+						htm += '</div>';
+						jQuery('.bot-chat-content-body').append(htm);
+						selectyesno(message);
+					}
+					else{
+						send_message(message,bot_status,is_menuDriven);
+					}
+				}
+
+
+
+			jQuery(document).on('keypress change paste', '.message-chat', function(e) {
+
+				var askmobilenum = jQuery('.message-chat').attr('attr-numonly');
+
+				if(askmobilenum == 1){
+
+						if (e.type == "paste") jQuery(this).change(); 
+						var newValue = jQuery(this).val();
+						var lastValue = '';
+						if (this.value.length == 0 && e.which == 48 ){
+						return false;
+						}
+						if(newValue.length >= 10){
+						if(e.keyCode == 8 || e.keyCode == 46 || e.keyCode == 37 || e.keyCode == 39){
+						} else {
+							e.preventDefault();
+						}
+						} 
+						var firstChar = newValue.substr(0, 1);
+						if (isNaN(newValue) === true || firstChar == 0) {
+						if(isNaN(newValue) === true) { 
+							this.value = this.value.replace(/[^0-9\.]/g,''); 
+						} else {
+							newValue = newValue.slice(1);
+							jQuery(this).val(newValue); 
+						}
+						} else { 
+						lastValue = newValue; 
+						}
+
+				}
+
+			});
+
+				jQuery(document).on('keypress', '.message-chat', function(e) {
+					if(e.which == 13) {
+
+						var if_empty = jQuery('.message-chat').val();
+
+						if(if_empty == "" || if_empty == "Type your message here..."){
+
+						}else{
+							jQuery('.message-chat').attr('attr-numonly',0);
+							submitMessage();
+						}
+						
+					}
+					
+				});
+
+
+
+				jQuery(document).on('click', '.click-yesno', function() {
+					jQuery('.message-chat').attr('disabled',true);
+					jQuery('.click-message-css').removeClass('click-message');
+					var message = jQuery(this).attr('attr-val');
+					var htm = '';
+					//append user message
+					htm += '<div class="col-md-12 guest-chat-div">';
+						htm += '<div class="col-md-10 guest-chat-container">';
+							htm += '<p class="guest-chat-message">'+message+'</p>';
+							htm += '<div class="bot-pointer pointerRight"></div>';
+							htm += '<div class="bot-pointerBorder pointerBorderRight"></div>';
+						htm += '</div>';
+					htm += '</div>';
+
+					jQuery('.bot-chat-content-body').append(htm);
+
+					selectyesno(message);
+				});
+
+				jQuery(document).on('click', '.click-message', function() {
+					var message = jQuery(this).attr('attr-id');
+					var bot_status = jQuery('.message-chat').attr('attr-status');
+					var is_menuDriven = 0;
+					send_message(message,bot_status,is_menuDriven);
+				
+				});
+
+				function selectyesno(message) {
+					var guest_name = jQuery('.guest-name').val();
+
+					if(message=='yes' || message=='YES'){
+						loadPrimary(guest_name,1);
+						
+					}
+					else{
+						loadPrimary(guest_name,0);
+					}
+				}
+
+				function send_message(message,bot_status,is_menuDriven){
+					
+					var htm = '';
+
+					jQuery('.click-message-css').removeClass('click-message');
+					if(message !=''){
+						message = message.replace(/[\r\n]/g, "<br />");
+						var filterWords = ["fool", "dumb", "couch potato"]; //CMS
+						var message3 = message;
+						for(var i=0; i<filterWords.length; i++){
+
+							// Create a regular expression and make it global
+							var pattern = new RegExp('\\b' + filterWords[i] + '\\b', 'g');
+
+							// Create a new string filled with '*'
+							var replacement = '*'.repeat(filterWords[i].length);
+
+							message3 = message3.replace(pattern, replacement);
+						}
+						var message2 = message.replace(/\*/g, '');
+
+
+						//append user message
+						htm += '<div class="col-md-12 guest-chat-div">';
+							htm += '<div class="col-md-10 guest-chat-container">';
+								htm += '<p class="guest-chat-message">'+message3+'</p>';
+								htm += '<div class="bot-pointer pointerRight"></div>';
+								htm += '<div class="bot-pointerBorder pointerBorderRight"></div>';
+							htm += '</div>';
+						htm += '</div>';
+
+						jQuery('.bot-chat-content-body').append(htm);
+
+						var height = jQuery('.bot-chat-content-body')[0].scrollHeight;
+						jQuery('.bot-chat-content-body').scrollTop(height);
+						setTimeout(function() {
+							if(message2==''){
+								appendAnswer(0,0,'Please check your words','','');
+							}else{
+								typing(message,bot_status,is_menuDriven);
+							}
+						
+						}, 1000);
+						jQuery('.message-chat').val('');
+						jQuery('.submit-message').css({'opacity':'.7','cursor':'default'});
+				
+					}
+				}
+
+				function typing(message,bot_status,is_menuDriven){
+					var htm = '';
+					//status = 1 - data from initial message
+					if(bot_status==1){
+						var hid_initial = parseInt(jQuery('.hid-initialMessages-count').val())-1;
+						var hid_initial_active = parseInt(jQuery('.hid-initialMessages-count').attr('attr-active')) + 1;
+
+						if(hid_initial_active<=hid_initial){
+
+							jQuery('.hid-initialMessages-count').val(hid_initial_active);
+							htm += jQuery('.bot-chat-div-'+hid_initial_active).html();
+
+							appendAnswer(0,0,htm,'','');
+							jQuery('.guest-number').val(message);
+						}
+						else{
+
+							var guest_name = message;
+							jQuery('.guest-name').val(guest_name);
+							var guest_number = jQuery('.guest-number').val();
+
+							//check if user already exist
+							//if no, save guest name and number - get user id
+
+							jQuery.ajax({
+								type: 'post',
+								url: filepath+"bot/bot_controller.php?query=checkSaveUser",
+								//home/checkSaveUser       
+								data: { guest_name:guest_name, guest_number:guest_number}
+							}).done(function(data){
+								var obj = JSON.parse(data);
+
+								jQuery('.guest-id').val(obj.user_id);
+								jQuery('.message-chat').attr('attr-status',2);                   
+
+								if(obj.active==1){
+									selectyesno('yes');
+									/*var answer = 'Thanks for that '+guest_name+', do you want to view our previous conversations?'
+									appendAnswer(2,0,answer,0);*/
+								}
+								else{
+									loadPrimary(guest_name,0);
+								}
+							});             
+						}
+					}
+					else{
+						//status = 2 - actual question and answer
+						byId = 0;
+						if(is_menuDriven==1){
+							txt = message.toLowerCase().replace(/\'/g, "");
+							message2 = jQuery('.hid_option-'+txt).attr('attr-valuename');
+							if(message2==undefined){
+								byId = 0;
+							}
+							else{
+								message = message2;
+							}                
+						}
+						
+						var user_id = jQuery('.guest-id').val();
+						jQuery.ajax({
+							type: 'post',
+							url: filepath+"bot/bot_controller.php?query=getAnswer",
+							//getAnswer       
+							data: { message: message, byId : byId, is_primary_message : 0, user_id: user_id }
+						}).done(function(data){
+							var obj = JSON.parse(data);
+							appendAnswer(obj.is_menuDriven,obj.optionType,obj.answer,obj.option,obj);
+							jQuery('.message-chat').attr('attr-status',2);
+						});
+						
+					}
+				}
+
+
+				function loadPrimary(guest_name,isConversation){
+					//initial message complete - data from answer : primary message
+					jQuery.ajax({
+						type: 'post',
+						url: filepath+"bot/bot_controller.php?query=getAnswer",
+						//getAnswer      
+						data: { message: '', is_primary_message : 1 }
+					}).done(function(data){
+						var obj2 = JSON.parse(data);
+						var answer = 'Great, '+ guest_name+'. '+obj2.answer;
+						appendAnswer(obj2.is_menuDriven,obj2.optionType,answer,obj2.option,obj2);
+
+						if(isConversation==1){
+							var guest_id = jQuery('.guest-id').val();
+							jQuery.ajax({
+								type: 'post',
+								url: filepath+"bot/bot_controller.php?query=getConversation",      
+								data: { guest_id: guest_id, }
+							}).done(function(data){
+								var obj = JSON.parse(data);
+								appendConversation(obj);
+							});
+						}
+						
+					});
+				}
+
+				/**
+				===========================================================================================================================================
+				**/
+				function appendConversation(obj){
+					//if yes, get all conversation & get returning message
+					var htm = '';
+					jQuery.each(obj, function(x,y) {
+						if(y.is_guest==1){
+							htm += '<div class="col-md-12 guest-chat-div">';
+								htm += '<div class="col-md-10 guest-chat-container">';
+									htm += '<p class="guest-chat-message">'+y.message+'</p>';
+									htm += '<div class="bot-pointer pointerRight"></div>';
+									htm += '<div class="bot-pointerBorder pointerBorderRight"></div>';
+								htm += '</div>';
+							htm += '</div>';
+						}
+						else{
+							htm += '<div class="col-md-12 bot-chat-div">';
+								htm += '<div class="col-md-10 bot-chat-container">';
+									htm += '<p class="bot-chat-name">MIRA</p>';
+									htm += '<p class="bot-chat-message">'+y.message+'</p>';
+									htm += '<div class="bot-pointer pointerLeft"></div>';
+									htm += '<div class="bot-pointerBorder pointerBorderLeft"></div>';
+								htm += '</div>';
+							htm += '</div>';
+						}
+					});
+					setTimeout(function() {
+						jQuery('.bot-chat-content-body').append(htm);
+						var height = jQuery('.bot-chat-content-body')[0].scrollHeight;
+						jQuery('.bot-chat-content-body').scrollTop(height);
+						
+						if(obj.length>0){
+							jQuery('.hid_options').html('');
+							jQuery('.message-chat').attr('attr-ismenudriven',0);
+							jQuery('.click-message-css').removeClass('click-message');
+
+						}
+						jQuery('.click-yesno-css').removeClass('click-yesno');
+						jQuery('.message-chat').attr('attr-yesno',0);
+						jQuery('.message-chat').attr('disabled',false);
+						jQuery('.message-chat').val('').focus();
+					}, 1000);
+					
+				}
+
+
+				function appendAnswer(is_menuDriven,optionType,answer,option,obj){
+					jQuery('.message-chat').attr('attr-isMenuDriven',is_menuDriven);
+					jQuery('.hid_options').html('');
+					var htm = '';
+					htm += '<div class="col-md-12 bot-chat-div remove-this">';
+						htm += '<div class="col-md-10 bot-chat-container">';
+							htm += '<p class="bot-chat-name">MIRA</p>'; //bot name
+							htm += '<p class="bot-chat-message p-bot-typing">is typing a message...</p>';
+							htm += '<div class="bot-pointer pointerLeft"></div>';
+							htm += '<div class="bot-pointerBorder pointerBorderLeft"></div>';
+						htm += '</div>';
+					htm += '</div>';
+
+					jQuery('.bot-chat-content-body').append(htm);
+					var height = jQuery('.bot-chat-content-body')[0].scrollHeight;
+					jQuery('.bot-chat-content-body').scrollTop(height);
+
+					if(answer == null){
+						answer = "Sorry, Something went wrong. Please try another category."
+					}
+
+					setTimeout(function() {
+						jQuery('.remove-this').remove();
+						htm = '<div class="col-md-12 bot-chat-div">';
+							htm += '<div class="col-md-10 bot-chat-container">';
+								htm += '<p class="bot-chat-name">MIRA</p>'; //botname
+								htm += '<p class="bot-chat-message">'+answer+'</p>';
+								if(obj !=''){
+									if(obj.is_attachment==1){
+										attachment =  obj.attachment;
+										attachment2 = attachment.substring(0, attachment.lastIndexOf('.'));
+										htm += '<p class="bot-chat-download" attr-file="'+attachment+'" title="Download">'+attachment2+' <span class="glyphicon glyphicon-download-alt bot-chat-download" aria-hidden="true" attr-file="'+attachment+'" style="margin-left:10px;" title="Download"></span></p>';
+									}
+								}
+								if(is_menuDriven==1){
+									htm += '<p class="bot-chat-separator">- - - - - - - - - - - -</p>';
+									
+									var i = 65;
+									var aa = 1;
+									var htm2 = '';
+
+									jQuery.each(option, function(x,y) {
+										if(optionType==1){
+											option = String.fromCharCode(i);
+											i++;
+										}
+										else{
+											option = aa;
+											aa++;
+										}
+
+										htm2 += '<input type="hidden" class="hid_option-'+option+'" value="'+y.id+'" attr-valuename ="'+y.question+'">';
+												
+										htm += '<p class="bot-chat-options"><a class="click-message click-message-css" attr-id="'+y.question+'">'+option+'. '+y.question+'</a></p>';
+									});
+									jQuery('.hid_options').html(htm2);   
+								}
+								if(is_menuDriven==2){
+									htm += '<p class="bot-chat-options"><a class="click-yesno click-yesno-css" attr-val="yes">YES</a></p>';
+									htm += '<p class="bot-chat-options"><a class="click-yesno click-yesno-css" attr-val="no">NO</a></p>';
+									jQuery('.message-chat').attr('attr-yesno',1);
+								}
+								else{
+									jQuery('.message-chat').attr('attr-yesno',0);
+								}
+
+								htm += '<div class="bot-pointer pointerLeft"></div>';
+								htm += '<div class="bot-pointerBorder pointerBorderLeft"></div>';
+							htm += '</div>';
+						htm += '</div>';
+						jQuery('.bot-chat-content-body').append(htm);
+						jQuery('.message-chat').attr('disabled',false);
+						jQuery('.message-chat').val('');
+						jQuery('.message-chat').focus();
+						var height = jQuery('.bot-chat-content-body')[0].scrollHeight;
+						jQuery('.bot-chat-content-body').scrollTop(height);
+					}, 1000);
+				}
+
+
+
+
+			});
+		}
+);
+
+
+
+</script>

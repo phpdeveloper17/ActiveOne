@@ -1,0 +1,97 @@
+
+<!-- ko if: getCode() == 'cashondelivery' -->
+<div class="payment-method" class="active" >
+    <div class="payment-method-content">
+        <!-- ko if: isAvailable() -->
+        <div class="payment-method-title field choice">
+        <input type="radio"
+               name="payment[method]"
+               class="payment-radio"
+               data-bind="attr: {'id': getCode()}, value: getCode(), checked: getCode()"/>
+        <label data-bind="attr: {'for': getCode()}">
+            <span data-bind="text: window.paymentMethods.cashondelivery"></span>
+        </label>
+        </div>
+        <div class="actions-toolbar">
+            <div class="primary">
+                <button class="action primary checkout btn-cashondelivery"
+                        style="display:none"
+                        type="submit"
+                        data-bind="
+                        click: placeOrder,
+                        attr: {title: $t('Place Order')},
+                        ">
+                        Place Order
+                </button>
+                <!-- /ko -->
+            </div>
+        </div>
+        <!-- /ko -->
+        <!-- ko ifnot: isAvailable() -->
+        <div class="payment-method-title field choice">
+            <span data-bind="text: 'Cash on Delivery not available'"></span>
+        </div>
+        <!-- /ko -->
+    </div>
+</div>
+<!-- /ko -->
+<!-- ko ifnot: getCode() == 'cashondelivery' -->
+<div class="payment-method" class="active" >
+    <div class="payment-method-content">
+        <div class="payment-method-title field choice">
+        <input type="radio"
+               name="payment[method]"
+               class="payment-radio"
+               data-bind="attr: {'id': getCode()}, value: getCode(), checked: getCode()"/>
+            <label data-bind="attr: {'for': getCode()}">
+                <!-- ko if: getCode() == 'dragonpay' -->
+                <span data-bind="text: window.paymentMethods.dragonpay"></span>
+                <!-- /ko -->
+                <!-- ko if: getCode() == 'healthcredits' -->
+                <span data-bind="text: 'Charge to Company'"></span>
+                <!-- /ko -->
+                <!-- ko if: getCode() == 'bpisecurepay' -->
+                <span data-bind="text: window.paymentMethods.bpisecurepay"></span>
+                <!-- /ko -->
+            </label>
+        </div>
+        <div class="actions-toolbar">
+            <div class="primary">
+                <!-- ko if: getCode() == 'dragonpay' -->
+                <button class="action primary checkout btn-dragonpay"
+                        type="submit"
+                        style="display:none"
+                        data-bind="
+                        click: continueTodragonpay,
+                        attr: {title: $t('Place Order')}
+                        ">
+                        Place Order
+                </button>
+                <!-- /ko -->
+                <!-- ko if: getCode() == 'healthcredits' -->
+                <button class="action primary checkout btn-healthcredits"
+                        style="display:none"
+                        type="submit"
+                        data-bind="
+                        click: continueTohealthcredits,
+                        attr: {title: $t('Place Order')}
+                        ">
+                        Place Order
+                </button>
+                <!-- /ko -->
+                <!-- ko if: getCode() == 'bpisecurepay' -->
+                <button class="action primary checkout btn-bpisecurepay"
+                        style="display:none"
+                        type="submit"
+                        data-bind="
+                        click: continueTobpisecurepay,
+                        attr: {title: $t('Place Order')}
+                        ">
+                        Place Order
+                </button>
+                <!-- /ko -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /ko -->

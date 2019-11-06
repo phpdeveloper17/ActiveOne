@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
+	<group id="default">
+		<job instance="Unilab\Benefits\Cron\Autorefreshperiod" method="execute" name="refresh_benefits">
+			<schedule>*/10 * * * *</schedule><!-- 10 minute-->
+		</job>
+	</group>
+</config>
+<!--
+* * * * * command to be executed
+| | | | |
+| | | | +_____ Day of week (0 - 7) (Sunday=0 or 7)
+| | | +_______ Month (1 - 12)
+| | +_________ Day of month (1 - 31)
+| +___________ Hour (0 - 23)
++_____________ Minute (0 - 59)
+-->

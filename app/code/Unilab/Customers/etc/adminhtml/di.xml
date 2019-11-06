@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\Customer\Controller\Adminhtml\Index\Validate" type="Unilab\Customers\Controller\Adminhtml\Customer\Validate" />
+
+    <preference for="Magento\Customer\Controller\Adminhtml\Index\Delete" type="Unilab\Customers\Controller\Adminhtml\Customer\Delete" />
+
+    <preference for="Magento\Customer\Controller\Adminhtml\Index\MassDelete" type="Unilab\Customers\Controller\Adminhtml\Customer\MassDelete" />
+
+   
+</config>

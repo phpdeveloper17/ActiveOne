@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+
+   <event name="checkout_cart_save_after"> 
+      <observer name="awafptc_checkout_cart_save_after" instance="Unilab\Afptc\Observer\CheckoutCartSaveAfterObserver" /> 
+   </event>
+   <event name="sales_quote_load_after"> 
+      <observer name="awafptc_sales_quote_load_after" instance="Unilab\Afptc\Observer\QuoteAfterLoadObserver" /> 
+   </event>
+   <event name="checkout_cart_product_add_after"> 
+      <observer name="awafptc_checkout_cart_product_add_after" instance="Unilab\Afptc\Observer\CheckoutCartProductAddAfterObserver" /> 
+   </event>
+   <event name="sales_quote_remove_item"> 
+      <observer name="awafptc_sales_quote_remove_item" instance="Unilab\Afptc\Observer\SalesQuoteRemoveAfterObserver" /> 
+   </event>
+   <event name="checkout_cart_update_items_after"> 
+      <observer name="awafptc_checkout_cart_update_items_after" instance="Unilab\Afptc\Observer\CheckoutCartUpdateItemsAfterObserver" /> 
+   </event>
+
+   <event name="catalog_product_get_final_price"> 
+      <observer name="aw_afptc_get_final_price" instance="Unilab\Afptc\Observer\GetFinalPriceObserver" /> 
+   </event>
+   <event name="catalog_product_type_configurable_price"> 
+      <observer name="aw_afptc_get_configurable_price" instance="Unilab\Afptc\Observer\GetConfigurablePriceObserver" /> 
+   </event>
+</config>

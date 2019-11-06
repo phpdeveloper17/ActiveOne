@@ -1,0 +1,636 @@
+
+<?php
+    $objectManager =  \Magento\Framework\App\ObjectManager::getInstance();
+    $checkoutQuote = $block->getCheckoutQuoteId();
+    $_wishlistHelper = $this->helper('Magento\Wishlist\Helper\Data');
+    $checkoutHelper = $objectManager->get('Magento\Checkout\Helper\Cart');
+    $_product = $block->getProduct();
+    $_wishlistSubmitUrl =  $_wishlistHelper->getAddParams($_product);//$_wishlistHelper->getAddUrl($_product);
+    $xQty = $_product->getUnilabMoq() * 1;
+    $unilabdc = $_product->getUnilabDc();
+    $dc_enabled = $block->isDcEnabled();
+    $productType = $_product->getTypeID();
+    $buttonTitle = __('Add to Cart');
+
+    $cart = $block->getQuoteCart();
+    $subTotal = $cart->getSubtotal();
+    $grandTotal = $cart->getGrandTotal();
+    $availablePcapAmount = $block->getAvailablePcapAmount();
+?>
+<style>
+.add-to-cart .qty {
+    margin-right: 5px;
+}
+.input-text.qty {
+    background: #F7F7F7;
+    border: none;
+    padding: 3px 3px 4px;
+    width: 30px;
+    border: 1px solid #444;
+    text-align: center;
+    /* *margin-right: 5px; */
+}
+/* Customize modal  */
+/* .modal-header {
+    padding: 10px 10px 10px 10px !important;
+    background-color: #353433;
+    color: #ffff;
+    border-top-right-radius: 0 !important;
+    border-top-left-radius: 0 !important;
+}
+
+.modal-title {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+    font-size: 16px !important;
+}
+
+.modal-content {
+    padding-top: 3rem !important;
+    padding: 10px 10px 10px 10px !important;
+}
+.modal-popup .modal-inner-wrap {
+	width: 35% !important;
+}
+
+.modal-footer, .action-close {
+    display: none;
+} */
+#dc_Modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    padding-top: 150px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+}
+
+h1#mod_title {
+    background-color: #000;
+}
+
+.modal-popup .modal-inner-wrap {
+    width: 35% !important;
+}
+
+/* .modal-content {
+    position: relative;
+    background-color: #fefefe;
+    margin: auto;
+	padding-top: 3rem !important;
+    padding: 10px 10px 10px 10px !important;
+    border: 1px solid #888;
+    width: 100%!important;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s;
+    border-radius: 5px !important;
+} */
+	
+.modal-content {
+        position: relative;
+        background-color: #fefefe;
+        margin: auto;
+        padding: 0;
+        border: 1px solid #888;
+        width: 30%;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+        -webkit-animation-name: animatetop;
+        -webkit-animation-duration: 0.4s;
+        animation-name: animatetop;
+        animation-duration: 0.4s;
+        border-radius: 5px !important;
+    }
+
+.modal-title {
+    margin-bottom: 0px;
+    margin-top: 0px;
+    color: white !important;
+    padding: 5px;
+    font-size: 16px;
+    font-weight: 700;
+    background: #000;
+    text-align: left;
+    text-transform: capitalize;
+    padding:10px;
+}
+
+/* .modal-title {
+	border-bottom: none !important;
+	padding-bottom: 0 !important;
+	font-size: 16px !important;
+	background-color:#353433!important;
+} */
+
+.modal-body {
+    padding: 5px;
+    margin-left: 10px;
+    text-align: center;
+    margin-top: 10px;
+    font-weight: 700;
+}
+.center{
+    text-align: center;
+}
+
+input.input-dc {
+    width: 40%;
+    padding: 5px;
+}
+
+.modal-footer {
+    padding: 25px;
+    margin-left: 10px;
+}
+
+.btn-apply, .btn-dont {
+    width: 25%;
+    background: #008081;
+    color: #f8fcfc;
+    border-radius: 5px;
+    font-weight: normal;
+    font-size: 12px;
+    margin-bottom: 3px;
+    display: inline-block;
+}
+
+.modal-header {
+    min-height: 16px;
+    padding: 0;
+    border-bottom: 1px solid #e5e5e5;
+    border-radius: 3px 3px 0 0;
+}
+/* .modal-header  {
+    padding: 10px 10px 10px 10px !important;
+    background-color: #353433;
+    color: #ffff;
+    border-top-right-radius: 0 !important;
+    border-top-left-radius: 0 !important;
+} */
+
+.modal-footer {
+    padding: 15px;
+    text-align: center;
+    border-top: 0;
+}
+.modal-body > center > p {
+    margin: 9px 0;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.modal-popup .modal-header{
+    min-height: 16px;
+    padding: 0;
+    border-bottom: none !important;
+    background: #353433;
+    border-radius:unset !important;
+}
+.modal-popup .modal-title{
+    margin-bottom: 0px;
+    margin-top: 0px;
+    color: white !important;
+    padding: 5px;
+    /* text-transform: uppercase; */
+    font-size: 16px;
+    font-weight: 400;
+    padding: 10px 10px !important;
+}
+.modal-popup .message{
+    padding: 5px;
+    text-align: center;
+    margin-top: 10px;
+    font-weight: 700 !important;
+    font-size: 13px !important;
+}
+</style>
+<?php if ($_product->isSaleable()): ?>
+    <div class="add-to-cart">
+        <?php if ($productType != "grouped"):?>
+            <label for="qty"><?=__('Qty:')?></label>
+            <!-- <p><?=$dc_enabled;?> <?=$unilabdc;?></p> -->
+            <!-- <div id="modal_wrapper">
+                <div class="mod_header">
+                    <h1 class="header_title">Invalid Quantity</h1>
+                </div>
+                <div class="mod_body">	
+                    <div class="login_form">
+                        <label class="message"></label>
+                    </div>		
+                            
+                </div>
+                
+                <div class="mod_footer">
+                    <div class="save_empinfo">
+                        <div class="form_group">
+                            <button type="button" title="Add to Cart" class="button btn-cart btnok" >
+                                <span><span>Ok</span></span>
+                            </button>					
+                        </div>
+                    </div>	
+                </div>	
+            </div>  -->
+            <div id="popup-content-warning" class="popup-content" style="display:none;">
+                <div class="col-md-12">
+                    <label for="" class="message"></label>
+                    <div class="form-group row" style="width: 50%;margin: 0 auto;">
+                    <button type="button" class="btn btn-block btn-ok btn-primary btnok">Ok</button>
+                    </div>
+                </div>
+            </div>
+
+      		<input type="hidden" value="<?= $checkoutQuote ?>" id="quote-id">
+             <input 
+                type="text" 
+                name="qty" 
+                id="qty" 
+                maxlength="12" 
+                value="<?php echo $xQty ?>" 
+                title="<?php echo __('Qty') ?>" 
+                class="input-text qty" 
+                <?php if ($unilabdc == 1 && $dc_enabled == 1): echo 'readonly'; endif; ?> /> 
+        <?php endif; ?>
+        
+        <?php if ($_product->getUnilabRx()): ?>
+            <?php if ($_product->getUnilabDc() && $dc_enabled == 1):?>
+                <button type="button" id="btnAddToCartDC" title="<?php echo $buttonTitle ?>" class="button btn-cart" isrx="0" returnId="<?php echo $_product->getId();?>" returnMoq="<?php echo $xQty;?>"><span><span>Add to Cart</span></span></button>
+                <button type="button" id="btnAddToCart" title="<?php echo $buttonTitle ?>" style="display:none;" returnMoq="<?php echo $xQty;?>"><span><span>Add to Cart</span></span></button>
+            <?php else: ?>
+               
+				<button type="button" id="btnAddToCart-<?= $_product->getId();?>" title="<?= $buttonTitle ?>" class="button btn-cart askPrescription" returnUrl="<?= $checkoutHelper->getAddUrl($_product) ?>" returnId="<?= $_product->getId();?>" returnMoq="<?= $xQty;?>" ><span><span><?= __('Add to Cart') ?></span></span></button>
+            <?php endif; ?>
+    <?php else: ?>
+            <?php if ($_product->getUnilabDc() && $dc_enabled == 1):?>
+				<button type="button" id="btnAddToCartDC" title="<?php echo $buttonTitle ?>" class="button btn-cart" isrx="1" returnId="<?php echo $_product->getId();?>" returnMoq="<?php echo $xQty;?>"><span><span>Add to Cart</span></span></button>
+				<button type="button" id="btnAddToCart" title="<?php echo $buttonTitle ?>" style="display:none;" returnMoq="<?php echo $xQty;?>"><span><span >Add to Cart</span></span></button>
+			<?php else:?>
+				<button type="button" id="btnAddToCart" title="<?php echo $buttonTitle ?>" returnMoq="<?php echo $xQty;?>" class="button btn-cart"><span><span><?php echo $buttonTitle ?></span></span></button>
+			<?php endif; ?>
+    <?php endif; ?>
+
+    <?php if ($_wishlistHelper->isAllow()):?>
+        <a href="#"
+            url="<?php echo $block->escapeHtml($_wishlistSubmitUrl) ?>"
+            class="button action towishlist">
+            <?php echo __('Add to Favorites') ?>
+        </a>
+    
+    <?php endif;?>
+    </div>
+    
+<?php endif;?>
+
+<script type="text/javascript">
+    require([
+        'jquery', 'Magento_Ui/js/modal/modal', 'fancybox', 'validation', 
+    ], function($, modal, fancybox, validation)
+    {
+        $(function(){
+            var wishlist_url = JSON.parse($(".towishlist").attr("url"));
+
+            $("#wishlist_form").attr('action',wishlist_url.action);
+            $("#wishlist_product").val(wishlist_url.data.product);
+            $("#wishlist_uenc").val(wishlist_url.data.uenc);
+
+        });
+        $(".btn-cart").on('click', function(e) {
+            $.fancybox.hideLoading();
+            var moq = "<?php echo $xQty; ?>";
+            var _product_price = $(".product-shop").find('.price-box .price').text();
+                _product_price = _product_price.substring(1, _product_price.length);
+                _product_price = parseFloat(_product_price)|| 0.00;
+                _product_price *= moq;
+              
+            var _grandTotalCart = "<?php echo $grandTotal?>";
+                _grandTotalCart = parseFloat(_grandTotalCart)||0.00;
+            
+            var _cartTotal = _product_price+_grandTotalCart;
+                _cartTotal = parseFloat(_cartTotal)||0.00;
+            var _availablePcapAmount = "<?php echo $availablePcapAmount?>";
+                _availablePcapAmount = parseFloat(_availablePcapAmount)||0.00;
+            
+                if(_cartTotal > _availablePcapAmount){
+                    $("#popup-content-warning").modal('openModal');
+                    $('#btnAddToCart').attr('disabled','true');
+                    $(".modal-custom").find(".modal-title").text("Error");
+                    $('.message').html('Insufficient purchase cap limit');
+                    e.stopImmediatePropagation();
+                }else{
+                    // $('#product_addtocart_form').submit();
+                }
+            $.fancybox.hideLoading();
+            return false;
+        });
+        $(".towishlist").on("click", function(e){
+            e.preventDefault();
+            $("#wishlist_form").submit();
+            
+        });
+
+        modal({
+			autoOpen: false,
+			responsive: true,
+			clickableOverlay: false,
+			modalClass: 'modal-custom',
+			title: 'Quantity Error',
+			keyEventHandlers: {
+				escapeKey: function (e) {
+					return false;
+				}
+			}
+		}, $("#popup-content-warning"));
+
+		$(".modal-footer, .action-close").css("display", "none");
+
+        //@btnok
+        $('.btnok').click(function (){
+            $("#popup-content-warning").modal('closeModal');
+            $('[name=qty]').focus();
+            $('[name=qty]').val("<?php echo $xQty ?>");
+            $('#btnAddToCart').removeAttr('disabled');
+    
+        });
+
+        $("#qty").on("change", function(e){
+
+            var moq = "<?php echo $xQty; ?>";
+            var qtyVal = $('input[name=qty]').val();
+
+            if (qtyVal % moq == 0)
+			{
+				$('#btnAddToCart').removeAttr('disabled');
+			}
+			else
+			{
+                $(".modal-custom").find(".modal-title").text("Quantity Error!");
+				$("#popup-content-warning").modal('openModal');
+				$('#btnAddToCart').attr('disabled','true');
+				$('.message').html('We’re sorry. We cannot process the quantity you requested. Kindly enter a quantity divisible by ' + moq + '. Thank you.');
+			}	
+        });
+            
+        $("#qty").on("keypress", function(e){
+            
+			if(event.which != 8 && isNaN(String.fromCharCode(event.which))){
+				e.preventDefault(); //stop character from entering input
+			}
+            var moq = "<?php echo $xQty; ?>";
+            var qtyVal = $('input[name=qty]').val();
+
+            if(e.keyCode == 13) {
+                e . preventDefault();
+                if (qtyVal % moq == 0)
+                {
+                    $('#btnAddToCart').removeAttr('disabled');
+                }
+                else
+                {
+                
+                    $("#popup-content-warning").modal('openModal');
+                    $('#btnAddToCart').attr('disabled','true');
+                    $('.message').html('We’re sorry. We cannot process the quantity you requested. Kindly enter a quantity divisible by ' + moq + '. Thank you.');
+                }
+            }	
+        });
+
+        //add to cart no rx
+        $('#btnAddToCart').on('click', function (){
+            $.fancybox.showLoading();
+            var url        = $(this).attr('returnUrl');
+            var product    = $(this).attr('returnId');
+            var moq        = $(this).attr('returnMoq');
+            var uenc = $(this).attr('returnUenc');
+
+            $('#product_addtocart_form').attr('action',url);
+            $('#product').val(product);
+            //$('#qty').val(moq);
+            $('#uenc').val(uenc);
+            $('#product_addtocart_form').submit();
+        });
+
+        //add to cart dc
+        $("#btnAddToCartDC").on("click", function(e){
+			$('#mod_title').css("background", "#000");
+            var isrx    = $('#addtocart-dc').attr('isrx');
+            var quoteid = $('#quote-id').val();
+            var product = $(this).attr('returnId');
+            $('#btn-apply').val(product);
+            $(".modal-footer").css("display", "block");
+            $.fancybox.showLoading();
+            $.ajax({
+                url : '<?= $block->getBaseUrl() . "unilabdc/digitalcoupon/checkitem"?>',
+                type:'post',
+                data: { 
+                    productid : product,
+                    quoteid: quoteid
+                },
+            }).done(function(response) {
+
+                if(response.result) {
+                    
+                    $("#dc_Modal").show();
+                    $.fancybox.hideLoading();
+                    $("#mod_title").text("Product is already added to Cart");
+                    $('#mod_title').css("background", "red");
+                    $("#mod_body").text("This item can be availed once per transaction");
+                    $("#dcinput").hide();
+                    $("#btn-apply").hide();
+                    // $('#btn-dont').css("margin-left", "25%");  
+                    $("#btn-dont").text("Close"); 
+                } else {
+                    $.fancybox.showLoading();
+                    setTimeout(function(){
+                        $("#dc_Modal").show();
+                        $("#mod_title").text("Special Program");
+                        $('#mod_title').css("background", "#000");
+                        $("#mod_body").text("INPUT 25+10 CODE");
+                        $("#dcinput").show();
+                        $("#btn-apply").show();
+                        $("#btn-apply").text("Use Code");
+                        $('#btn-dont').css("margin-left", "0px");  
+                        $("#btn-dont").text("Cancel");
+                        $.fancybox.hideLoading();
+                    }, 1000);   
+                }
+            });
+        });
+
+        //@btnapply
+        $('#btn-dont').on('click', function() {
+            $("#dc_Modal").hide();
+        });
+        $('#btn-apply').click(function (){
+            $.fancybox.showLoading();
+            var productid   = $(this).val();
+            var dcinput     = $('#dcinput').val();
+            var qty         = 1;
+            var quoteid     = $('#quote-id').val();
+            
+            $.post( '<?= $block->getBaseUrl(). "unilabdc/digitalcoupon/validate" ?>', 
+                {  
+                    productid: productid, dcinput: dcinput, qty: qty, quoteid: quoteid
+                }, function (response) {
+                    
+                    if(response.result == true) { 
+                        $("#dc_Modal").hide();
+                        $('#dcinput').val("");
+                        $('#btnAddToCart-'+productid).click(); 
+                        $.fancybox.showLoading();        
+                    } else {
+                        $("#dc_Modal").hide();
+                        $('#dcinput').val("");
+                        $.fancybox.showLoading();
+                        setTimeout(function(){
+                            $("#dc_Modal").show();
+                            $("#mod_body").text("INPUT 25+10 CODE");
+                            $.fancybox.hideLoading();
+                        }, 500);
+
+                        if(response.result == false){
+                            $("#btn-apply").text("Try Again");
+                            $("#mod_title").text("Code Invalid");
+                            $('#mod_title').css("background", "red");
+                        }
+                        if(response.result == "exist"){
+                            $("#btn-apply").text("Try Again");
+                            $("#mod_title").text("Promo Code already used");
+                            $('#mod_title').css("background", "red");
+                    }
+                }
+            });
+        });
+
+        $(".askPrescription").on('click',function(){ 
+                    
+            var url = $(this).attr('returnUrl');
+            var product = $(this).attr('returnId');
+            var moq = $(this).attr('returnMoq');
+            var uenc = $(this).attr('returnUenc');
+                    
+            $('#product_addtocart_form').attr('action',url);
+            $('#product').val(product);
+            $('#qty').val(moq);
+            $('#uenc').val(uenc);
+
+            $.fancybox.showLoading();
+                    
+            var prescription_askuser_url  = "<?= $this->getUrl('prescription/index/askuser');?>";                    
+            //var parameters  =  Form.serialize(this.form);                       
+            var parameters = '&form_action='+url;  
+            parameters += '&product='+product; 
+            parameters += '&qty='+moq; 
+            parameters += '&uenc='+uenc; 
+            parameters += '&form_key='+$('#product_addtocart_form').find('input[name="form_key"]').val(); 
+
+            $.ajax({
+                url: prescription_askuser_url,
+                data: parameters,
+                type: 'POST',
+                dataType: 'json',
+                success: function(data,textStatus,transport){
+                    if(transport.status == 200){
+                        var response = data;
+
+                        if(response.proceed_to_cart){                                   
+                            $('#product_addtocart_form').submit();                                      
+                        }else{                                          
+                            showDialog(response.askuser_dialog);                                                                     
+                            askUserControls(response);                                  
+                        }                                                           
+                                
+                    }
+                },
+                error: function(xhr,status,error){
+
+                }
+            }).done(function (data) {
+                $.fancybox.hideLoading();
+            });   
+                    
+        }); //.askPrescription onclick
+                
+        var showDialog = function(_content){	
+            $.fancybox({content: _content,
+                closeBtn: false,
+                closeClick: false,
+                helpers: { 
+                    overlay : {
+                        closeClick : false,
+                        locked:	   true
+                    }
+                }
+            }); 
+
+        }//showdialog
+                
+        var askUserControls = function(response) {              
+            $("#no_prescription").click(function(){                                       
+                showDialog(response.cancel_dialog);                                         
+                $("#btnCancelPrescription").click(function(){                      
+                    $.fancybox.close();
+                    removeCancelRxProduct(); //remove DC Free item                   
+                    
+                });             
+            });                 
+                    
+            $("#has_prescription").click(function(){                           
+                prescriptionControls(response);                                              
+            });              
+        }//askusercontrols
+
+        var prescriptionControls = function(response) {                     
+    
+            showDialog(response.prescription_dialog);               
+                    
+            $("#cancel_prescription").click(function(){                    
+                    
+                showConfirmCancelPrescriptionDialog(response);                                  
+                        
+            });                 
+                    
+        }//prescriptioncontrols
+
+        var showConfirmCancelPrescriptionDialog = function(response) {                          
+    
+            showDialog(response.cancel_trans_dialog);                               
+                    
+            $("#btnCancelPrescriptionTransaction").click(function(){                   
+                    
+                $.fancybox.close();
+                removeCancelRxProduct(); //remove DC Free item               
+                        
+            });                 
+                    
+            $("#btnCancelPrescriptionCancelTransaction").click(function(){                  
+                    
+                prescriptionControls(response);             
+                        
+            });                             
+                    
+        }
+
+        //Remove function
+        var removeCancelRxProduct = function(){
+            var productid = $('.btn-apply').val();
+                
+            $.ajax({
+                type: 'Post',
+                url:"<?= $this->getUrl('digitalcouponing/validatedc/removeCancelProductWithRx');?>",
+                data: {
+                    productid: productid          
+                },
+            }).done(function(data){ 
+                var response = data;
+            });
+        }
+		
+    });
+</script>
+    

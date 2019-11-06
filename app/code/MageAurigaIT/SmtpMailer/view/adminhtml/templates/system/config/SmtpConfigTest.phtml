@@ -1,0 +1,84 @@
+<?php
+
+/**
+ * SmtpMailer extension
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Auriga License
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.aurigait.com/magento_extensions/license.txt
+ *
+ * @category      MageAurigaIT
+ * @package       MageAurigaIT_SmtpMailer
+ * @copyright     Copyright (c) 2017
+ * @license       http://www.aurigait.com/magento_extensions/license.txt Auriga License
+ */
+
+?>
+
+<script>
+    require([
+        'jquery',
+        'Magento_Ui/js/modal/alert'
+    ], function ($, alert) {
+        
+        var isPwInputPristine = true;
+        //Bind a handler to input event so we know whether inout password has changed or not
+        $("#system_aitsmtpmailer_password").on("input", function() {
+            isPwInputPristine = false;
+        });
+        
+        var origBorderColor = jQuery("#system_aitsmtpmailer_test_email").css('borderColor');
+        
+        $("#MageAurigaIT_SmtpMailer_Test").click(function(){
+            var testMail = $('#system_aitsmtpmailer_test_email').val().trim();
+            if(testMail.length <= 0) {                
+                jQuery("#system_aitsmtpmailer_test_email").animate(
+                    {borderColor:'red'},
+                    200
+                ).delay(200).animate(
+                    {borderColor:origBorderColor},
+                    200
+                ).delay(200).animate(
+                    {borderColor:'red'},
+                    200
+                ).delay(200).animate(
+                    {borderColor:origBorderColor},
+                    200
+                ).siblings('p.note').css('color', '#f00');
+                return;
+            }
+            $.ajax({
+                url: '<?php echo $block->getSmtpTestUrl() ?>',
+                type: 'post',
+                data: {
+                    form_key: FORM_KEY,
+                    name: $('#system_aitsmtpmailer_name').val().trim(),
+                    auth: $('#system_aitsmtpmailer_auth').val().trim(),                    
+                    smtphost:$('#system_aitsmtpmailer_smtp_host').val().trim(),
+                    smtpport:$('#system_aitsmtpmailer_smtp_port').val().trim(),
+                    enc_protocol:$('#system_aitsmtpmailer_encryption_protocol').val().trim(),
+                    username:$('#system_aitsmtpmailer_username').val(),
+                    password:$('#system_aitsmtpmailer_password').val(),
+                    isPwInputPristine: isPwInputPristine?'yes':'no',
+                    from_email:$('#system_aitsmtpmailer_from_email').val().trim(),
+                    sender_name:$('#system_aitsmtpmailer_sender_name').val().trim(),
+                    user_defined_reply_to_path:$('#system_aitsmtpmailer_user_defined_reply_to_path').val().trim(),
+                    set_return_path:$('#system_aitsmtpmailer_set_return_path').val().trim(),
+                    user_defined_return_path:$('#system_aitsmtpmailer_user_defined_return_path').val().trim(),
+                    test_email:testMail
+                },
+                showLoader: true
+            }).done(function(data) {
+                alert({
+                    title:'SMTP Test',
+                    content:data
+                });
+            });
+        })
+    });
+</script>
+
+<?php echo $block->getButtonHtml() ?>

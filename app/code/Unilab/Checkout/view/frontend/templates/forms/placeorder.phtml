@@ -1,0 +1,179 @@
+<style>
+    .loading_gif
+        {
+        display:none;
+    }
+    .cont_wrapper
+    {
+        z-index: 99999;
+        position: fixed;
+        top: 25%;
+        left: 40%;
+        background-color: #fff;
+        padding: 16px;
+        width: 25%;
+    }
+    .black_background
+    {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        min-height: 1024px;
+        z-index: 9999;
+        background-color: #000;
+        height: 100vh;
+        width: 100%;
+        opacity: .8;
+    }
+    .text_close
+    {
+        cursor: pointer;
+        border: 1px solid #ccc;
+        float: left;
+        padding: 5px;
+        margin-top: 5px;
+        display:none;
+        color:#000 !important;
+    }
+    .place_order
+    {
+        border: 1px solid red;
+        width: 51%;
+        padding: 5px;
+        float: right;
+    }
+    .place-checkout {
+        margin-top: 90px;
+    }
+    
+    @media only screen and (max-width : 767px) {
+        .place_order
+        {
+        width: 90%!important;
+        }
+        
+        .place-checkout {
+            margin-top: 0px;
+            margin-bottom: 40px;
+        }
+    }
+
+</style>
+
+	<div class="loading_gif">	
+		<div class="cont_wrapper">
+			<div class="img_wrapper">
+				
+			</div>
+			<div class="text_wrapper">
+				Please wait. Redirecting to gateway URL.
+			</div>
+			<div class="text_close">
+				Close
+			</div>				
+		</div>	
+		<div class="black_background">
+		</div>		
+	</div>
+
+	<p class="place_order"><strong>Note:</strong>
+	By clicking “<strong>PLACE ORDER</strong>” button you acknowledge that you have read & understood activeoneRx Terms and Conditions. 
+	</p>
+	
+	</br>
+	
+	<p class="place-checkout">
+  
+    <?php
+    $payment = $block->getPaymentComponent();
+
+    $methodCode ='';
+    
+	if($methodCode == 'cashondelivery') : ?>
+    
+	<button id="confirm" type="button" title="Place Order" disabled="disabled" class="btn-disabled btn-checkout button" style="float: right;">
+	  <span><span>PLACE ORDER</span></span>
+	</button>
+	<?php
+	else:
+	?>
+	<button id="submit_btn" type="button" title="Place Order" disabled="disabled" class="btn-disabled btn-checkout button" style="float: right;">
+	  <span><span>PLACE ORDER</span></span>
+	</button>
+	<?php
+	endif;
+	?>
+	</p>
+	
+</br> 
+	<p>&nbsp;&nbsp;</p>	
+
+<script>
+
+ require([
+     'jquery',
+     'fancybox'
+    ],
+    function($, fancybox) {
+        
+        var confirm_template = '<div style="margin: 20px 5px 10px 4px; min-width:250px;">'+
+
+        '<p><h3 style="text-align: center;font-size:12px;font-weight:bold">This purchase is via Cash On Delivery.</h3></p>'+
+        
+        '<p><h3 style="text-align: center;font-size:12px;font-weight:bold">Would you like to proceed?</h3></p>'+
+
+        '<p style="text-align: center;margin: 0 auto;width: 224px;">'+	
+
+            ' <input id="confirm" type="button" title="Place Order" class="button" value="Yes">'+
+
+            ' <input type="button" name="close" class="button" id="cancelConfirmPlaceOrder" value="No"/>'+
+
+        '</p>'+
+
+        '</div>';
+
+        var showDialog = function(_content) {	
+
+            $.fancybox({content: _content,
+
+                closeBtn: false,
+
+                closeClick: false,
+
+                helpers: { 
+                    overlay : {
+                        closeClick : false,
+                        locked:	   true
+                    }
+                }
+            }); 
+        }
+        $(document).on('click', '#confirm', function() {
+        	$('.btn-cashondelivery').click();
+        });
+        $('.text_close').click(function () {	
+            $('.loading_gif').fadeOut();
+        });
+        $(document).on('click', '#cancelConfirmPlaceOrder', function() {
+			$.fancybox.close();
+		});
+	
+        $(document).on('click', '#submit_btn', function() {
+			var radios = $('.payment-radio');
+			radios.each(function(index){
+				var el = $(this);
+				if(el.prop('checked')) {
+					window.paymentMethod = el.val();
+					if(el.val() == 'cashondelivery') {
+						showDialog(confirm_template);
+					} else {
+						$('.btn-' + el.val()).click();
+					}
+				}
+			});
+			
+        });
+    }
+ );
+
+</script>

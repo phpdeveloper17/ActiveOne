@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Sales:etc/sales.xsd">
+    <section name="quote">
+        <group name="totals">
+            <item name="conveniencefee" instance="Unilab\Conveniencefee\Model\Total\Convenience\Quote" sort_order="150"/>
+            <!-- <item name="vatablesale" instance="Unilab\Conveniencefee\Model\Total\Vatablesale\Quote" sort_order="155"/> -->
+        </group>
+    </section>
+     <section name="order_invoice">
+	        <group name="totals">
+	            <item name="conveniencefee" instance="Unilab\Conveniencefee\Model\Invoice\Total\Quote" sort_order="160"/>
+	        </group>
+	    </section>
+	<section name="order_creditmemo">
+	        <group name="totals">
+	            <item name="conveniencefee" instance="Unilab\Conveniencefee\Model\Creditmemo\Total\Quote" sort_order="160"/>
+	        </group>
+	    </section>
+</config>

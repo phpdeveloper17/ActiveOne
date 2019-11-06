@@ -1,0 +1,29 @@
+
+
+<div class="shipping_wrapper">
+	<div class="heading">
+		<div class="cls_number">1</div>
+		<h1 class="cls_header">Select Address</h1>
+	</div>
+	<div class="cls_body" data-bind="scope: 'billingAddress'">
+    <!-- ko template: getTemplate() --><!-- /ko -->
+	</div>
+</div>
+<script type="text/x-magento-init">
+        {
+            "*": {
+                "Magento_Ui/js/core/app": {
+                    "components": {
+						"shippingMethod": {
+							"component": "Unilab_Checkout/js/action/shipping-method",
+							"template" : "Unilab_Checkout/shipping-method/form"
+                        },
+                        "billingAddress": {
+                            "component": "Unilab_Checkout/js/action/billing-address",
+                            "template" : "Unilab_Checkout/billing-address/form"
+                        }
+                    }
+                }
+            }
+        }
+</script>

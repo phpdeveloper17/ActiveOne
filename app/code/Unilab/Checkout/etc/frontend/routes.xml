@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!--
+ * Checkout Frontend Routes XML.
+ * @category  Unilab
+ * @package   Unilab_Checkout
+ * @author    Reyson Aquino 
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
+    <router id="standard">
+        <route id="ulcheckout" frontName="ulcheckout">
+            <module name="Unilab_Checkout" />
+        </route>
+        <route id="checkout" frontName="checkout">
+            <module name="Unilab_Checkout" />
+        </route>
+    </router>
+</config>

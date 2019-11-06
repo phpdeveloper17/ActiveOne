@@ -1,0 +1,164 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page layout="3columns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <!-- <update handle="default_head_blocks"/> -->
+    <body>
+
+    
+        
+
+        <referenceBlock name="logo" remove="true" />        
+        <referenceBlock name="page.top" remove="true" />        
+        <referenceBlock name="header.panel" remove="true" />        
+        <referenceBlock name="report.bugs" remove="true"/>
+        <referenceBlock name="store.links" remove="true"/>
+        <referenceBlock name="minicart" remove="true"/>
+        <referenceBlock name="advanced-search-link" remove="true"/>
+        <referenceBlock name="authentication-popup" remove="true"/>
+
+<referenceBlock name="customer_account_dashboard_address" remove="true"/>
+<move element="customer_account_dashboard_top" destination="page.main.title" after="-"/>
+
+<move element="sales.order.view" destination="content" after="sales.order.info" />
+<move element="order_items" destination="content" after="before.body.end" />
+    <referenceBlock name="sale.reorder.sidebar" remove="true"/>
+      <referenceBlock name="sales_transactions.grid.container" remove="true"/>
+
+
+
+<!--  <referenceContainer name="order.status" remove="true"/>
+  <referenceContainer name="order.date" remove="true"/>
+   <referenceContainer name="order.actions.container" remove="true"/>
+   <referenceContainer name="sales.order.info.buttons" remove="true"/>
+    <referenceContainer name="sales.order.info.buttons.rss" remove="true"/> -->
+   
+
+
+
+<!-- <referenceBlock name="sales_order_invoice.grid.container" remove="true"/>
+<referenceBlock name="sales_order_payment_method" remove="true"/>
+<referenceBlock name="sales_order_billing_address" remove="true"/> -->
+<!-- box-order-shipping-address
+box-order-shipping-method
+box-order-billing-address
+box box-order-billing-method
+block-title -->
+        <move element="breadcrumbs" destination="page.top" before="main.content"/>
+        <!-- <move element="main" destination="main.container"  after='-'/> -->
+        <move element="top.search" destination="catalog.topnav" after="-" />
+        <move element="page.main.title" destination="content" before="-"/>
+        
+        <move element="copyright" destination="before.body.end"/>
+
+        <referenceContainer name="header-wrapper">
+
+            <!-- top Link static home,contactus,aboutus, login -->
+            <block class="Magento\Framework\View\Element\Template" name="custom_top_menu" as="custom_top_menu" template="Magento_Theme::html/custom_top_menu.phtml"/>
+            <!-- logo -->
+            <block class="Magento\Theme\Block\Html\Header\Logo" as="custom_logo_header" template="Magento_Theme::html/custom_logo_header.phtml">
+                <arguments>
+                    <argument name="logo_img_width" xsi:type="number">189</argument>
+                    <argument name="logo_img_height" xsi:type="number">64</argument>
+                </arguments>
+            </block>
+            <!-- credits part -->
+            <block class="Magento\Framework\View\Element\Template" cacheable="false" name="custom_credits_header" as="custom_credits_header" template="Magento_Theme::html/custom_credits_header.phtml"/>
+            <!-- custom search section -->
+            <block class="Magento\Framework\View\Element\Template" name="custom_search_header" as="custom_search_header" template="Magento_Theme::html/custom_search_header.phtml"/>
+            <!-- Custom Navigation Menu -->
+            <block class="Magento\Framework\View\Element\Template" name="custom_nav_menu" as="custom_nav_menu" template="Magento_Theme::html/custom_nav_menu.phtml"/>
+
+        </referenceContainer>
+
+        <referenceContainer name="before.body.end">
+            <block class="Magento\Framework\View\Element\Template" name="index.home" template="Magento_Cms::popup.phtml"/>
+
+            <block class="Magento\Framework\View\Element\Template" name="copyright" as="copyright" template="Magento_Theme::html/copyright.phtml" after="footer"/>
+        </referenceContainer>
+
+        <!-- Store credit -->
+        <referenceBlock name="customer-account-navigation-customer-balance-link" remove="true"/>
+
+        <!-- Downloadable product link -->
+        <referenceBlock name="customer-account-navigation-downloadable-products-link" remove="true"/>
+
+        <!-- Subscription link -->
+        <referenceBlock name="customer-account-navigation-newsletter-subscriptions-link" remove="true"/>
+
+        <!-- Billing agreement link -->
+        <referenceBlock name="customer-account-navigation-billing-agreements-link" remove="true"/>
+
+        <!-- Product review link -->
+        <referenceBlock name="customer-account-navigation-product-reviews-link" remove="true"/>
+
+        <!-- My credit card link -->
+        <referenceBlock name="customer-account-navigation-my-credit-cards-link" remove="true"/>
+
+        <!-- Account link -->
+        <referenceBlock name="customer-account-navigation-account-link" remove="true"/>
+
+        <!-- Account edit link -->
+        <referenceBlock name="customer-account-navigation-account-edit-link" remove="true"/>
+
+        <!-- Address link -->
+        <referenceBlock name="customer-account-navigation-address-link" remove="true"/>
+
+        <!-- Orders link -->
+        <referenceBlock name="customer-account-navigation-orders-link" remove="true"/>
+
+        <!-- Wish list link -->
+        <referenceBlock name="customer-account-navigation-wish-list-link" remove="true"/>
+
+        <!-- Gift card link -->
+        <referenceBlock name="customer-account-navigation-gift-card-link" remove="true"/>
+
+        <!-- Order by SKU -->
+        <referenceBlock name="customer-account-navigation-checkout-sku-link" remove="true"/>
+
+        <!-- Gift registry -->
+        <referenceBlock name="customer-account-navigation-giftregistry-link" remove="true"/>
+
+        <!-- Reward points -->
+        <referenceBlock name="customer-account-navigation-reward-link" remove="true"/>
+ 
+<referenceBlock name="catalog.compare.sidebar" remove="true"/> 
+<referenceBlock name="catalog.compare.link" remove="true"/> 
+<referenceBlock name="related.product.addto.compare" remove="true"/> 
+<referenceBlock name="category.product.addto.compare" remove="true"/> 
+<referenceBlock name="view.addto.compare" remove="true" /> 
+
+<referenceBlock name="form.subscribe" remove="true" /> 
+
+
+<referenceBlock name="sidebar_01" remove="true" /> 
+<!-- <referenceBlock name="sidebar.main" remove="true" />  -->
+
+
+
+       <!--  <referenceBlock name="product.info.details" remove="true" />
+         <referenceBlock name="product.attributes" remove="true" />
+           <referenceBlock name="product_viewed_counter" remove="true" />
+           
+            <referenceBlock name="product.info.review" remove="true" />
+ -->
+
+ <referenceBlock name="catalog.compare.sidebar" remove="true"/>
+
+
+        <referenceContainer name="footer-container"> 
+            <container name="footer" as="footer" label="Page Footer" htmlTag="div" htmlClass="footer">
+                <container name="footer-wrapper" as="footer.wrapper" label="Prapper Footer Blocks" htmlTag="div" htmlClass="row-footer">
+                    <block class="Magento\Framework\View\Element\Template" name="footer.custom" as="footer_custom" template="Magento_Theme::html/footer_links.phtml"/>
+                  </container>
+            </container>
+        </referenceContainer>    
+</body>
+
+</page>
+
+

@@ -1,0 +1,31 @@
+<?php
+/**
+ * Top menu for store
+ *
+ * @var $block \Magento\Theme\Block\Html\Topmenu
+ */
+?>
+<?php $columnsLimit = $block->getColumnsLimit() ?: 0; ?>
+<?php $_menu = $block->getHtml('level-top', 'submenu', $columnsLimit) ?>
+
+<div class="main-nav">
+	<a class="toggle-nav" href="#">☰</a>
+	    <nav class="res-menu">
+ 			<ul class="category-menu">
+				<li>
+					<a href="<?php echo $this->getBaseUrl() ?>medicines-and-therapeutics.html"><?php echo __("Medicines and Therapeutics") ?></a>
+				</li>
+				<li>
+					<a href="<?php echo $this->getBaseUrl() ?>vitamins-and-nutrition.html"><?php echo __("Vitamins and Nutrition") ?></a>
+				</li>
+				<li>
+					<a href="<?php echo $this->getBaseUrl() ?>maternal-and-child-health.html"><?php echo __("Maternal and Child Care") ?></a>
+					
+				</li>
+				<li>
+					<a href="<?php echo $this->getBaseUrl() ?>beauty-and-personal-hygiene.html"><?php echo __("Beauty and Personal Care") ?></a>
+				</li>   
+            </ul>
+    	</nav>
+    </div>
+</div>  <!--End div container1 from custom_logo_header.phtml-->

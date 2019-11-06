@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!--
+ * Unilab_DragonPay
+ * Stores->Payment Methods->DragonPay
+ * @category  Unilab
+ * @package   Unilab_DragonPay
+ * @author    Kristian Claridad
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <dragonpay>
+                <debug>1</debug>
+                <active>0</active>
+                <title>Online Banking/ATM/Debit Card</title>
+                <merchantid>ACTIVEONE</merchantid>
+                <merchantpaswd>H2d3rFh8</merchantpaswd>
+                <order_status>pending</order_status>
+                <testmode>1</testmode>
+                <currency>PHP</currency>
+                <convenience_fee>15</convenience_fee>
+                <model>\Unilab\DragonPay\Model\Method\Standard</model>
+            </dragonpay>
+        </payment>
+    </default>
+</config>

@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="checkout_cart_item_renderers"/>
+    <body>
+        <!-- <referenceContainer name="page.messages">
+            <block class="Magento\Checkout\Block\Cart\ValidationMessages" name="checkout.cart.validationmessages"/>
+        </referenceContainer> -->
+        <referenceContainer name="content">
+            <block class="Unilab\Checkout\Block\Cart" name="checkout.cart" template="Unilab_Checkout::cart.phtml" cacheable="false">
+
+                <container name="checkout.cart.items" as="with-items">
+                    <container name="checkout.cart.container" htmlTag="div" htmlClass="cart-container" before="-">
+                        <container name="cart.footer" label="Cart Summary Container" htmlTag="div" htmlClass="cart-footer" after="-">
+                            <container name="checkout.cart.coupon" as="cartcoupon" label="Cart Coupon" before="totals">
+                                <block class="Magento\Checkout\Block\Cart\Coupon" name="checkout.cart.coupon.custom" as="coupon" template="Unilab_Checkout::cart/coupon.phtml"/>
+                            </container>
+                            <container name="checkout.cart.totals.container" as="totals" label="Shopping Cart Totals" after="coupon">
+                                <block class="Unilab\Checkout\Block\Cart\Totals" name="checkout.cart.totals" template="Unilab_Checkout::cart/totals.phtml">
+                                    <block class="Magento\Checkout\Block\Cart" name="checkout.cart.methods.bottom" template="Unilab_Checkout::cart/methods.phtml" as="cartmethods" />
+                                </block>
+                            </container>
+                        </container>
+                        <block class="Magento\Checkout\Block\Cart\Grid" name="checkout.cart.form" as="cart-items" template="Unilab_Checkout::cart/form.phtml">
+                            <block class="Magento\Framework\View\Element\RendererList" name="checkout.cart.item.renderers" as="renderer.list"/>
+                            <block class="Magento\Framework\View\Element\Text\ListText" name="checkout.cart.order.actions"/>
+                        </block>
+                    </container>
+                </container>
+                <container name="checkout.cart.noitems" as="no-items">
+                    <block class="Magento\Checkout\Block\Cart" name="checkout.cart.empty" before="-" template="Unilab_Checkout::cart/noitems.phtml">
+                        <container name="checkout.cart.empty.widget" as="checkout_cart_empty_widget" label="Empty Shopping Cart Content Before"/>
+                    </block>
+                </container>
+            </block>
+        </referenceContainer>
+        <referenceBlock name="checkout.cart.form">
+            <block class="Magento\Framework\View\Element\RendererList" name="checkout.cart.item.renderers.override" as="renderer.list.custom"/>
+            <arguments>
+                <argument name="renderer_list_name" xsi:type="string">checkout.cart.item.renderers.override</argument>
+            </arguments>
+        </referenceBlock>
+    </body>
+</page>

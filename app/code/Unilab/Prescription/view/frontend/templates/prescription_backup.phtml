@@ -1,0 +1,1456 @@
+	
+<style>
+	#ui-datepicker-div
+	{
+		z-index:99999 !important;
+	}
+	.ui-datepicker-trigger
+	{
+		display:none !important;
+	}
+    .p-modal { position: fixed;
+        top: 10%;
+        left: 50%;
+        z-index: 1050;
+        width: 560px;
+        margin-left: -280px;
+        background-color: #EEEEEE;
+        display: none;
+    }
+
+    .p-modal .p-header {
+		padding: 10px 10px;
+		background: #353433;
+		color: #fff;
+		border-bottom: 1px solid #eee;
+		font-size: 16px;
+		cursor: move;
+		}
+    .p-modal .p-header a.p-close {
+        width : 25px;
+        height : 25px;
+        border-radius : 12.5px;
+        font-size : 20px;
+        color : #fff;
+        line-height : 25px;
+        text-align : center;
+        background : #fff;
+        float: right;
+        color: #636363;
+        text-decoration: none;
+    }
+
+    .p-modal .p-body {
+        position: relative;
+        max-height: 500px;
+        padding: 15px;
+        overflow-y: auto;
+    }
+
+    .p-modal-backdrop {
+        opacity: 0.4;
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1040;
+        background-color: #000;
+    }
+
+    .pagediv { display: none; }
+    .pagediv .footer { margin-top: 5px; }
+    .pagediv .pagediv-header { margin: 5px 0 10px 0; }
+    .pagediv .footer .back { float: left; color: #00AFF0; text-decoration: none; margin-top: 5px; }
+    .pagediv .footer .control { float: right; }
+    .pagediv .footer .control button { background: #00AFF0; border: none; padding: 7px 20px; color: #fff; cursor: pointer; }
+
+    .default { display: block; font-size: 19px; padding: 10px 0 0px 15px; }
+    .default input { margin: 0px 10px 5px 0; }
+
+    .upload .file {
+        background: #A1A1A1;
+        border: none;
+        margin: 0;
+        padding: 5px 20px 7px 20px;
+        color: #fff;
+    }
+    .upload .file-text { height: 26px; width: 350px; }
+    .upload .file-text-capture { height: 26px; width: 350px; }
+
+
+
+    .upload input[type="text"], .upload input[type="date"] { height: 26px; text-indent: 10px; }
+    .upload input[type="date"] { text-indent: 5px; width: 95%; }
+    .upload label { width: 125px; display: inline-block; }
+    .upload .default-txt { width: 395px; }
+    .upload .content div { margin-bottom: 0px; }
+    .upload .select-image, .upload .select-image input:disabled { cursor: pointer; }
+
+    .camera input[type="text"], .camera input[type="date"] { height: 26px; text-indent: 10px; }
+    .camera input[type="date"] { text-indent: 5px; }
+    .camera .default-txt { width: 395px; }
+    .camera label { width: 125px; display: inline-block; }
+    .camera .content div { margin-bottom: 15px; }
+    .camera .screen { width: 530px; height: 355px; border: 1px solid; margin-bottom: 5px; }
+
+    .form .pagediv-header { margin-bottom: 20px;}
+    .form .content div { margin-bottom: 15px; }
+    .form label { width: 100%; display: inline-block;  margin-bottom: 5px; margin-top: 5px;}
+    .form label.md-contact { float: left; margin-right: 4px; margin-top: -3px; }
+    .form input[type="text"],
+    .form input[type="date"] { height: 22px; text-indent: 10px; width: 95%; }
+    .form input[type="date"] { text-indent: 5px; }
+
+    .existing .pres-id { min-width: 300px; }
+    .existing select { height: 26px; width: 440px; }
+
+    .clearfix:after { content: "."; display: block; clear: both; visibility: hidden; line-height: 0; height: 0; }
+    .clearfix { display: block; }
+    html[xmlns] .clearfix { display: block; }
+    * html .clearfix { height: 1%; }
+
+    .hide { display: none; }
+	
+	.fancybox-skin {
+		background-color:transparent !important;
+
+	}
+	.fancybox-opened .fancybox-skin {
+	  -webkit-box-shadow: none !important;
+	  -moz-box-shadow: none !important;
+	  box-shadow: none !important;
+	}	
+	.validation-advice
+	{
+		display:none;
+	}
+	.prescrip_note
+	{
+	   color: #ff0000;
+	}
+	.expiry {
+		display: none;
+	}
+	.footer.clearfix {
+	position: absolute;
+	bottom: 14px;
+	}
+	.upload-btn {
+	  float: right;
+	  margin: 10px 0 0;
+	}
+	.cpt-btn {
+	  float: right;
+	  display: flex;
+	  margin: 10px 0 0;
+	}
+	div.cpt-btn input {
+		margin-right: 3px !important; 
+	}
+	
+	.mobile-capture-container{
+		min-height: 315px;
+	    width: 100%;
+	}
+	.hide{
+		display: none;
+	}
+	.select-image-capture{
+		text-align: center;
+	}
+	.btn-block+.btn-block {
+		margin-top: 0;
+	}
+</style>
+
+<div class="prescription_detail_wrapper" style="height:360px;overflow:auto;"> 
+
+<!-- <script type="txt/javascript" src="<?php //echo $this->getSkinUrl("js/jquery/jquery.form.min.js");?>"></script> -->
+
+	<?php //echo $this->getChildHtml("html_calendar");?>
+
+	<script>	 
+	var disable_submission  		 = false;
+
+var prevent_submission  		 = false;				
+		require(
+            [
+				'jquery',
+				'mage/mage',
+				'domReady!'
+            ],
+            function(
+                $
+            ) {
+				// var prescriptionForm 		  = new VarienForm('product_addtocart_prescription_form',true);  
+
+				var confirm_prescription_html = '';  
+
+				var prescription_form_in_progress = false; 
+
+				var has_next_upload			  	 = false;
+
+				
+				var disable_submission = false;
+
+				var prescriptionForm = $('#product_addtocart_prescription_form');
+				
+				prescriptionForm.mage('validation', {})
+				
+				prescriptionForm.submit(function(){
+					
+					if(disable_submission){
+
+						return false;
+
+					}
+
+					if(prescriptionForm.validation('isValid')){
+						
+						return true
+					}else{
+						return false
+					}
+				})
+				
+
+				// prescriptionForm.submit = function(button, url) {  
+
+				// 		if(disable_submission){
+
+				// 			return false;
+
+				// 		}			
+
+				// 		if (this.validator.validate()){ 
+
+				// 			var form = this.form;
+
+				// 			var oldUrl = form.action;
+
+
+
+				// 			if (url) {
+
+				// 			form.action = url;
+
+				// 			}
+
+				// 			var e = null;
+
+				// 			try {
+
+							
+
+				// 				//check if no prescription is selected
+
+				// 				var wrapper = prescriptions.wrapper;					
+
+				// 				if(wrapper.select("input#no_prescription").length > 0)
+
+				// 				{ 
+
+				// 					var no_rescription = wrapper.select("input#no_prescription")[0];
+
+				// 					if(no_rescription.checked){    
+
+				// 						closeNoPrescription(form); 					
+
+				// 					}else{		
+
+				// 						if(prevent_submission){
+
+				// 							return false;
+
+				// 						}
+
+				// 						prevent_submission = true;
+
+				// 						this.form.submit();  
+
+				// 						$.fancybox.showLoading();
+
+				// 					}							
+
+				// 				} else{		
+
+				// 					if(prevent_submission){
+
+				// 						return false;
+
+				// 					}
+
+				// 					prevent_submission = true;
+
+				// 					this.form.submit(); 
+
+				// 					$.fancybox.showLoading();
+
+				// 				}
+
+				// 			} catch (e) {
+
+				// 			}
+
+				// 			this.form.action = oldUrl;
+
+				// 			if (e) {
+
+				// 				throw e;
+
+				// 			}
+
+
+
+				// 			if (button && button != 'undefined') {
+
+				// 				button.disabled = true;
+
+				// 			}
+
+				// 		}
+
+				// 		prescription_form_in_progress = false;
+
+				// }.bind(prescriptionForm);
+
+					
+
+				var closeNoPrescription = function(frm)
+
+				{
+
+					showDialog(confirm_prescription_html);
+
+					$("#form_wrapper_cancelled").html(frm);
+
+					
+
+					$("#btnCancelPrescription").click(function(){ 
+
+						frm.submit();
+
+						$.fancybox.close();  
+
+					});
+
+					
+
+					$("#btnCancelPrescriptionRemove").click(function(){ 	 
+
+						prescriptionControls(prescription_response);
+
+					});
+
+				}
+			}
+		);
+	</script>
+	
+		<div class="p-modal ui-draggable" style="display: block; top: 10%;">
+			<div class="p-header">Attach Prescription<a href="javascript:void(0);" class="p-close">x</a></div>
+			<div class="p-body">			
+
+				<?php $product_cart_form_fields = $block->getProductToCartFormFields();?> 
+
+				<form id="product_addtocart_prescription_form" action="<?php echo $product_cart_form_fields['form_action'];?>" method="post" enctype="multipart/form-data">
+
+					<?php unset($product_cart_form_fields['form_action']);?> 
+
+					<?php while( list( $field, $value ) = each($product_cart_form_fields )):?>	
+
+						  <?php if(is_array($value)):?>	 
+
+								<?php foreach($value as $sub_key=>$sub_value):?>
+
+									<input type="hidden" name="<?php echo $field;?>[<?php echo $sub_key;?>]" value="<?php echo $sub_value;?>"/> 
+
+								<?php endforeach;?>
+
+						  <?php else:?>		  
+
+								<input type="hidden" name="<?php echo $field;?>" value="<?php echo $value;?>"/> 
+
+						  <?php endif;?>		  
+
+					<?php endwhile;?>  			
+			
+
+	
+		<!--h3><?php //echo __("You have indicated that you have a prescription.");?></h3-->		
+
+
+			<ul class="prescription_types_wrapper" id="prescription_types_wrapper">	
+
+				<li>					
+				<div class="pagediv default" style="display: block;">
+					<input  class="prescription_types" type="radio" name="prescription[type]" id="new_prescription" value="<?=$block->getTypeNew()?>" />
+					<label for="new_prescription">Input Prescription Detail</label><br>
+				</div>
+				<div class="pagediv form" style="display: none;" id="upload_details">
+					<div class="prescription_details"> 
+						<div>
+							<label for="prescription_date_prescribed">Date Prescribed</label>
+							<input type="text" autocomplete="off"  placeholder="Date Prescribed" name="prescription[date_prescribed]" id="prescription_date_prescribed"/>
+						</div>					
+						<div>
+							<label for="prescription_patient_name">Patient's Name</label>
+							<input type="text" name="prescription[patient_name]" id="prescription_patient_name" class="required-entry required"/>
+						</div>	
+						<div>
+							<label for="prescription_doctor_name">Doctor's Name</label>
+							<input type="text" name="prescription[doctor]" id="prescription_doctor_name" class="required-entry required"/>
+						</div>					
+						<div>
+							<label for="prescription_ptr_no">License Number</label>
+							<input type="text" name="prescription[ptr_no]" id="prescription_ptr_no" class="required-entry required"/>
+						</div>					
+						<div>
+							<label for="prescription_clinic">Clinic</label>
+							<input type="text" name="prescription[clinic]" id="prescription_clinic" class="required-entry required"/>
+						</div>					
+						<div>
+							<label for="prescription_clinic_address">Clinic Address</label>
+							<input type="text" name="prescription[clinic_address]" id="prescription_clinic_address" class="required-entry required"/>
+						</div>					
+						<div>
+							<label for="prescription_contact_number">Contact Number</label>
+							<input type="text"  maxlength="11" name="prescription[contact_number]" id="prescription_contact_number" class="required-entry required"/>
+						</div>					
+						<!--div class="expiry">
+							<label for="prescription_expiry_date">Expiry Date</label>
+							<input type="text" autocomplete="off"  name="prescription[expiry_date]" id="prescription_expiry_date" class="required-entry required "/>
+						</div-->					
+					</div>
+					<div class="footer clearfix">
+						<a href="javascript:void(0);" class="back btn btn-primary btn-block btn-prescription">&lt;- Back</a>
+						<div class="control"></div>
+					</div>
+				</div>
+			</li>	
+			
+				<li>
+				
+					<div class="pagediv default" style="display: block;">
+						<input class="prescription_types" type="radio" name="prescription[type]" id="upload_prescription" value="<?php echo $block->getTypePhoto();?>" />
+						<label for="upload_prescription">Upload a clear photo of your doctor's prescription</label><br>		
+					</div>
+				
+					<div class="pagediv upload" style="display: none;" id="upload_attached">					
+						<div id="upload_prescription_details" class="prescription_details">						
+							<div class="pagediv-header">Upload a clear photo of your doctor's prescription</div>
+							<div class="prescrip_note"><strong>Note: </strong>Please make sure to capture  FULL IMAGE of prescription. Maximum file size is 2MB.</div>
+							
+							<div class="content">							
+									<?php 
+										$now = new DateTime();
+									?>
+								<input type="hidden" autocomplete="off"  name="prescription[date_prescribed_2]" id="prescription_date_prescribed_2" class="required-entry required" value="<?php echo $now->format('m/d/Y')?>" />
+								<input style="width:0px;height:0px;overflow:hidden;" type="file" id="file_attacher" name="prescription[scanned_rx][prescription_scanned_rx]" id="prescription_scanned_rx" class="required-file-u validate-filetype validate-filesize"/> 
+								
+
+								<div class="select-image">								
+									<a style="background: #A1A1A1; float: left; border: none;margin: 0;padding: 5px 20px 7px 20px;color: #fff;" class="button">
+										<label id="attach_file" style="cursor: pointer;width: 100px;" for="file_attacher">
+										<?php echo __("Select Image");?>
+										</label>
+									</a>
+									<input type="text" id="file_text" class="file-text required-entry required" readonly>
+									<div id="loader_rx" style="display:none;">
+										<img src="<?=$block->getViewFileUrl('images/loader.gif') ?>">
+									</div>
+									<br/><br/>
+									<div id="scanned_prescription_lists">									
+										<div class="full_width" id="main_presc_scanned"></div> 										
+										<input name="prescription[current_rx_image_selected]" type="hidden" value="" id="current_rx_image_selected"/>
+									</div>									
+									
+								</div>
+							</div>
+							<div class="footer clearfix">
+								<a href="javascript:void(0);" class="back btn btn-primary btn-block btn-prescription">&lt;- Back</a>
+							</div>
+
+						</div> 
+						
+					</div>
+
+			</li>
+			
+			<?php 
+				$prescriptionHelper = $this->helper('Unilab\Prescription\Helper\Data');
+				$camera_active 	= 	$prescriptionHelper->getConfig('imagecapture_section/imagecapture_group/imagecapture_active');	
+				if ($camera_active == 1):
+			?>
+			
+			<li>			
+				<div class="pagediv default" style="display: block;">
+					<input type="radio" name="pagediv" value="form" id="radio_Camera">
+					<label for="radio_Camera">Capture photo using your webcam</label><br>
+				</div>	
+
+
+				<div class="pagediv upload" style="display: none;" id="upload_camera">
+					
+					<div> Upload prescription using your webcam.</div>
+						<?php 
+							$now = new DateTime();
+						?>
+						<input type="hidden" autocomplete="off"  name="prescription[date_prescribed_2]" id="prescription_date_prescribed_2" class="required-entry required" value="<?php echo $now->format('m/d/Y')?>" />
+
+						<input type="hidden" autocomplete="off"  name="prescription[type]" id="upload_prescription_webcam" class="required-entry required" value="<?php echo $block->getTypePhoto()?>" />
+					
+					<div class="camera_prescription_wrapper">
+						<div class="prescription-display-web">
+							<?php 
+							echo $block->getCameraBlock();
+							?>
+						</div>
+						<div class="prescription-display-mobile" style="display:none;"><!-- static style for js displaying @leandro -->
+							<div class="mobile-capture-uploader">
+									
+								<div class="content">							
+									<?php 
+										$now1 = new DateTime();
+									?>
+									<div id="scanned_prescription_lists" class="mobile-capture-container">
+										<div class="full_width" id="main_presc_scanned_capture"></div> 										
+										<input name="prescription[current_rx_image_selected]" type="hidden" value="" id="current_rx_image_selected"/>
+									</div>	
+									<input type="hidden" autocomplete="off"  name="prescription[date_prescribed_2]" id="prescription_date_prescribed_2" class="required-entry required" value="<?php echo $now1->format('m/d/Y')?>" />
+									<input style="width:0px;height:0px;overflow:hidden;" type="file" id="file_attacher_capture" name="prescription[scanned_rx][prescription_scanned_rx]" id="prescription_scanned_rx" class="required-file-u validate-filetype validate-filesize"/> 
+									
+
+									<div class="select-image select-image-capture hide">								
+										<a style="background: #A1A1A1; float: left; border: none;margin: 0;padding: 5px 20px 7px 20px;color: #fff;" class="button">
+											<label id="attach_file" style="cursor: pointer;width: 100px;" for="file_attacher_capture">
+											<?php echo __("Select Image");?>
+											</label>
+										</a>
+										<input type="text" id="file_text_capture" class="file-text-capture required-entry required hide" disabled="">
+										<div id="loader_rx_capture" style="display:none;">
+											<img src="<?php //echo $this->getSkinUrl("images/loader.gif");?>">
+										</div>
+										<br/><br/>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>													
+					<div class="full_width" id="main_presc_scanned" style="display: none;">cxzxcv</div> 										
+					<input name="prescription[current_rx_image_selected]" type="hidden" value="" id="current_rx_image_selected"/>
+					<div class="prescrip_note"><strong>Note: </strong>Please make sure to capture  FULL IMAGE of prescription. Maximum file size is 2MB.</div>
+					<div class="cpt-btn">
+						<input type="submit" class="btn btn-primary btn-block webcam_upload" value="Upload" style="display:none;"/>
+						<input type="button" class="btn btn-primary btn-block webcam_cancel p-close" value="Cancel" style="display:none;"/>
+						<input type="button" class="btn btn-primary btn-block cancel_capture" value="Delete" style="display:none;"/>
+						<input type="button" class="btn btn-primary btn-block capture" value="Capture" style="display:none;"/>
+						<!-- Insert Preloader -->
+						
+					</div>
+					<div id="preloader" style="display:none;">  
+						<img src="<?=$block->getViewFileUrl('images/ajax-loader.gif')?>" style="width:20px;"> Please Wait for a moment...
+					</div>
+					<div class="footer clearfix">
+						<a href="javascript:void(0);" class="back btn btn-primary btn-block btn-prescription">&lt;- Back</a>
+						<div class="control"></div>
+					</div>
+					<?php 
+					/**
+
+					**/
+
+					?>
+
+
+				</div>	
+					
+			</li>		
+
+			<?php endif; ?>
+			
+			
+			
+
+			<li>
+				<div class="pagediv default" style="display: block;">
+					<input  class="prescription_types" type="radio" name="prescription[type]" id="existing_prescription" value="<?php echo $block->getTypeExisting();?>"  />
+					<label for="existing_prescription">Use existing prescription</label><br>
+				</div>							
+
+				<div class="pagediv existing" style="display: none;" id="upload_existing">
+				
+				<div id="existing_prescription_details" class="prescription_details">							
+
+					<?php $prescription_lists = $block->getPrescriptionCollection();?>
+
+					<?php if($prescription_lists->count() > 0):?>
+
+						<ul>
+
+							<?php foreach($prescription_lists as $prescription):?> 									
+
+								<li>
+
+									<input type="radio" value="<?php echo $prescription->getPrescriptionId();?>" name="prescription[prescription_id]"  class="validate-one-required-by-name required-one"  id="prescription_prescription_id_<?php echo $prescription->getPrescriptionId();?>"/>
+
+									<?php if($prescription->getScannedRx() !=""):?>
+
+											<?php if(strpos($prescription->getScannedRx(), ',') === FALSE):?> 
+
+												<?php $rxs = array($prescription->getScannedRx());?> 
+
+												<?php $orif_file_names = array($prescription->getOriginalFilename());?> 
+
+											<?php else:?>
+
+												<?php $rxs 			   = explode(",",$prescription->getScannedRx());?> 
+
+												<?php $orif_file_names = explode(",",$prescription->getOriginalFilename());?> 
+
+											<?php endif;?>
+
+												<label title="<?php echo $prescription->getScannedRx();?>" for="prescription_prescription_id_<?php echo $prescription->getPrescriptionId();?>">
+
+													
+
+													<?php echo __('Attached RXs ');?> - <?php echo $block->getTimezoneInterface()->formatDate($prescription->getDatePrescribed(), \IntlDateFormatter::MEDIUM, false) ;?>
+
+													<a style="cursor:pointer;margin-left:4px;" title="<?php echo __("Show Prescription Attachments");?>"  class="show_details_rxs"><?php echo __("(+)");?></a>
+
+													<div style="display:none;border:1px solid #FB3561;padding:10px;" class="presc_details_view_rxs">  
+
+														<?php foreach($rxs as $indx=>$rx):
+														
+															if( !preg_match("/^http\:\/\/|https\:\/\//", $rx) ):
+															
+																$imgurl 	= '';
+																$imgurl 	= $block->getStoreManager()->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA).'prescriptions/'.$rx;
+																$imgurl 	= str_replace('pub/','',$imgurl);
+																$imagename 	= $block->getFilterManager()->truncate($orif_file_names[$indx],50);
+															else:
+																$imgurl 	= $rx;
+																$imagename 	= basename($rx);
+															endif;													
+														
+														?> 																	
+															<a href="javascript:void(0);" onclick="window.open('<?php echo $imgurl; ?>','_blank')"><?php echo $imagename;?></a>, 
+
+														<?php 
+														
+														
+														endforeach;
+														
+														?>
+
+													</div>
+
+												</label> 
+
+									<?php else:?>
+
+										<label for="prescription_prescription_id_<?php echo $prescription->getPrescriptionId();?>"><?php echo $prescription->getDoctor();?> - <?php echo $block->getTimezoneInterface()->formatDate($prescription->getDatePrescribed(), \IntlDateFormatter::MEDIUM, false) ;?></label> 
+
+										 <a style="cursor:pointer;margin-left:4px;" title="<?php echo __("Show Prescription Details");?>"  class="show_details"><?php echo __("(+)");?></a>
+
+											<div style="display:none;border:1px solid #FB3561;" class="presc_details_view">
+
+												<p>
+
+													<label style="width:35%;"><?php echo __("Prescribe Date:");?></label>								 
+
+													<span class="entry_wrapper field-row"> <?php echo $prescription->getDatePrescribed();?></span>
+
+												</p>
+
+												<p>								
+
+													<label style="width:35%;"><?php echo __("Patient's Name:");?></label> 
+
+													<?php echo $prescription->getPatientName();?> 
+
+												</p>  
+
+												<p> 
+
+													<label style="width:35%;"><?php echo __("Doctor's Name:");?></label> 
+
+													 <?php echo $prescription->getDoctor();?> 
+
+												</p>
+
+												<p>
+
+													<label style="width:35%;"><?php echo __("License Number:");?></label> 
+
+													<?php echo $prescription->getPtrNo();?>
+
+												</p>
+
+												<p>
+
+													<label style="width:35%;"><?php echo __("Clinic:");?></label> 
+
+													<?php echo $prescription->getClinic();?> 
+
+												</p>
+
+												<p>
+
+													<label style="width:35%;"><?php echo __("Clinic Address:");?></label> 
+
+													<?php echo $prescription->getClinicAddress();?>
+
+												</p>
+
+												<p>
+
+													<label style="width:35%;"><?php echo __("Contact Number:");?></label> 
+
+													<?php echo $prescription->getContactNumber();?>
+
+												</p>
+
+												<p class="expiry">
+
+													<label style="width:35%;"><?php echo __("Expiry Date:");?></label> 
+
+													<span class="entry_wrapper field-row">
+
+														<?php echo $prescription->getExpiryDate();?> 
+
+													</span>
+
+												</p>  
+
+												<div class="clear"></div>
+
+											</div>  
+
+											<br/>
+
+									<?php endif;?>
+
+								</li>
+								
+							<?php endforeach; ?>  
+
+						</ul> 
+
+					<?php else:?>
+
+						<?php if($block->getCustomerSession()->isLoggedIn()):?>
+
+							<p><?php echo __("You have no existing prescription.");?><input type="hidden" id="pre_prescription" class="validate-existing-prescriptions"/></p>
+
+							
+
+						<?php else:?> 
+
+							<p><?php echo __("Please <a href='".$block->getCustomerModelUrl()->getLoginUrl()."' style='color:#D90202;'>log in</a> to display your existing prescription");?>
+							<input type="hidden" id="pre_prescription" class="validate-existing-prescriptions"/></p>
+
+						<?php endif;?>
+
+						<div class="clear"></div> 
+
+						<div style="height:10px;">&nbsp;</div>
+
+					<?php endif;?>
+
+					<div class="footer clearfix">
+						<a href="javascript:void(0);" class="back btn btn-primary btn-block btn-prescription">&lt;- Back</a>
+					</div>
+				</div>
+			</div>
+
+				</li>  	
+
+		<!-- 	<li>
+				<div class="pagediv default" style="display: block;">
+					<input  class="prescription_types" type="radio" name="prescription[type]" id="upload_upondelivery" value="<?php echo "upload_upondelivery"; ?>"  />
+					<label for="upload_upondelivery">Prescription to be presented upon delivery					<br>
+					</label>
+				</div>							
+
+				<div class="pagediv upondelivery" style="display: none;" id="upload_rx_upondelivery">
+
+					<div id="upondelivery_prescription" class="upondelivery_details">
+						<strong>Prescription to be presented upon delivery</strong>
+						<br>
+						<span style="font-size:14px;"><strong>NOTE:</strong><span">&nbsp;Available for Cash and Credit Card upon delivery</span></span>						
+						<div class="clear"></div> 
+						<div style="height:10px;">&nbsp;</div>					
+						<div class="footer clearfix">
+							<a href="javascript:void(0);" class="back">&lt;- Back</a>
+						</div>					
+					</div>
+					
+				</div>
+			</li> -->								
+												
+
+			</ul>
+
+			<div class="upload-btn" id="grp-btn" style="display:none;">
+				<input type="submit" class="save btn btn-primary btn-block btn-prescription" value="Upload" id="save_prescription"/>
+				<input type="button" class="btn btn-primary btn-block btn-prescription p-close" value="Cancel" id="cancel_prescription"/>
+			</div>
+			
+		</form>
+		
+		</div>		
+	</div>
+
+
+	<script>
+		require(
+            [
+                'jquery',
+                'fancybox',
+                'ddaccordion',
+                'prototype',
+                'effects',
+                'controls',
+                'unilab',
+                'prescription-validation',
+                'validation',
+				'domReady!',
+				'jquery-form'
+            ],
+            function(
+                $,
+                fancybox
+            ) {
+				var prescriptions = new PrescriptionSwitcher('prescription_types_wrapper','prescription_types');
+				
+				var userAgent = navigator.userAgent.toLowerCase();
+				
+				
+		
+
+				var Browser = {
+
+					Mozilla: /mozilla/.test(userAgent) && !/(compatible|webkit)/.test(userAgent)
+
+				};
+
+
+				$(document).on('click','.removerx',function(e){
+					e.preventDefault();
+					var id = $(this).attr('data-id');
+					$('#'+id).remove()
+
+					if($('#main_presc_scanned > div').length == 0){
+						$('#file_text').val('')
+					}
+				})
+
+				$(document).ready(function(){  
+					
+					
+					
+					if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) { //if android/apple
+						$('.prescription-display-mobile').show();
+						$('.prescription-display-web').hide();
+
+						//events
+						$('.capture').click(function(){
+							$('#file_attacher_capture').click();
+							$(this).hide();
+							$('.cancel_capture').show();
+							$('.webcam_upload').show();
+							$('.webcam_cancel').show();
+							
+
+						});
+						$('.cancel_capture').click(function(){
+							$('#main_presc_scanned_capture').html('');
+							$('#file_attacher_capture').val('');
+							$('.capture').show();
+							$('.cancel_capture').hide();
+							$('.upload-btn').hide();
+							$('.webcam_upload').hide();
+							$('.webcam_cancel').hide();
+
+						});
+
+					}else{
+						$('.prescription-display-mobile').hide();
+						$('.prescription-display-web').show();
+
+						//events
+						$('.capture').click(function(){
+							take_snapshot();
+						});
+						$('.cancel_capture').click(function(){
+							show_snapshot();
+						})
+					}
+
+					
+
+					
+
+
+					$(".show_details").click(function(){
+
+						var target_element = $(this).next(".presc_details_view");
+
+						if($(this).hasClass("open")){ 
+
+							$(this).removeClass("open");
+
+							$(this).html('<?php echo __("(+)");?>');
+
+							target_element.hide();
+
+						}else{
+
+							$(this).addClass("open");
+
+							target_element.show();
+
+							$(this).html('<?php echo __("(-)");?>');
+
+						}
+
+					});
+
+					
+
+					$(".show_details_rxs").click(function(){
+
+						var target_element = $(this).next(".presc_details_view_rxs");
+
+						if($(this).hasClass("open")){ 
+
+							$(this).removeClass("open");
+
+							$(this).html('<?php echo __("(+)");?>');
+
+							target_element.hide();
+
+						}else{
+
+							$(this).addClass("open");
+
+							target_element.show();
+
+							$(this).html('<?php echo __("(-)");?>');
+
+						}
+
+					});
+
+					
+
+					if(Browser.Mozilla){  
+
+						$('label#attach_file').click(function(event){
+
+							var input = $('#'+$(this).attr('for'));
+
+							input.click();
+
+							return false;
+
+						}); 
+
+					}
+
+				
+
+					$("#prescription_date_prescribed").datepicker({
+						changeMonth: true,
+						changeYear: true,
+						showOn: "both",
+
+						buttonImage: "<?php //echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_SKIN) . 'adminhtml/default/default/images/grid-cal.gif';?>",
+
+						buttonImageOnly: true,
+
+						dateFormat: 'yy-mm-dd',
+
+						maxDate: "+0D"			
+
+					});
+
+					$("#prescription_date_prescribed_2").datepicker({
+
+						changeMonth: true,
+						changeYear: true,
+						showOn: "both",
+
+						buttonImage: "<?php //echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_SKIN) . 'adminhtml/default/default/images/grid-cal.gif';?>",
+
+						buttonImageOnly: true,
+
+						dateFormat: 'yy-mm-dd',
+
+						maxDate: "+0D"
+
+					});
+
+					
+
+					$("#prescription_expiry_date").datepicker({
+
+						changeMonth: true,
+						changeYear: true,
+						showOn: "both",
+
+						buttonImage: "<?php //echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_SKIN) . 'adminhtml/default/default/images/grid-cal.gif';?>",
+
+						buttonImageOnly: true,
+
+						dateFormat: 'yy-mm-dd',
+
+						minDate: "-0D"
+
+					}); 
+					
+					
+					
+
+					$("#upload_prescription_details").on("change","input[id=file_attacher]",function(e){
+
+						if (navigator.userAgent.match(/msie/i) || navigator.userAgent.match(/trident/i) ){
+							var iebrowser = "test";
+						}else{
+						
+							if(window.ActiveXObject){
+								
+							var fso = new ActiveXObject("Scripting.FileSystemObject");
+							var filepath = document.getElementById('file_attacher').value;
+							var thefile = fso.getFile(filepath);
+							var sizeinbytes = thefile.size;
+							}else{
+								var sizeinbytes = document.getElementById('file_attacher').files[0].size;
+								var find_file_ext=document.getElementById('file_attacher').value;
+								var file_ext=/[^.]+$/.exec(find_file_ext); 
+							}
+
+							var fSExt = new Array('Bytes', 'KB', 'MB', 'GB');
+							fSize = sizeinbytes; i=0;while(fSize>900){fSize/=1024;i++;}
+
+							var csvSize	= (Math.round(fSize*100)/100);
+							
+							if(fSExt[i] == 'MB' || fSExt[i] == 'GB'){
+								
+								if (csvSize > 2){
+									
+									alert('The file size is too large. Please select less than 2MB image.');
+									
+									document.getElementById('file_attacher').value = '';
+									document.getElementById('file_text').value = '';
+									
+									return false;
+									
+								}
+							}							
+							
+						}
+
+
+						prescription_form_in_progress = true;
+
+						var date = new Date();
+
+						var file_obj      = $(this); 
+
+						$("#loader_rx").show();	
+
+						var main_action   = $("#product_addtocart_prescription_form").attr('action');
+
+						$("#product_addtocart_prescription_form").attr('action','<?php echo $this->getUrl("prescription/index/presavescannedrx?_=");?>'+date.getTime());	
+						
+						alert(2234324);
+
+						$("#product_addtocart_prescription_form").ajaxForm({ 
+
+							dataType: "json",
+
+							beforeSubmit: function() {  
+								
+								
+
+								if(disable_submission){
+									return false;
+								}
+
+								disable_submission = true;
+								
+								// if(disable_submission == true){
+
+								// 	has_next_upload = true;
+
+								// }else{
+
+								// 	disable_submission = true;
+
+								// }
+
+
+
+							},
+
+							uploadProgress: function(event, position, total, percentComplete) { 
+
+							},
+
+							error: function()
+
+							{ 
+
+							},
+
+							success: function(xhr){ 
+								$("#product_addtocart_prescription_form").attr('action',main_action);
+
+								file_obj.parent().find('.preview_rx').html('');
+
+								// if(has_next_upload == false){
+
+								// 	disable_submission = false;  
+
+								// }
+
+								
+
+							},
+
+							complete: function(xhr) {     
+										
+								alert(xhr);
+								try{
+									
+
+									$("#loader_rx").hide();														
+
+									//var response_data = eval("("+xhr.responseText+")");	  
+
+									var response_data =$.parseJSON(xhr.responseText);  
+
+									if(response_data.success == true){ 	
+
+										var ranid = '<?php  echo md5(time());?>' + date.getTime();
+
+										
+
+										
+
+										var temp = '<div id="'+ranid+'" style="width:80px;float:left;position:relative;"' +  
+
+												'<a href="'+response_data.scanned_rx_list+'" target="_blank">'+
+
+												'<img src="'+response_data.scanned_rx_list+'" width="70" height="70" class="capimage"></a>'+
+
+												'<span style="position:absolute;right:10px;"><a style="display: block; background-color:#208880; text-align: center; color: #FFFFFF; font-weight: bold; height: 15px; line-height: 15px; width: 17px;" class="removerx" data-id="'+ranid+'">x</a></span>'+
+
+												'<input type="hidden" value="'+response_data.image_name+'" name="prescription[scanned_rxs]['+response_data.orig_image_name+']">'+
+
+												'</div> ';
+										
+										$("#main_presc_scanned").append(temp); 
+
+									}else if(response_data.error == 'TYPE'){  
+
+										alert("<?php echo __("Invalid File Type") ;?>");
+
+									}else if(response_data.error == 'SIZE'){
+
+										alert("<?php echo __("Invalid File Size") ;?>");
+
+									}else{
+
+										alert("<?php echo __("Error in Uploading. File maybe too large or invalid. Please try again.") ;?>");
+
+					
+
+									}
+
+								}catch(err){ 
+
+									alert("<?php echo __("Error in Uploading. File maybe too large or invalid. Please try again. ") ;?>");
+
+								}
+
+								$("#product_addtocart_prescription_form").ajaxFormUnbind()
+								disable_submission = false;
+
+							}});
+							
+							
+						$("#product_addtocart_prescription_form").submit();  	
+
+					});
+
+					$(".prescription-display-mobile").on("change","input[id=file_attacher_capture]" ,function(e){
+
+							if (navigator.userAgent.match(/msie/i) || navigator.userAgent.match(/trident/i) ){			
+								var iebrowser = "test";
+							}else{
+							
+								if(window.ActiveXObject){
+									
+								var fso = new ActiveXObject("Scripting.FileSystemObject");
+								var filepath = document.getElementById('file_attacher_capture').value;
+								var thefile = fso.getFile(filepath);
+								var sizeinbytes = thefile.size;
+								}else{
+									var sizeinbytes = document.getElementById('file_attacher_capture').files[0].size;
+									var find_file_ext=document.getElementById('file_attacher_capture').value;
+									var file_ext=/[^.]+$/.exec(find_file_ext); 
+								}
+
+								var fSExt = new Array('Bytes', 'KB', 'MB', 'GB');
+								fSize = sizeinbytes; i=0;while(fSize>900){fSize/=1024;i++;}
+
+								var csvSize	= (Math.round(fSize*100)/100);
+								
+								if(fSExt[i] == 'MB' || fSExt[i] == 'GB'){
+									
+									if (csvSize > 2){
+										
+										alert('The file size is too large. Please select less than 2MB image.');
+										
+										document.getElementById('file_attacher_capture').value = '';
+										document.getElementById('file_text_capture').value = '';
+										
+										return false;
+										
+									}
+								}							
+								
+							}
+
+
+							// prescription_form_in_progress = true;
+
+							// var date = new Date();
+							// var file_obj      = $(this); 
+
+							// //$("#loader_rx_capture").show();	
+
+							// var main_action   = $("#product_addtocart_prescription_form").attr('action');
+
+							// $("#product_addtocart_prescription_form").attr('action','<?php //echo $this->getUrl("prescription/index/presavescannedrx?_=");?>'+date.getTime());	
+
+							// $("#product_addtocart_prescription_form").ajaxForm({ 
+
+							// 	dataType: "json",
+
+							// 	beforeSubmit: function() {  
+							// 		if(disable_submission == true){
+							// 			has_next_upload = true;
+							// 		}else{
+							// 			disable_submission = true;
+							// 		}
+							// 	},
+							// 	uploadProgress: function(event, position, total, percentComplete) { 
+
+							// 	},
+							// 	error: function(){ 
+
+							// 	},
+							// 	success: function(xhr){ 
+							// 		$("#product_addtocart_prescription_form").attr('action',main_action);
+
+							// 		file_obj.parent().find('.preview_rx').html('');
+
+							// 		if(has_next_upload == false){
+							// 			disable_submission = false;  
+							// 		}
+
+							// 	},
+
+							// 	complete: function(xhr) {     													
+							// 		try{
+							// 			$("#loader_rx_capture").hide();														
+
+							// 			//var response_data = eval("("+xhr.responseText+")");	  
+
+							// 			var response_data =$.parseJSON(xhr.responseText);  
+
+							// 			if(response_data.success == true){ 	
+
+							// 				var ranid = '<?php  //echo md5(time());?>' + date.getTime();
+
+							// 				var temp = '<div id="'+ranid+'" style="width: 100%; text-align: center;"' +  
+
+							// 						'<a href="'+response_data.scanned_rx_list+'" target="_blank">'+
+
+							// 						'<img src="'+response_data.scanned_rx_list+'" width="100%" height="100%" class="capimage"></a>'+
+
+							// 						'<span class="capture-image-display-c" style="position:absolute;right:10px;display:none"><a href="javascript:void(0);" style="display: block; background-color:#208880; text-align: center; color: #FFFFFF; font-weight: bold; height: 15px; line-height: 15px; width: 17px;" onclick="removeRx(\''+ranid+'\')">x</a></span>'+
+
+							// 						'<input type="hidden" value="'+response_data.image_name+'" name="prescription[scanned_rxs]['+response_data.orig_image_name+']">'+
+
+							// 						'</div> ';
+
+							// 				$("#main_presc_scanned_capture").html(temp); 
+
+							// 			}else if(response_data.error == 'TYPE'){  
+
+							// 				alert("<?php //echo __("Invalid File Type") ;?>");
+
+							// 			}else if(response_data.error == 'SIZE'){
+
+							// 				alert("<?php //echo __("Invalid File Size") ;?>");
+
+							// 			}else{
+
+							// 				alert("<?php //echo __("Error in Uploading. File maybe too large or invalid. Please try again.") ;?>");
+
+						
+
+							// 			}
+
+							// 		}catch(err){ 
+
+							// 			alert("<?php //echo __("Error in Uploading. File maybe too large or invalid. Please try again. ") ;?>");
+
+							// 		}
+
+							// 	}});
+
+							// 	$("#product_addtocart_prescription_form").submit();  	
+
+				
+					});
+
+					$('#upload_prescription').click(function (){		
+						$('.default').hide();
+						$('#upload_attached').show();
+						$('#grp-btn').show();
+					});
+					
+					$('#radio_Camera').click(function (){		
+						$('.default').hide();
+						$('#upload_camera').show();
+						$('.capture').show();
+						$('#grp-btn').hide();
+					});
+
+					$('#existing_prescription').click(function (){		
+						$('.default').hide();
+						$('#upload_existing').show();
+						$('#grp-btn').show();	
+					});
+					
+					$('#upload_upondelivery').click(function (){		
+						$('.default').hide();
+						$('#upload_rx_upondelivery').show();
+						$('.upondelivery_details').show();
+						$('#save_prescription').val('Continue');
+						$('#grp-btn').show();	
+					});
+					
+					
+					$('#radioForm').click(function (){			
+						$('.default').hide();
+						$('.form').show();	
+						$('#preloader').hide();
+						$('#grp-btn').show();
+
+					});	
+
+					$('#new_prescription').click(function (){		
+						$('.default').hide();
+						$('#upload_details').show();
+						$('#grp-btn').show();		
+					});			
+					
+					$('.back').click(function (){		
+						
+						$('.default').show();
+						$('.upload').hide();
+						$('.upondeliSery_details').hide();
+						$('.camera').hide();
+						$('.form').hide();
+						$('.existing').hide();	
+						$('#upload_prescription').prop('checked', false);
+						$('#existing_prescription').prop('checked', false);
+						$('#new_prescription').prop('checked', false);	
+						$('#radio_Camera').prop('checked', false);
+						$('#upload_upondelivery').prop('checked', false);		
+						$('#save_prescription').val('Upload');			
+						$('#camera_frame').show();
+						$('#result_image').hide();
+						$('.cancel_capture').hide();
+						$('.capture').hide();
+						$('#grp-btn').hide();
+						// Webcam.reset();
+						$("#file_text").val("");
+						$("#current_rx_image_selected").val("");
+						$("#scanned_prescription_lists").find('div div').remove();
+						$('.webcam_upload').hide();
+						$('.webcam_cancel').hide();
+					});
+					
+					$('.file').click(function (){		
+						$('#file_attacher').click();
+					
+					});
+					
+					$('#file_attacher').change(function () {		
+						$('.file-text').val($(this).val());
+					});
+
+
+					$('#file_attacher_capture').change(function () {		
+						$('.file-text-capture').val($(this).val());
+					});
+					
+					$('#uploadattached').click(function (){	
+						$('#save_prescription').click();
+					
+					});
+					
+					$('#uploadcaptured').click(function (){	
+						$('#save_prescription').click();
+					
+					});
+
+					$('#uploadexisting').click(function (){	
+						$('#save_prescription').click();
+					
+					});
+
+					$('#uploaddetails').click(function (){	
+						$('#save_prescription').click();
+					
+					});
+					
+					$('.p-close').click(function (){
+						$('.p-modal').hide();	
+						$('.fancybox-overlay').fadeOut();
+						$('html').removeClass('fancybox-lock');			
+						// Webcam.reset();
+					});	
+
+					
+
+				}); //END OF .READY
+
+
+				
+
+				
+			}
+		);
+	//<![CDATA[
+		
+
+
+	//]]>
+
+	</script>
+
+
+		
+	
+	
+</div> 

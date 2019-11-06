@@ -1,0 +1,168 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Unilab
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Unilab.com license that is
+ * available through the world-wide-web at this URL:
+ * http://www.Unilab.com/license-agreement.html
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Unilab
+ * @package     Unilab_Bannerslider
+ * @copyright   Copyright (c) 2012 Unilab (http://www.Unilab.com/)
+ * @license     http://www.Unilab.com/license-agreement.html
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+	<acl>
+		<resources>
+			<resource id="Magento_Backend::admin">
+				<resource id="Unilab_Extensions::modules" title="Unilab Extension" sortOrder="80">
+					<resource id="Unilab_Benefits::benefits" title="Employee Benefits" sortOrder="1" >
+
+						<resource id="Unilab_Benefits::employeebenefits" title="Employee Benefits" sortOrder="0">
+							<resource id="Unilab_Benefits::create_benefit" title="Add Employee Benefits" sortOrder="1"/>
+							<resource id="Unilab_Benefits::edit_benefit" title="Edit Employee Benefits" sortOrder="2"/>
+							<resource id="Unilab_Benefits::mass_delete" title="Mass Delete Employee Benefits" sortOrder="3"/>							
+							<resource id="Unilab_Benefits::import" title="Import Employee Benefits" sortOrder="3"/>
+							<resource id="Unilab_Benefits::save" title="Save Employee Benefits" sortOrder="4"/>
+						</resource>
+
+						<resource id="Unilab_Benefits::tendertype" title="Tender Type" sortOrder="1">
+							<resource id="Unilab_Benefits::create_tendertype" title="Add Tender Type" sortOrder="1"/>
+							<resource id="Unilab_Benefits::edit_tendertype" title="Edit Tender Type" sortOrder="2"/>
+							<resource id="Unilab_Benefits::mass_delete_tendertype" title="Mass Delete Tender Type" sortOrder="3"/>
+							<resource id="Unilab_Benefits::save_tendertype" title="Save Tender Type" sortOrder="4"/>
+						</resource>
+						<resource id="Unilab_Benefits::transactiontype" title="Transaction Type" sortOrder="2">
+							<resource id="Unilab_Benefits::create_transactiontype" title="Add Transaction Type" sortOrder="1"/>
+							<resource id="Unilab_Benefits::mass_delete_transaction_type" title="Mass Delete Transaction Type" sortOrder="2"/>
+							<resource id="Unilab_Benefits::save_transaction_type" title="Save Transaction Type" sortOrder="3"/>
+						</resource>
+						<resource id="Unilab_Benefits::purchasecaplimit" title="Purchase Cap Limit" sortOrder="3">
+							<resource id="Unilab_Benefits::create_purchase" title="Add Purchase Cap Limit" sortOrder="1"/>
+							<resource id="Unilab_Benefits::import_purchasecap" title="Import Purchase Cap Limit" sortOrder="2"/>
+							<resource id="Unilab_Benefits::mass_delete_purchasecap" title="Mass Delete Purchase Cap Limit" sortOrder="3"/>
+							<resource id="Unilab_Benefits::save_purchasecap" title="Save Purchase Cap Limit" sortOrder="4"/>
+						</resource>
+						<resource id="Unilab_Benefits::companybranch" title="Company Branch" sortOrder="3">
+							<resource id="Unilab_Benefits::create_company_branch" title="Add Company Branch" sortOrder="1"/>
+							<resource id="Unilab_Benefits::edit_company_branch" title="Edit Company Branch" sortOrder="2"/>
+							<resource id="Unilab_Benefits::import_company_branch" title="Import Company Branch" sortOrder="3"/>
+							<resource id="Unilab_Benefits::mass_delete_companybranch" title="Mass Delete Company Branch" sortOrder="4"/>
+							<resource id="Unilab_Benefits::save_companybranch" title="Save Company Branch" sortOrder="5"/>
+						</resource>
+						
+
+					</resource>
+					<resource id="Unilab_DigitalCouponing::unilabdc" title="Digital Couponing" sortOrder="3" >
+						<resource id="Unilab_DigitalCouponing::unilabdc_ascii" title="ASCII Equivalents" sortOrder="0">
+							<resource id="Unilab_DigitalCouponing::add_asciiequivalent" title="Add ASCII Equivalent" sortOrder="1" />
+							<resource id="Unilab_DigitalCouponing::edit_asciiequivalent" title="Edit ASCII Equivalent" sortOrder="2" />
+							<resource id="Unilab_DigitalCouponing::massdelete_asciiequivalent" title="Mass Delete ASCII Equivalent" sortOrder="3" />
+							<resource id="Unilab_DigitalCouponing::save_asciiequivalent" title="Save ASCII Equivalent" sortOrder="4" />
+						</resource>
+						<resource id="Unilab_DigitalCouponing::unilabdc_remainder" title="Remainder Equivalents" sortOrder="1">
+							<resource id="Unilab_DigitalCouponing::add_remainder" title="Add Remainder Equivalent" sortOrder="1" />
+							<resource id="Unilab_DigitalCouponing::edit_remainder" title="Edit Remainder Equivalent" sortOrder="2" />
+							<resource id="Unilab_DigitalCouponing::massdelete_remainder" title="Mass Delete Remainder Equivalent" sortOrder="3" />
+							<resource id="Unilab_DigitalCouponing::save_remainder" title="Save Remainder Equivalent" sortOrder="4" />
+						</resource>
+						<resource id="Unilab_DigitalCouponing::unilabdc_usedcoupon" title="Used Coupons" sortOrder="2" />
+					</resource>
+					<resource id="Unilab_Extensions::Price" title="Price" sortOrder="4">
+						<resource id="Unilab_Pricelist::pricelist" title="Price List" sortOrder="10">
+							<resource id="Unilab_Pricelist::promo_catalog" title="Price List" sortOrder="20"/>								
+							<resource id="Unilab_Pricelist::promo" title="Price List" sortOrder="20"/>	
+							<resource id="Unilab_Pricelist::add_pricelist" title="Add Price" sortOrder="20"/>	
+							<resource id="Unilab_Pricelist::edit_pricelist" title="Edit Price" sortOrder="30"/>	
+							<resource id="Unilab_Pricelist::delete" title="Delete Price" sortOrder="40"/>							
+							<resource id="Unilab_Pricelist::import" title="Import Price List" sortOrder="50"/>
+							<resource id="Unilab_Pricelist::massdelete" title="Delete Price" sortOrder="60"/>
+						</resource>
+						<resource id="Unilab_Benefits::pricelevel" title="Price Level" sortOrder="20">
+							<resource id="Unilab_Benefits::add_pricelevel" title="Add Price Level" sortOrder="10"/>
+							<resource id="Unilab_Benefits::pricelevel_delete" title="Delete Price Level" sortOrder="20"/>
+							<resource id="Unilab_Benefits::edit_pricelevel" title="Edit Price Level" sortOrder="30"/>
+							<resource id="Unilab_Benefits::import_pricelevel" title="Import Price Level" sortOrder="40"/>
+							<resource id="Unilab_Benefits::importresult_pricelevel" title="Import Price Level Report" sortOrder="50"/>
+							<resource id="Unilab_Benefits::save_pricelevel" title="Save Price Level" sortOrder="60"/>
+							<resource id="Unilab_Benefits::massdelete_pricelevel" title="Mass Delete Price Level" sortOrder="70"/>
+						</resource>
+						<resource id="Unilab_Benefits::productpricelist" title="Product Price List" sortOrder="30">
+							<resource id="Unilab_Benefits::add_productpricelist" title="Add Product Price List" sortOrder="10"/>
+							<resource id="Unilab_Benefits::delete_productpricelist" title="Delete Product Price List" sortOrder="20"/>
+							<resource id="Unilab_Benefits::edit_productpricelist" title="Edit Product Price List" sortOrder="30"/>
+							<resource id="Unilab_Benefits::import_productpricelist" title="Import Product Price List" sortOrder="40"/>
+							<resource id="Unilab_Benefits::importresult_productpricelist" title="Import Product Price List Report" sortOrder="50"/>
+							<resource id="Unilab_Benefits::save_productpricelist" title="Save Product Price List" sortOrder="60"/>
+							<resource id="Unilab_Benefits::massdelete_productpricelist" title="Mass Delete Product Price List" sortOrder="70"/>
+						</resource>
+					</resource>
+
+					<resource id="Unilab_Extensions::Reports" title="Reports" sortOrder="5">
+						<resource id="Unilab_Reports::countryAndCity" title="Country and City" sortOrder="10"/>								
+						<resource id="Unilab_Reports::customerName" title="Customer Name" sortOrder="20"/>							
+						<resource id="Unilab_Reports::gender" title="Gender" sortOrder="30"/>								
+						<resource id="Unilab_Reports::monthlySummary" title="Monthly Summary" sortOrder="40"/>
+						<resource id="Unilab_Reports::orderDetails" title="Order Details" sortOrder="50"/>								
+						<resource id="Unilab_Reports::orderSummary" title="Order Summary" sortOrder="60"/>
+						<resource id="Unilab_Reports::products" title="Products" sortOrder="70"/>
+					</resource>
+
+					<resource id="Unilab_Extensions::AddFreeProductToCart" title="Add Free Product To Cart" sortOrder="7">
+						<resource id="Unilab_Afptc::afptc" title="Add Free Product To Cart List" sortOrder="10">	
+							<resource id="Unilab_Afptc::add_afptc" title="Add Free Product To Cart Add" sortOrder="10"/>							
+							<resource id="Unilab_Afptc::edit_afptc" title="Add Free Product To Cart Edit" sortOrder="20"/>							
+							<resource id="Unilab_Afptc::save" title="Add Free Product To Cart Save" sortOrder="30"/>							
+						</resource>
+						<resource id="Unilab_Afptc::afptcSettings" title="Add Free Product To Cart Settings" sortOrder="20"/>							
+					</resource>
+
+					<resource id="Unilab_Extensions::others" title="Manage others" sortOrder="7">
+						<!--Admin Logs-->
+						<resource id="Unilab_Adminlogs::adminlogs" title="Admin Logs" sortOrder="10">
+							<resource id="Unilab_Adminlogs::Adminlogs_list" title="Admin Logs List" sortOrder="10"/>							
+						</resource>
+
+						<!--Mov Shipping-->
+						<resource id="Unilab_Movshipping::movshipping" title="MOV Shipping" sortOrder="20">
+							<resource id="Unilab_Movshipping::add_movshipping" title="Add MOV Shipping" sortOrder="10"/>							
+							<resource id="Unilab_Movshipping::edit_movshipping" title="Edit MOV Shipping" sortOrder="10"/>								
+							<resource id="Unilab_Movshipping::delete_movshipping" title="Delete MOV Shipping" sortOrder="10"/>							
+						</resource>
+
+						<!--Philippine Cities-->
+						<resource id="Unilab_City::city_manager" title="Manage Philippine Cities" sortOrder="30">	        	      	  
+							<resource id="Unilab_City::city_list" title="City List" sortOrder="10"/>							
+							<resource id="Unilab_City::city_add" title="Add City" sortOrder="10"/>
+							<resource id="Unilab_City::city_edit" title="Edit City" sortOrder="10"/>							
+							<resource id="Unilab_City::city_delete" title="Delete City" sortOrder="10"/>
+						</resource>
+						<!--Unilab Checkout Configuration-->
+						<resource id="Unilab_Checkout::manage_checkout" title="Unilab Checkout Configuration" sortOrder="50">
+							<resource id="Unilab_Checkout::config" title="Unilab Checkout Setting" sortOrder="10"/>							
+						</resource>
+						<resource id="Unilab_Prescription::prescription_camera" title="Prescription Camera" sortOrder="50">
+							<resource id="Unilab_Prescription::config" title="Camera Setting" sortOrder="10"/>
+						</resource>
+						
+					</resource>
+				</resource>
+				<resource id="Magento_Customer::customer">
+					<resource id="Unilab_Customers::import" title="Import Customer" sortOrder="30"/>
+					<resource id="Unilab_Customers::customer_groups" title="Customer Group">
+						<resource id="Unilab_Customers::group" title="Customer Group List" sortOrder="30"/>
+					</resource>
+				</resource>
+			</resource>
+		</resources>
+	</acl>
+</config>

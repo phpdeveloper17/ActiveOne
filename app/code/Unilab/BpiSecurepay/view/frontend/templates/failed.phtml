@@ -1,0 +1,15 @@
+
+<?php
+
+?>
+<div class="checkout-success">
+    <p><b><?php echo __('Your transaction with BPI Securepay has failed.')?></b></p>
+   
+	<p><b><?php echo __('You may click on <a href="'.$this->getUrl('customer/account').'">'.  __('My Account').'</a> to view details of your order.</span>')?></b></p>
+
+    <div class="actions-toolbar">
+        <div class="primary">
+            <a class="action primary continue" href="<?= /* @escapeNotVerified */ $block->getContinueUrl() ?>"><span><?= /* @escapeNotVerified */ __('Continue Shopping') ?></span></a>
+        </div>
+    </div>
+</div>

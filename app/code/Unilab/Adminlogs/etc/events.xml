@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+
+    <event name="backend_auth_user_login_success">
+        <observer name="admin_user_login_success" instance="Unilab\Adminlogs\Observer\AdminLogin" />
+    </event>
+    <event name="backend_auth_user_login_failed">
+        <observer name="admin_user_login_failed" instance="Unilab\Adminlogs\Observer\AdminLoginFailed" />
+    </event>
+    <event name="adminhtml_customer_save_after">
+        <observer name="admin_customer_save" instance="Unilab\Adminlogs\Observer\CustomerSave" />
+    </event>
+    <event name="adminhtml_sales_orders_view">
+        <observer name="admin_sales_orders_view_observer" instance="Unilab\Adminlogs\Observer\ViewOrders" />
+    </event>
+    <event name="adminhtml_view_sales">
+        <observer name="admin_sales_view_observer" instance="Unilab\Adminlogs\Observer\OrderView" />
+    </event>
+    <event name="admin_user_save_after">
+        <observer name="admin_user_update" instance="Unilab\Adminlogs\Observer\ChangePassword" />
+    </event>
+    <event name="controller_action_predispatch_adminhtml_auth_logout">
+        <observer name="admin_user_logout" instance="Unilab\Adminlogs\Observer\AdminLogout" />
+    </event>
+</config>

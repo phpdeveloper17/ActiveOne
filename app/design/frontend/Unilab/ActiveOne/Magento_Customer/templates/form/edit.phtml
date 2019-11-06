@@ -1,0 +1,244 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Magento\Customer\Block\Form\Edit $block */
+?>
+<style>
+.base{
+    font-weight: normal !important;
+    font-size: 20px !important;
+}
+.field {
+    float: left;
+    width: 45%;
+    margin-right: 5%;
+}
+.legend{
+    width: 40% !important;
+    border-bottom:0 !important;
+    margin-left:0 !important;
+    margin-top: 10px !important;
+    font-weight: bold;
+}
+.input-box{
+    width:90%;
+}
+.fieldset > .field:not(.choice) > .label{
+    width: 0 !important;
+}
+.my-account span{
+    font-size:12px !important;
+}
+._has-datepicker{
+    width: 92% !important;
+}
+.ui-datepicker-trigger{
+    position:absolute !important;
+}
+#change-password{
+    position: absolute !important;
+}
+.field.choice{
+    width:22% !important;
+}
+.choice span{
+    font-weight:bold;
+}
+.back-button{
+    margin: 20px 0 16px 0;
+    color:black;
+}
+.back-button a,small{
+    color:black;
+    font-weight:bold;
+    font-size:14px;
+}
+#agree_on_terms{
+    position:absolute !important;
+}
+.actions-toolbar p.required{
+    float:left;
+    font-size:12px;
+    margin-right: 10px;
+    color: #EB340A;
+    font-weight:bold;
+    margin-top:10px;
+}
+div.mage-error{
+    position:absolute;
+}
+#password-error{
+    margin-top: 35px;
+    width:40%;
+	text-align:justify;
+}
+
+@media (max-width: 960px) and (min-width: 640px){
+    .page-title-wrapper {
+        width: 100%!important;
+    }
+
+    .mydashboard h1 {
+        margin-bottom: 20px!important;
+    }
+}
+</style>
+<div data-bind="scope: 'messages'">
+    <div data-bind="foreach: { data: cookieMessages, as: 'message' }" class="messages">
+        <div data-bind="attr: {
+            class: 'message-' + message.type + ' ' + message.type + ' message',
+            'data-ui-id': 'message-' + message.type
+        }">
+            <div data-bind="html: message.text"></div>
+        </div>
+    </div>
+</div>
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Magento_Ui/js/core/app": {
+                "components": {
+                        "messages": {
+                            "component": "Magento_Theme/js/view/messages"
+                        }
+                    }
+                }
+            }
+    }
+</script>
+<script type="text/x-magento-init">
+    {
+        "#custom-form": {
+            "validation": {}
+        }
+    }
+
+</script>
+<form class="form form-edit-account" action="<?= $block->escapeUrl($block->getUrl('customers/account/editPost')) ?>" method="post" id="form-validate" enctype="multipart/form-data" data-hasrequired="<?= $block->escapeHtmlAttr(__('* Required Fields')) ?>" autocomplete="off" data-mage-init='{"validation": {}}'>
+<div class="my-account">
+    <fieldset class="fieldset info">
+        <?= $block->getBlockHtml('formkey') ?>
+        <!-- <legend class="legend"><span style="font-size:16px !important;"><?= $block->escapeHtml(__('Account Information')) ?></span></legend><br> -->
+        <?= $block->getLayout()->createBlock('Magento\Customer\Block\Widget\Name')->setObject($block->getCustomer())->toHtml() ?>
+
+        <?php $_dob = $block->getLayout()->createBlock('Unilab\Customers\Block\Widget\Dob') ?>
+        <?php $_taxvat = $block->getLayout()->createBlock('Magento\Customer\Block\Widget\Taxvat') ?>
+        <?php $_gender = $block->getLayout()->createBlock('Magento\Customer\Block\Widget\Gender') ?>
+        <?php $_civilStatus = $block->getLayout()->createBlock('Unilab\Customers\Block\Widget\CivilStatus');?>
+        <?php $_terms = $block->getLayout()->createBlock('Unilab\Customers\Block\Widget\Terms');?>
+
+
+        <?php if ($_taxvat->isEnabled()): ?>
+            <?= $_taxvat->setTaxvat($block->getCustomer()->getTaxvat())->toHtml() ?>
+        <?php endif ?>
+        <div class="field choice" style="display:none">
+            <input type="checkbox" checked="checked" name="change_email" id="change-email" data-role="change-email" value="1" title="<?= $block->escapeHtmlAttr(__('Change Email')) ?>" class="checkbox" />
+        </div>
+        <div class="field email required" data-container="change-email">
+            <label class="label" for="email"><span><?= $block->escapeHtml(__('Email')) ?></span></label>
+            <div class="input-box">
+                <input type="email" name="email" id="email" autocomplete="email" data-input="change-email" value="<?= $block->escapeHtmlAttr($block->getCustomer()->getEmail()) ?>" title="<?= $block->escapeHtmlAttr(__('Email')) ?>" class="input-text" data-validate="{required:true, 'validate-email':true}" />
+            </div>
+        </div>
+    <?php
+        $civil_status = $block->getCustomer()->getCustomAttribute('civil_status');
+        $agree_on_terms = $block->getCustomer()->getCustomAttribute('agree_on_terms');
+        $civilstatus = '';
+        if(!empty($civil_status)){
+            $civilstatus = $civil_status->getValue();
+        }
+    ?>
+        <?=$_civilStatus->setCivilStatus($civilstatus)->toHtml();?>
+
+        <?php if ($_gender->isEnabled()): ?>
+            <?=$_gender->setGender($block->getCustomer()->getGender())->toHtml();?>
+        <?php endif ?>
+
+        <?php if ($_dob->isEnabled()): ?>
+            <?= $_dob->setDate($block->getCustomer()->getDob())->toHtml() ?>
+        <?php endif ?>
+        <?= $_terms->setAgreeOnTerms($agree_on_terms->getValue())->toHtml() ?>
+
+        <div class="field choice">
+            <input type="checkbox" name="change_password" id="change-password" data-role="change-password" value="1" title="<?= $block->escapeHtmlAttr(__('Change Password')) ?>"<?php if ($block->getChangePassword()): ?> checked="checked"<?php endif; ?> class="checkbox" />
+            <label class="change-password-label label" style="margin-left: 50px;" for="change-password"><span><?= $block->escapeHtml(__('Change Password')) ?></span></label>
+        </div>
+    </fieldset>
+
+    <fieldset class="fieldset password" data-container="change-email-password">
+        <div  class="field required" data-container="new-password" style="width:100%">
+            <label class="label" for="current-password"><span><?= $block->escapeHtml(__('Current Password')) ?></span></label>
+            <div class="input-box current-password" style="width:40%">
+                <input type="password" class="input-text" name="current_password" id="current-password" data-input="current-password"
+                data-validate="{required:true}"
+                autocomplete="off" />
+            </div>
+        </div>
+        <div class="field new password required" data-container="new-password">
+
+            <label class="label" for="password"><span><?= $block->escapeHtml(__('New Password')) ?></span></label>
+            <div class="input-box">
+                <input type="password" class="input-text" name="password" id="password"
+                    data-password-min-length="<?= $block->escapeHtml($block->getMinimumPasswordLength()) ?>"
+                    data-password-min-character-sets="<?= $block->escapeHtml($block->getRequiredCharacterClassesNumber()) ?>"
+                    data-input="new-password"
+                    data-validate="{required:true, 'validate-customer-password':true}"
+                    autocomplete="off" />
+                <div id="password-strength-meter-container" data-role="password-strength-meter" aria-live="polite">
+                    <div id="password-strength-meter" class="password-strength-meter">
+                        <?= $block->escapeHtml(__('Password Strength')) ?>:
+                        <span id="password-strength-meter-label" data-role="password-strength-meter-label">
+                            <?= $block->escapeHtml(__('No Password')) ?>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="field confirm password required" data-container="confirm-password">
+            <label class="label" for="password-confirmation"><span><?= $block->escapeHtml(__('Confirm New Password')) ?></span></label>
+            <div class="input-box">
+                <input type="password" class="input-text" name="password_confirmation" id="password-confirmation"
+                    data-input="confirm-password"
+                    autocomplete="off" />
+            </div>
+        </div>
+    </fieldset>
+    <?= $block->getChildHtml('form_additional_info') ?>
+    <div class="actions-toolbar" style="margin-left:0 !important">
+        <p class="required">* Required Fields</p>
+        <div class="primary">
+            <button type="submit" class="action save primary" title="<?= $block->escapeHtmlAttr(__('Save')) ?>"><span><?= $block->escapeHtml(__('Save')) ?></span></button>
+        </div>
+    </div>
+    <div class="back-button">
+        <div class="secondary">
+            <small>« </small>
+            <a class="action back" href="<?= $block->escapeUrl($block->getBackUrl()) ?>"><span><?= $block->escapeHtml(__('Back')) ?></span></a>
+        </div>
+    </div>
+</div>
+</form>
+<script>
+
+</script>
+<script type="text/x-magento-init">
+    {
+        "[data-role=change-email], [data-role=change-password]": {
+            "changeEmailPassword": {
+                "titleChangeEmail": "<?= $block->escapeJs($block->escapeHtml(__('Change Email'))) ?>",
+                "titleChangePassword": "<?= $block->escapeJs($block->escapeHtml(__('Change Password'))) ?>",
+                "titleChangeEmailAndPassword": "<?= $block->escapeJs($block->escapeHtml(__('Change Email and Password'))) ?>"
+            }
+        },
+        "[data-container=new-password]": {
+            "passwordStrengthIndicator": {
+                "formSelector": "form.form-edit-account"
+            }
+        }
+    }
+</script>

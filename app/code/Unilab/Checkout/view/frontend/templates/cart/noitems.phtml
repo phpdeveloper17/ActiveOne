@@ -1,0 +1,63 @@
+<?php
+/**
+ * Copyright © 2016 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<div data-bind="scope: 'messages'">
+    <div data-bind="foreach: { data: cookieMessages, as: 'message' }" class="messages">
+        <div data-bind="attr: {
+            class: 'message-' + message.type + ' ' + message.type + ' message',
+            'data-ui-id': 'message-' + message.type
+        }">
+            <div data-bind="html: message.text"></div>
+        </div>
+    </div>
+</div>
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Magento_Ui/js/core/app": {
+                "components": {
+                        "messages": {
+                            "component": "Magento_Theme/js/view/messages"
+                        }
+                    }
+                }
+            }
+    }
+</script>
+<div class="no-cart-items">
+    <div class="row">
+        <div class="col-md-12 col-xs-12">
+
+            <h4 class="text-center"><?php echo __('THE SHOPPING CART IS CURRENTLY EMPTY.') ?></h1>
+
+        </div>
+        <div class="col-md-3 col-sm-3 col-xs-12">
+            <?= $block->getChildHtml('checkout_cart_empty_widget') ?>
+            <img class="img-cart-empty" src='<?=  $this->getViewFileUrl('images/empty_cart.png'); ?>'>
+        </div>
+        <div class="col-md-8 col-sm-8 col-xs-12">
+            <div class="empty-message">
+                <p>
+                    <?=  __('Thank you for visiting Work-Place Pharmacy Services, Inc.') ?><br />
+                    <?=  __('If you are having issues with the shopping cart, please ') ?>
+                    <a href="<?=  $this->getUrl("contacts/"); ?>" class="email-link fancybox.ajax">email support</a>
+                    <br /></br />
+                </p>
+            </div>
+
+            <p><?= __('<a href="%1" class="button continue-shopping">Continue Shopping</a>',
+                    $block->escapeUrl($block->getContinueShoppingUrl())) ?>
+            </p>
+            <?= $block->getChildHtml('shopping.cart.table.after') ?>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    require(['jquery'], function($){
+        $(".shopping-cart-page-title").css("display","none");
+    })
+</script>

@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<config 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+	
+	<menu>
+		<add id="Unilab_DigitalCouponing::unilabdc" title="Digital Couponing" translate="title" sortOrder="4" module="Unilab_DigitalCouponing" parent="Unilab_Extensions::modules" resource="Unilab_DigitalCouponing::unilabdc"/>
+		<add id="Unilab_DigitalCouponing::unilabdc_title" title="Digital Couponing" translate="title" module="Unilab_DigitalCouponing" sortOrder="50" parent="Unilab_Extensions::modules"  resource="Unilab_DigitalCouponing::unilabdc"/>
+		<add id="Unilab_DigitalCouponing::unilabdc_ascii" title="ASCII Equivalents" translate="title" module="Unilab_DigitalCouponing" resource="Unilab_DigitalCouponing::unilabdc_ascii" dependsOnModule="Unilab_DigitalCouponing" parent="Unilab_DigitalCouponing::unilabdc" action="unilabdc/ascii/index" sortOrder="1"/>
+		<add id="Unilab_DigitalCouponing::unilabdc_remainder" title="Remainder Equivalents" translate="title" module="Unilab_DigitalCouponing" resource="Unilab_DigitalCouponing::unilabdc_remainder" dependsOnModule="Unilab_DigitalCouponing" parent="Unilab_DigitalCouponing::unilabdc" action="unilabdc/remainder/index" sortOrder="2"/>
+		<add id="Unilab_DigitalCouponing::unilabdc_usedcoupon" title="Used Coupons" translate="title" module="Unilab_DigitalCouponing" resource="Unilab_DigitalCouponing::unilabdc_usedcoupon" dependsOnModule="Unilab_DigitalCouponing" parent="Unilab_DigitalCouponing::unilabdc" action="unilabdc/usedcoupon/index" sortOrder="3"/>
+	</menu>
+
+</config>

@@ -1,0 +1,9 @@
+<referenceContainer name="page.messages">
+    <block class="Magento\Framework\View\Element\Messages" name="messages" as="messages"/>
+ </referenceContainer>
+<!-- <referenceContainer name="columns">
+    <container name="div.sidebar.main.custom" htmlTag="div" htmlClass="sidebar sidebar-main" before="main">
+        <block class="Magento\Framework\View\Element\Template" name="catalog.leftnav.freshipping" before="-" template="Magento_Catalog::catalog/freeshipping.phtml"/>
+         <block class="Magento\Framework\View\Element\Template" name="catalog.leftnav.menu" after="catalog.leftnav.freshipping" template="Magento_Catalog::catalog/navigation/left_menu.phtml"/>
+    </container>
+</referenceContainer> -->

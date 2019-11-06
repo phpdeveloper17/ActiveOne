@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+    	<add id="Unilab_Movshipping::movshipping" title="Manage MOV Shipping" translate="title" module="Unilab_Movshipping" action="movshipping/shipping/index" resource="Unilab_Movshipping::movshipping" dependsOnModule="Unilab_Movshipping" sortOrder="1" parent="Unilab_Extensions::others"/>    
+    </menu>
+</config>

@@ -1,0 +1,60 @@
+<form 
+    id="import_form"
+    enctype="multipart/form-data" 
+    action="<?php echo $this->getUrl('*/*/submitimport')?>" 
+    method="post">
+    <fieldset 
+        class="fieldset admin__fieldset no-display" 
+        id="upload_file_fieldset" 
+        style="display: block;">
+        
+        <legend class="admin__legend legend">
+            <span>File to Import</span>
+        </legend>
+        <br>
+        
+        <div class="messages"></div>
+        <div>
+            <input name="form_key" type="hidden" value="<?php echo $block->getFormKey() ?>" />
+        </div>
+        <div class="admin__field field field-import_file  required _required" data-ui-id="import-form-container-form-fieldset-element-form-field-import-file">
+            <label class="label admin__field-label" for="import_file" data-ui-id="import-form-container-form-fieldset-element-file-import-file-label"><span>Select CSV File to Import</span></label>
+            <div class="admin__field-control control">
+                <input 
+                    id="csv_file" 
+                    name="csv_file" 
+                    data-ui-id="import-form-container-form-fieldset-element-file-import-file"
+                    value="" title="Select CSV File to Import" 
+                    class="input-file required-entry _required" 
+                    type="file"
+                    aria-required="true"
+                    accept=".csv"> 
+            </div>
+        </div>
+        <div class="admin_field">
+            <button disabled id="btn-import" type="submit" class="btn btn-default">Submit</button>
+        </div>
+    </fieldset>
+</form>
+<script>
+    require(
+        [
+            'jquery',
+        ],    
+        function($) {
+          $("#csv_file").on("change",function(e){
+            if($(this).val().length != 0){
+                console.log($(this).val().length);
+                $("#btn-import").attr("disabled", false);
+            }else{
+                $("#btn-import").attr("disabled", true);
+            }
+          });
+
+          $(document).on('submit', "import_form", function(e) {
+            $("#btn-import").attr("disabled", false);
+            $("#btn-import").text("Uploading...");
+          });
+        }
+    );
+</script>

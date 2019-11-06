@@ -1,0 +1,248 @@
+<style>
+    .expandme,.submenu_selected{
+        color:red;
+        text-decoration:underline;
+    }
+    select:focus {
+        outline: ;
+    }
+    select {
+        border: 0px !important;
+        outline: 0px !important;
+        overflow: auto !important;
+        -ms-overflow-style: none;
+        word-break: break-word !important;
+        background-color: transparent !important;
+        scroll: none;
+        padding-left: 10px;
+    }
+    select::-webkit-scrollbar {
+        display: none;
+    }
+    option {
+        width: 200px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .active{
+        background-color:#A5A3A3;
+    }
+
+    .block.block-filter.you-may-also-like{
+        display: block !important;
+    }
+
+    i.fa {
+        margin-left: 10px !important;
+    }
+</style>
+
+<?php
+	$objectManager =  \Magento\Framework\App\ObjectManager::getInstance();
+    $storeManager = $objectManager->get('\Magento\Store\Model\StoreManagerInterface');
+    $urlInterface = $objectManager->get('\Magento\Framework\UrlInterface');
+    $eavConfig = $objectManager->get('\Magento\Eav\Model\Config');
+    $categoryCollection = $objectManager->create('\Magento\Catalog\Model\ResourceModel\Category\CollectionFactory');
+    $categoryModel = $objectManager->create('\Magento\Catalog\Model\Category');
+    $productCollection = $objectManager->create('\Magento\Catalog\Model\ResourceModel\Product\CollectionFactory');
+    $productStatus = $objectManager->get('\Magento\Catalog\Model\Product\Attribute\Source\Status');
+    $productVisibility = $objectManager->get('\Magento\Catalog\Model\Product\Visibility');
+    $productModel = $objectManager->create('Magento\Catalog\Model\Product');
+    $filterManager = $objectManager->get('\Magento\Framework\Filter\FilterManager');
+    $imageHelper = $objectManager->create('\Magento\Catalog\Helper\Image');
+    $checkoutHelper = $objectManager->get('Magento\Checkout\Helper\Cart');
+    $registry = $objectManager->get('\Magento\Framework\Registry');
+    $store = $storeManager->getStore();
+	$currentUrl = $urlInterface->getCurrentUrl();
+	$baseUrl = $store->getBaseurl();
+	$is_visible = true;
+	$Listblocked = array();
+	$Listblocked[] = $baseUrl."customer/account";
+
+	if (in_array($currentUrl, $Listblocked)) {
+		$is_visible = false;
+    }
+?>
+
+<div class="block block-filter" style="margin-bottom: 0;background: #403150 !important;">
+    <div class="block-title" style="padding: 6px">
+        <strong style="color:#ffff!important;font-size:14px" class="filter-title"><?php echo __('Filter By') ?><i class="fa fa-chevron-right"></i></strong>
+    </div>
+</div>
+<!-- Filter By Type -->
+<div class="block block-layered-nav" <?php if(!$is_visible){ echo "style='display:none;'"; } ?> >
+	<strong class="filter-title">
+        <span style="margin-left: 5px;"><?php echo __('TYPE') ?></span>
+        <hr style="margin:0; margin-bottom: 5px;">
+    </strong>
+	<ul style="width:98%; height:auto;" size="5" name="filter_bytype" id="filter_bytype">
+	<?php
+		$attribute_code = "unilab_type";
+		$attribute_details = $eavConfig->getAttribute("catalog_product", $attribute_code);
+		$data = $attribute_details->getSource()->getAllOptions(false);
+        // echo "<pre>";
+        // var_dump($data);
+        // echo "</pre>";
+        echo "<li value='0'>All</li>";
+		foreach($data as $_item):
+			$value = $_item['value'];
+			$label = $_item['label'];
+			echo "<li id = 'item_".$value."' value='$value'>$label</li>";
+		endforeach;
+	?>
+	</ul>
+</div>
+
+<!-- FIlter By Format -->
+<div class="block block-layered-nav" style="display:none;">
+    <strong class="filter-title" style="display:none;">
+        <span><?php echo __('FORMAT') ?></span>
+    </strong>
+    <ul style="width:98%; height:auto;" multiple name="filter_byformat" id="filter_byformat">
+    <?php
+        $attribute_code = "unilab_format";
+        $attribute_details = $eavConfig->getAttribute("catalog_product", $attribute_code);
+        $data = $attribute_details->getSource()->getAllOptions(false);
+        echo "<li value='0'>All</li>";
+        foreach($data as $_item):
+            $value = $_item['value'];
+            $label = $_item['label'];
+            echo "<li id = 'item_".$value."' value='$value'>$label</li>";
+        endforeach;
+    ?>
+    </ul>
+</div>
+
+<!-- Filter By Benefits -->
+<div class="block block-layered-nav" <?php if(!$is_visible){ echo "style='display:none;'"; } ?> >
+	<strong class="filter-title">
+        <span style="margin-left: 5px;"><?php echo __('BENEFIT') ?></span>
+        <hr style="margin:0; margin-bottom: 5px;">
+    </strong>
+	<ul style="width:98%; " size="44" name="filter_bybenefit" id="filter_bybenefit">
+	<?php
+		$attribute_code = "unilab_benefit";
+		$attribute_details = $eavConfig->getAttribute("catalog_product", $attribute_code);
+		$data = $attribute_details->getSource()->getAllOptions(false);
+
+		echo "<li value='0'>All</li>";
+		foreach($data as $_item):
+			$value = $_item['value'];
+			$label = $_item['label'];
+			echo "<li id = 'item_".$value."' value='$value'>$label</li>";
+		endforeach;
+	?>
+	</ul>
+</div>
+
+<!-- Filter By Segment  -->
+
+<div class="block block-layered-nav" style="display:none;">
+    <strong class="filter-title" style="display:none; color:#fff;">
+        <span><?php echo __('SEGMENT') ?></span>
+    </strong>
+	<ul style="width:98%; height:auto;" multiple name="filter_bysegment" id="filter_bysegment">
+	<?php
+		$attribute_code = "unilab_segment";
+		$attribute_details = $eavConfig->getAttribute("catalog_product", $attribute_code);
+		$data = $attribute_details->getSource()->getAllOptions(false);
+
+		echo "<li value='0'>All</li>";
+		foreach($data as $_item):
+			$value = $_item['value'];
+			$label = $_item['label'];
+			echo "<li id = 'item_".$value."' value='$value'>$label</li>";
+		endforeach;
+	?>
+	</ul>
+</div>
+
+<!-- Sidenav Filtering -->
+<?php
+    //$datafilter = $block->getFilterIds();
+    $datafilter = array();
+
+    $datafilter['tid'] 	= $this->getRequest()->getParam('tid');
+    $datafilter['fid'] 	= $this->getRequest()->getParam('fid');
+    $datafilter['bid'] 	= $this->getRequest()->getParam('bid');
+    $datafilter['sid'] 	= $this->getRequest()->getParam('sid');
+    $tid = isset($_GET['tid']) ? $_GET['tid']: null;
+    $sid = isset($_GET['sid']) ? $_GET['sid']: null;
+    $fid = isset($_GET['fid']) ? $_GET['fid']: null;
+    $bid = isset($_GET['bid']) ? $_GET['bid']: null;
+
+?>
+<input type="hidden" id="tid-id" name="hidden-id" value="<?php echo $tid; ?>">
+<input type="hidden" id="sid-id" name="hidden-id" value="<?php echo $sid; ?>">
+<input type="hidden" id="fid-id" name="hidden-id" value="<?php echo $fid; ?>">
+<input type="hidden" id="bid-id" name="hidden-id" value="<?php echo $bid; ?>">
+<script type="text/javascript">
+    require([
+        'jquery'
+    ], function($){
+        $('#filter_bybenefit').on('mouseover',function(e){
+            $(this).focus();
+        });
+
+        $(document).ready(function (){
+
+            var curr_url = "<?=$currentUrl?>";
+            var split_url = curr_url.split("&");
+            var baseUrl = split_url[0];
+            var queryParam = window.location.search == "" ? "?" : "&";
+
+            var tid1 = $('#tid-id').val();
+
+            var sid1 = $('#sid-id').val();
+
+            var fid1 = $('#fid-id').val();
+
+            var bid1 = $('#bid-id').val();
+
+            $('#item_'+tid1).addClass('active');
+
+            $('#item_'+sid1).addClass('active');
+
+            $('#item_'+fid1).addClass('active');
+
+            $('#item_'+bid1).addClass('active');
+
+            $('#filter_bytype').val("<?php echo $datafilter['tid'];?>");
+
+            $('#filter_byformat').val("<?php echo $datafilter['fid']; ?>");
+
+            $('#filter_bybenefit').val("<?php echo $datafilter['bid']; ?>");
+
+            $('#filter_bysegment').val("<?php echo $datafilter['sid']; ?>");
+
+            if(typeof tid === "undefined"){ tid = 0; }
+
+            if(typeof fid === "undefined"){ fid = 0; }
+
+            if(typeof bid === "undefined"){ bid = 0; }
+
+            if(typeof sid === "undefined"){ sid = 0; }
+
+            $('#filter_bytype li').click(function (){
+                var tid = $(this).attr('value');
+                window.location.href = baseUrl+queryParam+"strfilter=1&tid="+tid+"&fid="+fid+"&bid="+bid+"&sid="+sid;
+            })
+
+            $('#filter_bysegment li').click(function (){
+                var sid = $(this).attr('value');
+                window.location.href = baseUrl+queryParam+"strfilter=1&tid="+tid+"&fid="+fid+"&bid="+bid+"&sid="+sid;
+            });
+
+            $('#filter_byformat li').click(function (){
+                var fid  =$(this).attr('value');
+                window.location.href = baseUrl+queryParam+"strfilter=1&tid="+tid+"&fid="+fid+"&bid="+bid+"&sid="+sid;
+            });
+
+            $('#filter_bybenefit li').click(function(){
+                var bid = $(this).attr('value');
+                window.location.href = baseUrl+queryParam+"strfilter=1&tid="+tid+"&fid="+fid+"&bid="+bid+"&sid="+sid;
+            });
+        });
+    });
+</script>

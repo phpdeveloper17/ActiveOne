@@ -1,0 +1,15 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Magento\Customer\Block\Widget\civil_status $block */
+
+?>
+<div class="field <?= $block->escapeHtmlAttr($block->getFieldId('agree_on_terms')) ?>" style="width:100%">
+    <input type="checkbox" name="<?= $block->escapeHtmlAttr($block->getFieldName('agree_on_terms')) ?>" id="<?= $block->escapeHtmlAttr($block->getFieldId('agree_on_terms')) ?>" data-role="terms" value="1" title="<?= $block->escapeHtmlAttr(__('I agree to the Terms and Conditions & Privacy Policy')) ?>"<?php if ($block->getAgreeOnTerms()): ?> checked="checked"<?php endif; ?> class="checkbox" />
+    <p class="terms-label" for="terms" style="margin-left: 50px;"><span><?= $block->escapeHtml(__('I agree to the Terms and Conditions & Privacy Policy')) ?></span></p>
+</div>

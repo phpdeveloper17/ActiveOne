@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * DragonPay View XML.
+ * @category  Unilab
+ * @package   DragonPay
+ * @author    Kristian Claridad
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
+    <router id="standard">
+        <route id="dragonpay" frontName="dragonpay">
+            <module name="Unilab_DragonPay" />
+        </route>
+    </router>
+</config>

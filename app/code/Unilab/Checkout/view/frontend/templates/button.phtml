@@ -1,0 +1,15 @@
+<?php
+/**
+ * Copyright © Unilab, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php /** @var $block \Unilab\Checkout\Block\Onepage\Success */ ?>
+
+<?php if ($block->getCanViewOrder() && $block->getCanPrintOrder()) :?>
+    <?= /* @escapeNotVerified */ __('Click <a href="%1" class="print-btn" onclick="this.target=\'_blank\'" class="print">here to print</a> a copy of your order confirmation.', $block->getPrintUrl()) ?>
+    <?= $block->getChildHtml() ?>
+<?php endif;?>

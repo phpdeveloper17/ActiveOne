@@ -1,0 +1,29 @@
+
+<form action="" id="shipping-method-form" data-bind="if: shippingRates().length > 0">
+    <ul id="ul-shippingmethod" data-bind="foreach: {data: rates(), as: 'shippingmethod'}">
+
+         <li class="li-shippingmethod">
+            <input type="radio"  name="shippingmethod" class="shipping_method" style="display: none;"
+                data-bind="
+                attr: {value: shippingmethod.carrier_code +'_' +shippingmethod.carrier_code}, 
+                checked : $parent.selectedShippingMethod(shippingmethod),
+                event: { change: $parent.selectShippingMethod}"     
+            />
+            <label for="" data-bind="text: carrier_title"></label>								
+            <ul id="ul-shippingdescription">
+                <div id="freeshipping_name" style="display: block; padding-left:20px;" class="shipping_desc">
+                    <i> 
+                        <span data-bind="text: shippingmethod.method_title"></span>
+                        <span data-bind="text: $parent.getFormattedPrice(shippingmethod.price_excl_tax)"></span>
+                    </i>
+                </div>
+            </ul>							
+        </li>	
+    </ul>
+</form>
+<div id="gcheckout-shipping-method-available" class="shipping-methods-available" data-bind="ifnot: shippingRates().length > 0">    
+    <strong><p>Shipping not available</p></strong>
+</div>
+
+
+

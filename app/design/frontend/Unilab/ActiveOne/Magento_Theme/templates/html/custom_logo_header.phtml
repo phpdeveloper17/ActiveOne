@@ -1,0 +1,16 @@
+
+<?php $storeName = $block->getThemeName() ? $block->getThemeName() : $block->getLogoAlt();
+?>
+<!-- <span data-action="toggle-nav" class="action nav-toggle"><span><?= /* @escapeNotVerified */ __('Toggle Nav') ?></span></span> -->
+<div class="container1">
+    <div class="image-logo">
+        <a class="" href="<?= $block->getUrl('') ?>" title="<?= /* @escapeNotVerified */ $storeName ?>">
+
+            <img src="<?= /* @escapeNotVerified */ $block->getLogoSrc() ?>"
+                alt="<?= /* @escapeNotVerified */ $block->getLogoAlt() ?>"
+                <?= $block->getLogoWidth() ? 'width="' . $block->getLogoWidth() . '"' : '' ?>
+                <?= $block->getLogoHeight() ? 'height="' . $block->getLogoHeight() . '"' : '' ?>
+            />
+        </a>
+    </<div>
+</div>

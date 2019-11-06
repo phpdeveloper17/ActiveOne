@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="customer_account"/>
+    <body>
+        <referenceBlock name="customer.wishlist">
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">Magento_Wishlist::custom_wishlist.phtml</argument>
+            </action>
+        </referenceBlock>
+        <referenceBlock name="page.main.title">
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">Magento_Wishlist::title.phtml</argument>
+            </action>
+        </referenceBlock>
+        <referenceBlock name="customer.wishlist.items">
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">Magento_Wishlist::item/custom_list.phtml</argument>
+            </action>
+        </referenceBlock>
+        <referenceBlock name="customer.wishlist.item.image">
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">Magento_Wishlist::item/column/image.phtml</argument>
+            </action>
+        </referenceBlock>
+        <referenceBlock name="customer.wishlist.item.name">
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">Magento_Wishlist::item/column/name.phtml</argument>
+            </action>
+        </referenceBlock>
+        <referenceBlock name="customer.wishlist.item.price">
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">Magento_Wishlist::item/column/price.phtml</argument>
+            </action>
+        </referenceBlock>
+        <referenceBlock name="customer.wishlist.item.inner">
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">Magento_Wishlist::item/column/actions.phtml</argument>
+            </action>
+        </referenceBlock>
+
+        <referenceBlock name="customer.wishlist.button.update">
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">Magento_Wishlist::button/update.phtml</argument>
+            </action>
+        </referenceBlock>
+
+        <referenceBlock name="customer.wishlist.button.share">
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">Magento_Wishlist::button/share.phtml</argument>
+            </action>
+        </referenceBlock>
+
+        <referenceBlock name="customer.wishlist.button.toCart" remove="true"/>
+        <referenceBlock name="customer.wishlist.item.comment" remove="true"/>
+
+        <move element="customer.wishlist.item.edit" destination="customer.wishlist.item.inner" after="customer.wishlist.item.cart"/>
+        <move element="customer.wishlist.item.remove" destination="customer.wishlist.item.inner" after="customer.wishlist.item.edit"/>
+    </body>
+</page>

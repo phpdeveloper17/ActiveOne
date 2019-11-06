@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!--
+ * Pricelist View XML.
+ * @category  Unilab
+ * @package   Unilab_Pricelist
+ * @author    Kristian Claridad
+-->
+
+
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+layout="admin-2columns-left" xsi:noNamespaceSchemaLocation="../../../../../../
+../lib/internal/Magento/Framework/View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="left">
+            <block class="Unilab\Pricelist\Block\Adminhtml\Pricelist\Edit\Tabs"
+                name="pricelist_edit_tab"/>
+        </referenceContainer>
+        <referenceContainer name="content">
+            <block class="Unilab\Pricelist\Block\Adminhtml\Pricelist\Edit"
+                name="pricelist_edit_tab_main"/>
+        </referenceContainer>
+    </body>
+</page>

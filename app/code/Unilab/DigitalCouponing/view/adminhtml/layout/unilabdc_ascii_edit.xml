@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!--
+ * City View XML.
+ * @category  Unilab
+ * @package   Unilab_DigitalCouponing
+ * @author    Reyson Aquino  
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+           <block class="Unilab\DigitalCouponing\Block\Adminhtml\Ascii\Edit" name="edit_asciiequivalent" />
+        </referenceContainer>
+    </body>
+</page>

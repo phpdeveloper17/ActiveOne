@@ -1,0 +1,8 @@
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-1column"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+           <block class="Unilab\Pricelist\Block\Adminhtml\Pricelist\Importresult" name="importresult" template="Unilab_Pricelist::import_pricelistresult.phtml" />
+        </referenceContainer>
+    </body>
+</page>

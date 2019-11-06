@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add title="Manage Price List" parent="Unilab_Extensions::Price" sortOrder="1" dependsOnModule="Unilab_Pricelist" resource="Unilab_Pricelist::pricelist" action="pricelist/promo_catalog/" module="Unilab_Pricelist" translate="title" id="Unilab_Pricelist::pricelist"/>
+        <remove id="Magento_CatalogRule::promo_catalog"/>
+    </menu>
+</config>

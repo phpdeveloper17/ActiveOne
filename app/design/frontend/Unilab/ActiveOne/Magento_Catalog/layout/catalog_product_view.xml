@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page layout="1column" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="mage/gallery/gallery.css"/>
+    </head>
+    <update handle="catalog_product_opengraph" />
+    <update handle="page_calendar"/>
+    <body>
+        <referenceBlock name="page.main.title" remove="true"/>
+        <referenceContainer name="product.info.main" remove="true"/>
+        <referenceContainer name="product.info.media" remove="true"/>
+
+        <referenceContainer name="content">
+            <container name="product.info.view" htmlTag="div" htmlClass="product-info-view" before="-">
+                <block class="Unilab\Catalog\Block\Product\View" name="product.info.details" template="Unilab_Catalog::product/view/custom_details.phtml">
+                    <block class="Magento\Catalog\Block\Product\View\Gallery" name="product.info.gallery" as="media" template="Magento_Catalog::product/view/media.phtml"/>
+                    <block class="Unilab\Catalog\Block\Product\View" name="product.info.addto" as="addto" template="Unilab_Catalog::product/view/addto.phtml"/>
+                    <block class="Unilab\Catalog\Block\Product\View" name="product.info.addtocart" as="addtocart" template="Unilab_Catalog::product/view/addtocart.phtml"/>
+
+                    <block class="Magento\Catalog\Block\Product\View\Type\Simple" name="product.info.availability" as="product_availability" template="Unilab_Catalog::product/view/type/default.phtml"/>
+                    <block class="Unilab\Catalog\Block\Product\Price" name="product.info.custom.price" as="product_info_custom_price" template="Unilab_Catalog::product/view/price.phtml"/>
+                    <!-- <block class="Unilab\Catalog\Block\Product\View" name="product.info.custom.description" as="product_info_custom_description" template="Unilab_Catalog::product/view/description.phtml"/> -->
+                    <!-- <container name="product.info.extrahint" as="extrahint" label="Product View Extra Hint">
+                        <container name="product.info.social" label="Product social links container" htmlTag="div" htmlClass="product-social-links">
+                            <block class="Magento\Catalog\Block\Product\View" name="product.info.addto" as="addto" template="Magento_Catalog::product/view/addto.phtml">
+                                <block class="Magento\Catalog\Block\Product\View\AddTo\Compare" name="view.addto.compare" after="view.addto.wishlist" template="Magento_Catalog::product/view/addto/compare.phtml" />
+                            </block>
+                            <block class="Magento\Catalog\Block\Product\View" name="product.info.mailto" template="Magento_Catalog::product/view/mailto.phtml"/>
+                        </container>
+                    </container> -->
+                </block>
+            </container>
+        </referenceContainer>
+
+        <!-- <referenceBlock name="product.info.details">
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">Unilab_Catalog::product/view/custom_details.phtml</argument>
+            </action>
+        </referenceBlock>
+        <referenceBlock name="page.main.title" remove="true"/> -->
+
+    </body>
+</page>

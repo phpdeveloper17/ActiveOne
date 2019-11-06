@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Unilab_Extensions::AddFreeProductToCart" title="Add Free Product To Cart" translate="title" sortOrder="8" module="Unilab_Extensions" parent="Unilab_Extensions::modules" resource="Unilab_Extensions::AddFreeProductToCart"/>
+
+    	<add id="Unilab_Afptc::afptc" title="Rules" translate="title" module="Unilab_Afptc" action="afptc/afptc/index" resource="Unilab_Afptc::afptc" dependsOnModule="Unilab_Afptc" sortOrder="1" parent="Unilab_Extensions::AddFreeProductToCart"/>
+        
+        <add id="Unilab_Afptc::afptcSettings" title="Settings" translate="title" module="Unilab_Afptc" action="adminhtml/system_config/edit/section/awafptc" resource="Unilab_Afptc::afptcSettings" dependsOnModule="Unilab_Afptc" sortOrder="2" parent="Unilab_Extensions::AddFreeProductToCart"/>
+    </menu>
+</config>

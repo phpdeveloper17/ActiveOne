@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * DragonPay View XML.
+ * @category  Unilab
+ * @package   DragonPay
+ * @author    Kristian Claridad
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="payment">
+            <group id="dragonpay" translate="label" type="text" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="1">
+                <comment><![CDATA[<a href="http://www.dragonpay.ph/" target="_blank"><img src="http://activeone.ecomqa.com/skin/frontend/default/unilab2/images/payment/dragonpay-logo.png"/></a>]]></comment>
+                <label>DragonPay</label>
+                <field id="active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="title" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Title</label>
+                    <depends> 
+                        <field id="active">1</field>
+                    </depends>
+                </field>
+                <field id="merchantid" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Merchant ID</label>
+                    <depends> 
+                        <field id="active">1</field>
+                    </depends>
+                </field>
+                <field id="merchantpaswd" translate="label" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Password</label>
+                    <depends> 
+                        <field id="active">1</field>
+                    </depends>
+                </field>
+                <field id="order_status" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>New Order Status</label>
+                    <source_model>Magento\Sales\Model\Config\Source\Order\Status\NewStatus</source_model>
+                    <depends> 
+                        <field id="active">1</field>
+                    </depends>
+                </field>
+                <field id="testmode" translate="label comment" sortOrder="60" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Test Mode</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends> 
+                        <field id="active">1</field>
+                    </depends>
+                </field>
+                <field id="currency" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Accepted Currency</label>
+                    <source_model>Magento\Config\Model\Config\Source\Locale\Currency</source_model>
+                    <depends> 
+                        <field id="active">1</field>
+                    </depends>
+                </field>
+                <field id="payment_description" translate="label" type="textarea" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Payment Description</label>
+                    <depends> 
+                        <field id="active">1</field>
+                    </depends>
+                </field>
+                <field id="convenience_fee" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Convenience Fee</label>
+                    <comment>Set Amount of convenience fee per transaction</comment>
+                    <depends> 
+                        <field id="active">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

@@ -1,0 +1,55 @@
+<?php
+/** @var $block \Magento\Framework\View\Element\Template */
+/** @var $helper \Magento\Search\Helper\Data */
+$helper = $this->helper(\Magento\Search\Helper\Data::class);
+
+$helper_cart = $this->helper('\Magento\Checkout\Helper\Cart'); 
+
+
+?>
+<div class="div-sec search-cart-container">
+    <div class="inner-container">
+      <div class="search">
+          <form id="search_main_form" action="<?= /* @escapeNotVerified */ $helper->getResultUrl() ?>" method="get">
+              <div class="form-search-main">
+                  <label for="search">Search</label>
+                    <input id="main_search"
+                           data-mage-init='{"quickSearch":{
+                                "formSelector":"#search_main_form",
+                                "url":"<?= /* @escapeNotVerified */ $helper->getSuggestUrl()?>",
+                                "destinationSelector":"#search_autocomplete"}
+                           }'
+                           type="text"
+                           name="<?= /* @escapeNotVerified */ $helper->getQueryParamName() ?>"
+                           value="<?= /* @escapeNotVerified */ $helper->getEscapedQueryText() ?>"
+                           placeholder="<?= /* @escapeNotVerified */ __('SEARCH...') ?>"
+                           class="input-text"
+                           autocomplete="off"/>
+
+                    <button type="submit"
+                        title="<?= $block->escapeHtml(__('Search')) ?>"
+                        class="searchbtn">
+                        <i style="margin-left:0 !important;" class="fa fa-search"></i>
+                    </button>
+                    <div id="search_autocomplete" class="search-autocomplete" style="display: none;"></div>
+                    <?= $block->getChildHtml() ?>
+                    <script type="text/javascript">
+			           //<![CDATA[
+			               // var searchForm = new Varien.searchForm('search_mini_form', 'search', 'SEARCH');
+			               // searchForm.initAutocomplete('<?php echo $helper->getSuggestUrl() ?>', 'search_autocomplete');
+			           //]]>
+			        </script>
+              </div>
+          </form>
+      </div>
+      <div class="topcart">
+              <div class="bfcart cart">
+                <i class=" fa fa-shopping-cart"></i>
+                  <a href="<?php echo $this->getUrl('checkout/cart', ['_secure' => true]);?>" class="cart-count">
+                    Cart (<span class="cartcount"><?php echo $helper_cart->getItemsCount();?></span>)</a>
+                  <!-- <a href="<?php echo $this->getUrl('checkout', ['_secure' => true]);?>" class="checkout">Checkout</a> -->
+              </div>
+          </div>
+    </div>
+</div>
+<!-- </div>  End div container1 from custom_logo_header.phtml -->

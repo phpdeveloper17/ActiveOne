@@ -1,0 +1,690 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+use Magento\Framework\App\Action\Action;
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php
+/**
+ * Product list template
+ *
+ * @var $block \Magento\Catalog\Block\Product\ListProduct
+ */
+?>
+<?php
+$_productCollection = $block->getLoadedProductCollection();
+
+$customerSession = $block->getCustomerSessionData();
+
+$_helper = $this->helper('Magento\Catalog\Helper\Output');
+$prescriptionHelper = $this->helper('Unilab\Prescription\Helper\Data');
+$dc_enabled = $prescriptionHelper->getConfig('unilabdc/unilabdc_general/unilabdc_enabled');
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+
+$cart = $block->getQuoteCart();
+$subTotal = $cart->getSubtotal();
+$grandTotal = 0;
+$grandTotal = $cart->getGrandTotal();
+
+$availablePcapAmount = $block->getAvailablePcapAmount();
+
+?>
+<?php if (!$_productCollection->count()): ?>
+    <div class="message info empty"><div><?= /* @escapeNotVerified */ __('We can\'t find products matching the selection.') ?></div></div>
+<?php else: ?>
+    <?= $block->getToolbarHtml() ?>
+    <?= $block->getAdditionalHtml() ?>
+    <?php
+    if ($block->getMode() == 'grid') {
+        $viewMode = 'grid';
+        $image = 'category_page_grid';
+        $showDescription = false;
+        $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW;
+    } else {
+        $viewMode = 'list';
+        $image = 'category_page_list';
+        $showDescription = true;
+        $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::FULL_VIEW;
+    }
+    /**
+     * Position for actions regarding image size changing in vde if needed
+     */
+    $pos = $block->getPositioned();
+    $param = [];
+    ?>
+    <div class="products wrapper <?= /* @escapeNotVerified */ $viewMode ?> products-<?= /* @escapeNotVerified */ $viewMode ?>">
+        <?php $iterator = 1; ?>
+        <ol class="products list items product-items">
+            <?php /** @var $_product \Magento\Catalog\Model\Product */
+                // $_productCollection->setCollection($_productCollection);
+            ?>
+            <?php foreach ($_productCollection as $_product): ?>
+                <?php $xQty = $_product->getData('unilab_moq') * 1; ?>
+                <?= /* @escapeNotVerified */ ($iterator++ == 1) ? '<li class="item product product-item">' : '</li><li class="item product product-item">' ?>
+                <?php if($_product->getUnilabRx() == 1): ?>
+                    <div class="productrx"></div>
+                <?php endif; ?>
+                <div class="product-item-info" data-container="product-grid">
+                    <?php
+                    $productImage = $block->getImage($_product, $image);
+                    if ($pos != null) {
+                        $position = ' style="left:' . $productImage->getWidth() . 'px;'
+                            . 'top:' . $productImage->getHeight() . 'px;"';
+                    }
+                    ?>
+                    <?php // Product Image ?>
+                    <a href="<?= /* @escapeNotVerified */ $_product->getProductUrl() ?>" class="product photo product-item-photo" tabindex="-1">
+                        <?= $productImage->toHtml() ?>
+                    </a>
+                    <div class="product details product-item-details">
+                        <?php
+                            $_productNameStripped = $block->stripTags($_product->getName(), null, true);
+                        ?>
+                        <strong class="product name product-item-name">
+                            <a class="product-item-link"
+                               href="<?= /* @escapeNotVerified */ $_product->getProductUrl() ?>">
+                                <?= /* @escapeNotVerified */ $_helper->productAttribute($_product, $_product->getName(), 'name') ?>
+                            </a>
+                        </strong>
+                        <?= $block->getReviewsSummaryHtml($_product, $templateType) ?>
+                        <?= /* @escapeNotVerified */ $block->getCustomProductPrice($_product) ?>
+                        <?= $block->getProductDetailsHtml($_product) ?>
+
+                        <div class="product-item-inner">
+                            <div class="product actions product-item-actions"<?= strpos($pos, $viewMode . '-actions') ? $position : '' ?>>
+                                <div class="actions-primary"<?= strpos($pos, $viewMode . '-primary') ? $position : '' ?>>
+                                    <?php if ($_product->isSaleable()): ?>
+                                        <?php $postParams = $block->getAddToCartPostParams($_product); ?>
+
+                                        <form data-role="tocart-form" data-product-sku="<?=  /* @NoEscape */ $_product->getSku() ?>" action="<?= /* @NoEscape */ $postParams['action'] ?>" method="post">
+                                            <input type="hidden" name="product" value="<?= /* @escapeNotVerified */ $postParams['data']['product'] ?>">
+                                            <input type="hidden" name="<?= /* @escapeNotVerified */ Action::PARAM_NAME_URL_ENCODED ?>" value="<?= /* @escapeNotVerified */ $postParams['data'][Action::PARAM_NAME_URL_ENCODED] ?>">
+                                            <?= $block->getBlockHtml('formkey') ?>
+
+                                            <?php
+
+                                            $isrsx = 0;
+                                            $dc_enabled = $prescriptionHelper->getConfig('unilabdc/unilabdc_general/unilabdc_enabled');
+                                            $buttonTitle = '';
+
+                                            ?>
+                                            <?php if( $dc_enabled  && $_product->getData('unilab_dc')): ?>
+                                            <!-- $_product->getData('unilab_dc') && -->
+
+                                                <?php if($_product->getData('unilab_rx')): ?>
+
+                                                    <button type="button" id="btnAddToCart" title="<?= $buttonTitle ?>" class="button btn-cart AddToCartDC" isrx="1" returnId="<?= $_product->getId();?>" returnUrl="<?= $postParams['action'] ?>" returnMoq="<?= $xQty;?>"><span><span><?= __('Add to Cart') ?></span></span></button>
+
+                                                    <button type="button" id="btnAddToCart-<?= $_product->getId();?>" title="<?= $buttonTitle ?>" class="button btn-cart askPrescription" returnUrl="<?= $postParams['action'] ?>" returnId="<?= $_product->getId();?>" returnMoq="<?= $xQty;?>" style="display:none;"><span><span><?= __('Add to Cart RX') ?></span></span></button>
+
+                                                <?php else: ?>
+
+                                                    <button type="button" id="btnAddToCart" title="<?= $buttonTitle ?>" class="button btn-cart AddToCartDC" isrx="0" returnId="<?= $_product->getId();?>" returnUrl="<?= $postParams['action'] ?>" returnMoq="<?= $xQty;?>"><span><span><?= __('Add to Cart') ?></span></span></button>
+
+                                                    <button type="button" id="btnAddToCart-<?= $_product->getId();?>" title="<?= $buttonTitle ?>" class="button btn-cart AddToCartNoRx" returnUrl="<?= $postParams['action'] ?>" returnId="<?= $_product->getId();?>" returnMoq="<?= $xQty;?>" style="display:none;"><span><span><?= __('Add to Cart OTC') ?></span></span></button>
+
+                                                <?php endif; ?>
+
+                                            <?php else: ?>
+
+                                                <?php if($_product->getData('unilab_rx')): ?>
+
+                                                    <button type="button" id="btnAddToCart" title="<?= $buttonTitle ?>" class="button btn-cart askPrescription" returnUrl="<?= $postParams['action'] ?>" returnId="<?= $_product->getId();?>" returnMoq="<?= $xQty;?>"><span><span><?= __('Add to Cart') ?></span></span></button>
+
+                                                <?php else: ?>
+
+                                                    <button type="button" id="btnAddToCart" title="<?= $buttonTitle ?>" class="button btn-cart AddToCartNoRx" returnUrl="<?= $postParams['action'] ?>" returnId="<?= $_product->getId();?>" returnMoq="<?= $xQty;?>"><span><span><?= __('Add to Cart') ?></span></span></button>
+
+                                                <?php endif; ?>
+
+                                            <?php endif; ?>
+
+
+
+                                        </form>
+                                    <?php else: ?>
+                                        <?php if ($_product->isAvailable()): ?>
+                                            <div class="stock available"><span><?= /* @escapeNotVerified */ __('In stock') ?></span></div>
+                                        <?php else: ?>
+                                            <div class="stock unavailable"><span><?= /* @escapeNotVerified */ __('Out of stock') ?></span></div>
+                                        <?php endif; ?>
+                                    <?php endif; ?>
+                                </div>
+                                <div data-role="add-to-links" class="actions-secondary"<?= strpos($pos, $viewMode . '-secondary') ? $position : '' ?>>
+                                    <?php if ($addToBlock = $block->getChildBlock('addto')): ?>
+                                        <?= $addToBlock->setProduct($_product)->getChildHtml() ?>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <?php if ($showDescription):?>
+                                <div class="product description product-item-description">
+                                    <?= /* @escapeNotVerified */ $_helper->productAttribute($_product, $_product->getShortDescription(), 'short_description') ?>
+                                    <a href="<?= /* @escapeNotVerified */ $_product->getProductUrl() ?>" title="<?= /* @escapeNotVerified */ $_productNameStripped ?>"
+                                       class="action more"><?= /* @escapeNotVerified */ __('Learn More') ?></a>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+                <?= ($iterator == count($_productCollection)+1) ? '</li>' : '' ?>
+            <?php endforeach; ?>
+        </ol>
+    </div>
+    <?= $block->getToolbarHtml() ?>
+
+    <!-- The Modal -->
+    <!-- <div id="dc_Modal" class="modal">
+        <div class="modal-content">
+                <div class="modal-header center">
+                    <h2 class="modal-title" id="mod_title">Special Program</h2>
+                </div>
+            <div class="modal-body">
+                <p><span id="mod_body"></span></p>
+                <input type="text" class="input-dc" name="dcinput" id="dcinput"  >
+            </div>
+            <div class="modal-footer center">
+                <button type="button" title="<?= __('Use Code') ?>" class="button btn-apply" id="btn-apply" name="productid">
+                    <span id="mod_btn1"></span>
+                </button>
+                <button type="button" title="<?= __('Cancel') ?>" class="button btn-dont" id="btn-dont" name="productid">
+                    <span id="mod_btn2">Cancel</span>
+                </button>
+            </div>
+        </div>
+    </div> -->
+
+
+    <div id="dc_Modal" class="modal">
+        <div class="modal-content">
+                <div class="modal-header center">
+                    <h1 class="modal-title" id="mod_title">Special Program</h1>
+                </div>
+            <div class="modal-body">
+                <p><span id="mod_body"></span></p>
+                <input type="text" class="input-dc" name="dcinput" id="dcinput"  >
+            </div>
+            <div class="modal-footer center">
+                <div class="row">
+                    <div class="col-sm-12 col-xs-12 col-md-6">
+                        <button type="button" title="<?= __('Use Code') ?>" class="btn btn-primary btn-block" id="btn-apply" name="productid">
+                            <span id="mod_btn1"></span>
+                        </button>
+                    </div>
+                    <div class="col-sm-12 col-xs-12 col-md-6">
+                        <button type="button" title="<?= __('Cancel') ?>" class="btn btn-block btn-secondary" id="btn-dont" name="productid">
+                            <span id="mod_btn2">Cancel</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" value="<?= $cart->getId() ?>" id="quote-id">
+    <div id="pcap_Modal" class="modal">
+        <div class="modal-content">
+                <div class="modal-header center">
+                <h2 class="modal-title" id="mod_title">Error</h2>
+                </div>
+            <div class="modal-body">
+                <p><span id="mod_body">Insufficient purchase cap limit</span></p>
+            </div>
+            <div class="modal-footer center">
+                <div class="form_group">
+                    <button type="button" title="Add to Cart" class="button btnok pcap_btn_ok" >
+                        <span><span>Ok</span></span>
+                    </button>					
+                </div>
+            </div>
+        </div>
+    </div>
+    <form action="" method="post" id="product_addtocart_form">
+        <input type="hidden" id="product" name="product" >
+        <input type="hidden" id="qty"   name="qty">
+        <input type="hidden" id="uenc"   name="uenc">
+        <?= $block->getBlockHtml('formkey') ?>
+    </form>
+
+    <?php if (!$block->isRedirectToCartEnabled()) : ?>
+        <script type="text/x-magento-init">
+        {
+            "[data-role=tocart-form], .form.map.checkout": {
+                "catalogAddToCart": {
+                    "product_sku": "<?= /* @NoEscape */ $_product->getSku() ?>"
+                }
+            }
+        }
+        </script>
+        <script>
+        require(
+            [
+                'jquery',
+                'fancybox',
+                'ddaccordion',
+                'prototype',
+                'effects',
+                'controls',
+                'unilab',
+                'prescription-validation',
+                'validation',
+                'domReady!'
+            ],
+            function(
+                $,
+                fancybox
+            ) {
+
+                var disable_submission   = false;
+                var prevent_submission   = false;
+                $(".btn-cart").on('click', function(e) {
+                    $.fancybox.hideLoading();
+                    var url        = $(this).attr('returnUrl');
+                    var product    = $(this).attr('returnId');
+                    var moq        = $(this).attr('returnMoq');
+                    var uenc = $(this).attr('returnUenc');
+
+                    $('#product_addtocart_form').attr('action',url);
+                    $('#product').val(product);
+                    $('#qty').val(moq);
+                    $('#uenc').val(uenc);
+					
+                    var _product_price = $(this).closest("li").find('.price-box .price').text();
+                        _product_price = _product_price.substring(1, _product_price.length);
+                        _product_price = parseFloat(_product_price)|| 0.00;
+                        _product_price *= moq;
+					
+                    var _grandTotalCart = "<?php echo $grandTotal?>";
+                        _grandTotalCart = parseFloat(_grandTotalCart)||0.00;
+                    var _cartTotal = _product_price+_grandTotalCart;
+                        _cartTotal = parseFloat(_cartTotal)||0.00;
+                    var _availablePcapAmount = "<?php echo $availablePcapAmount?>";
+                        _availablePcapAmount = parseFloat(_availablePcapAmount)||0.00;
+                        if(_cartTotal > _availablePcapAmount){
+                            $("#pcap_Modal").show();
+                            e.stopImmediatePropagation();
+                        }else{
+							if($(this).hasClass('AddToCartDC') != true && $(this).hasClass('askPrescription') != true){
+								$('#product_addtocart_form').submit();
+							}
+						
+						}
+                    $.fancybox.hideLoading();
+                    return false;
+                });
+                $(".pcap_btn_ok").on("click",function(){
+                    $("#pcap_Modal").hide();
+                })
+                $('.AddToCartDC').on('click', function() {
+
+                    var isrx    = $('#addtocart-dc').attr('isrx');
+                    var quoteid = $('#quote-id').val();
+                    var product = $(this).attr('returnId');
+                    $('#btn-apply').val(product);
+                    $.fancybox.showLoading();
+                    $.ajax({
+                        url : '<?= $block->getBaseUrl() . "unilabdc/digitalcoupon/checkitem"?>',
+                        type:'post',
+                        data: {
+                            productid : product,
+                            quoteid: quoteid
+                        },
+                    }).done(function(response) {
+
+                        if(response.result) {
+
+                            $("#dc_Modal").show();
+                            $.fancybox.hideLoading();
+                            $("#mod_title").text("Product is already added to Cart");
+                            $('#mod_title').css("background", "red");
+                            $("#mod_body").text("This item can be availed once per transaction");
+                            $("#dcinput").hide();
+                            $("#btn-apply").hide();
+                            $("#btn-dont").text("Close");
+                        } else {
+                            $.fancybox.showLoading();
+                            setTimeout(function(){
+                                $("#dc_Modal").show();
+                                $("#mod_title").text("Special Program");
+								$('#mod_title').css("background", "#000");
+                                $("#mod_body").text("INPUT 25+10 CODE");
+                                $("#dcinput").show();
+                                $("#btn-apply").show();
+                                $("#btn-apply").text("Use Code");
+                                $('#btn-dont').css("margin-left", "0px");
+                                $("#btn-dont").text("Cancel");
+                                $.fancybox.hideLoading();
+                            }, 1000);
+                        }
+                    });
+                });
+                $('.AddToCartNoRx').on('click', function (){
+                    $.fancybox.showLoading();
+                    var url        = $(this).attr('returnUrl');
+                    var product    = $(this).attr('returnId');
+                    var moq        = $(this).attr('returnMoq');
+                    var uenc = $(this).attr('returnUenc');
+                   
+
+                    $('#product_addtocart_form').attr('action',url);
+                    $('#product').val(product);
+                    $('#qty').val(moq);
+                    $('#uenc').val(uenc);
+                   
+                });
+               
+                $('#btn-dont').on('click', function() {
+                    $("#dc_Modal").hide();
+                });
+                $('#btn-apply').click(function (){
+                    $.fancybox.showLoading();
+                    $("#dc_Modal").hide();
+                    var productid   = $(this).val();
+                    var dcinput     = $('#dcinput').val();
+                    var qty         = 1;
+                    var quoteid     = $('#quote-id').val();
+
+                    $.post( '<?= $block->getBaseUrl(). "unilabdc/digitalcoupon/validate" ?>',
+                        {
+                            productid: productid, dcinput: dcinput, qty: qty, quoteid: quoteid
+                        }, function (response) {
+
+                            if(response.result == true) {
+                                $("#dc_Modal").hide();
+                                $('#dcinput').val("");
+                                $('#btnAddToCart-'+productid).click();
+                                $.fancybox.showLoading();
+                            } else {
+                                $('#dcinput').val("");
+                                $.fancybox.showLoading();
+                                setTimeout(function(){
+                                    $("#dc_Modal").show();
+                                    $("#mod_body").text("INPUT 25+10 CODE");
+                                    $.fancybox.hideLoading();
+                                }, 500);
+
+                                if(response.result == false){
+                                    $("#btn-apply").text("Try Again");
+                                    $("#mod_title").text("Code Invalid");
+                                    $('#mod_title').css("background", "red");
+                                }
+                                if(response.result == "exist"){
+                                    $("#btn-apply").text("Try Again");
+                                    $("#mod_title").text("Promo Code already used");
+                                    $('#mod_title').css("background", "red");
+                            }
+                        }
+                    });
+                });
+
+                $(".askPrescription").on('click',function(){
+                    if(prevent_submission){
+                        return false;
+                    }
+
+                    var url = $(this).attr('returnUrl');
+                    var product = $(this).attr('returnId');
+                    var moq = $(this).attr('returnMoq');
+                    var uenc = $(this).attr('returnUenc');
+
+                    $('#product_addtocart_form').attr('action',url);
+                    $('#product').val(product);
+                    $('#qty').val(moq);
+                    $('#uenc').val(uenc);
+
+                    $.fancybox.showLoading();
+
+                    var prescription_askuser_url  = '<?= $this->getUrl('prescription/index/askuser');?>';
+
+                    //var parameters  =  Form.serialize(this.form);
+
+                    var parameters = '&form_action='+url;
+                    parameters += '&product='+product;
+                    parameters += '&qty='+moq;
+                    parameters += '&uenc='+uenc;
+                    parameters += '&form_key='+$('#product_addtocart_form').find('input[name="form_key"]').val();
+
+                    $.ajax({
+                        url: prescription_askuser_url,
+                        data: parameters,
+                        type: 'POST',
+                        dataType: 'json',
+                        success: function(data,textStatus,transport){
+                            if(transport.status == 200){
+
+                                var response = data
+
+                                if(response.proceed_to_cart){
+
+                                    $('#product_addtocart_form').submit();
+
+                                }else{
+
+                                    showDialog(response.askuser_dialog);
+
+                                    askUserControls(response);
+
+                                }
+
+                            }
+                        },
+                        error: function(xhr,status,error){
+
+                        }
+                    }).done(function (data) {
+                        $.fancybox.hideLoading();
+                    });
+
+                }); //.askPrescription onclick
+
+                var showDialog = function(_content){
+
+                    $.fancybox({content: _content,
+
+                                closeBtn: false,
+
+                                closeClick: false,
+
+                                helpers: { overlay : {closeClick : false,
+
+                                                    locked:	   true}}
+
+                                });
+
+                }//showdialog
+
+                var askUserControls = function(response) {
+
+                    $("#no_prescription").click(function(){
+
+                        showDialog(response.cancel_dialog);
+
+                        $("#btnCancelPrescription").click(function(){
+
+                            $.fancybox.close();
+                           // removeCancelRxProduct(); //remove DC Free item
+
+                        });
+
+                    });
+
+                    $("#has_prescription").click(function(){
+
+                        prescriptionControls(response);
+
+                    });
+
+                }//askusercontrols
+
+                var prescriptionControls = function(response) {
+					
+                   showDialog(response.prescription_dialog);
+
+                   $("#cancel_prescription").click(function(){
+
+                        showConfirmCancelPrescriptionDialog(response);
+
+                    });
+
+                }//prescriptioncontrols
+
+                var showConfirmCancelPrescriptionDialog = function(response) {
+
+                    showDialog(response.cancel_trans_dialog);
+
+                    $("#btnCancelPrescriptionTransaction").click(function(){
+
+                        $.fancybox.close();
+                        //removeCancelRxProduct(); //remove DC Free item
+
+                    });
+
+                    $("#btnCancelPrescriptionCancelTransaction").click(function(){
+
+                        prescriptionControls(response);
+
+                    });
+
+                }//showconfirmcancelprescriptiondialog
+
+            
+            }
+        );
+    </script>
+
+<style>
+    .actions-secondary{
+        display: none !important;
+    }
+    #dc_Modal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        padding-top: 150px;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0.4);
+    }
+    #pcap_Modal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        padding-top: 150px;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0.4);
+    }
+    #pcap_Modal .modal-title{
+        margin-bottom: 0px;
+        margin-top: 0px;
+        color: white !important;
+        background: #353433;
+        padding: 5px;
+        text-transform: uppercase;
+        font-size: 14px;
+        font-weight: 700;
+        border-top-left-radius: 0 !important;
+        border-top-right-radius: 0 !important;
+        padding:20px;
+    }
+    #pcap_Modal .modal-footer {
+        text-align:left !important;
+        margin-left:0 !important;
+    }
+    #pcap_Modal .modal-body {
+        text-align: left !important;
+        font-size:11px;
+    }
+    #pcap_Modal .modal-content {
+        border-radius: 0 !important;
+    }
+    .modal-content {
+        position: relative;
+        background-color: #fefefe;
+        margin: auto;
+        padding: 0;
+        border: 1px solid #888;
+        width: 30%;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+        -webkit-animation-name: animatetop;
+        -webkit-animation-duration: 0.4s;
+        animation-name: animatetop;
+        animation-duration: 0.4s;
+        border-radius: 5px !important;
+    }
+
+    .modal-title {
+        margin-bottom: 0px;
+        margin-top: 0px;
+        color: white !important;
+        padding: 5px;
+        font-size: 16px;
+        font-weight: 700;
+        background: #000;
+        text-align: left;
+        text-transform: capitalize;
+        padding: 10px;
+    }
+
+    .modal-body {
+        padding: 5px;
+        margin-left: 10px;
+        text-align: center;
+        margin-top: 10px;
+        font-weight: 700;
+    }
+    .center{
+        text-align: center;
+    }
+
+    input.input-dc {
+        width: 40%;
+        padding: 5px;
+    }
+
+    .modal-footer {
+        padding: 25px;
+        margin-left: 10px;
+    }
+
+    .btn-apply, .btn-dont {
+        width: 25%;
+        background: #008081;
+        color: #f8fcfc;
+        border-radius: 5px;
+        font-weight: normal;
+        font-size: 12px;
+        margin-bottom: 3px;
+        display: inline-block;
+    }
+    .modal-header {
+        min-height: 16px;
+        padding: 0;
+        border-bottom: 1px solid #e5e5e5;
+        border-radius: 3px 3px 0 0;
+    }
+    .modal-footer {
+        padding: 15px;
+        text-align: center;
+        border-top: 0;
+    }
+    .modal-body > center > p {
+        margin: 9px 0;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+</style>
+    <?php endif; ?>
+<?php endif; ?>

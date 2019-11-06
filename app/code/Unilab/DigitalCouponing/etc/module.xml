@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+/** 
+ * Digital Couponing Module XMl.
+ * @category  Unilab
+ * @package   Unilab_DigitalCouponing
+ * @author    Reyson Aquino
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
+   <module name="Unilab_DigitalCouponing" setup_version="1.0.0">
+   </module>
+</config>

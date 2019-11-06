@@ -1,0 +1,141 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * SmtpMailer extension
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Auriga License
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.aurigait.com/magento_extensions/license.txt
+ *
+ * @category      MageAurigaIT
+ * @package       MageAurigaIT_SmtpMailer
+ * @copyright     Copyright (c) 2017
+ * @license       http://www.aurigait.com/magento_extensions/license.txt Auriga License
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="system">
+            <group id="aitsmtpmailer" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>SMTP Configuration</label>
+                <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="name" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Host IP</label>
+                    <comment>Default: localhost</comment>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="auth" translate="label" type="select" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Authentication method</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Smtpauth</source_model>
+                    <comment>Use "LOGIN" for Google, Yahoo etc smtp providers.</comment>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="encryption_protocol" translate="label" type="select" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Encryption type</label>
+                    <source_model>MageAurigaIT\SmtpMailer\Model\Config\Source\AuthType</source_model>                    
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="smtp_host" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>SMTP Host</label>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="smtp_port" translate="label" type="text" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>SMTP Port</label>
+                    <validate>validate-number</validate>
+                    <frontend_class>validate-number</frontend_class>
+                    <comment>Use 465 for SSL and 587 for TLS</comment>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="username" translate="label" type="text" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Username</label>
+                    <comment>Email Address or Account ID.</comment>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="password" translate="label" type="obscure" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Password</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="from_email" translate="label comment" type="text" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>From Email Address</label>
+                    <validate>validate-email</validate>
+                    <comment>Leave blank to use Magento supplied value instead</comment>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <field id="sender_name" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Name of the sender</label>
+                    <comment>Leave blank to use Magento supplied value instead</comment>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+
+                <field id="user_defined_reply_to_path" translate="label" type="text" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Reply-to Email</label>
+                    <validate>validate-email</validate>
+                    <comment>Leave blank to use default value instead</comment>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+
+                <field id="set_return_path" translate="label" type="select" sortOrder="12" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Set Return-Path</label>
+                    <source_model>MageAurigaIT\SmtpMailer\Model\Config\Source\ReturnPathType</source_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                
+                <field id="user_defined_return_path" translate="label" type="text" sortOrder="13" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Return-Path Email</label>
+                    <validate>validate-email</validate>
+                    <backend_model>Magento\Config\Model\Config\Backend\Email\Address</backend_model>
+                    <depends>
+                        <field id="set_return_path">custom</field>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+                <group id="test" translate="label" showInDefault="1" showInWebsite="1" showInStore="0" sortOrder="100">
+                    <label>Send a test email</label>
+                    <attribute type="expanded">1</attribute>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                    <frontend_model>Magento\Config\Block\System\Config\Form\Fieldset</frontend_model>
+                    
+                    <field id="email" translate="label comment" type="text" sortOrder="14" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Email address</label>
+                        <comment>Email address to send a test email.</comment>
+                        <frontend_class>validate-email</frontend_class>
+                    </field>                    
+                    <field id="button" translate="label comment" type="button" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <frontend_model>MageAurigaIT\SmtpMailer\Block\Adminhtml\System\Config\SmtpConfigTestButton</frontend_model>
+                    </field>
+                </group>
+            </group>
+        </section>
+    </system>
+</config>

@@ -1,0 +1,133 @@
+<?php
+#query
+$objectManager =  \Magento\Framework\App\ObjectManager::getInstance();
+$customerSession = $objectManager->create('\Magento\Customer\Model\Session');
+$resourceConnection = $objectManager->get('\Magento\Framework\App\ResourceConnection');
+$connection = $resourceConnection->getConnection(\Magento\Framework\App\ResourceConnection::DEFAULT_CONNECTION);
+$customer = $customerSession->getCustomer();
+//Search entity_id from rra_emp_benefits
+$select 	=	$connection->select()->from('rra_emp_benefits', array('*'))
+->where('entity_id=?',$customer->getId())->where('is_active=?',1);
+$benefits_items 	=	$connection->fetchRow($select);
+$storeManager = $objectManager->get('\Magento\Store\Model\StoreManagerInterface');
+$baseUrl = $storeManager->getStore()->getBaseUrl();
+?>
+<style>
+#myBtn{
+	cursor:pointer;
+}
+</style>
+<div class="top-menu">
+	<div class="nav-container">
+		<ul class="top_navigation">
+			<div class="top-left">
+				<li><a href="<?php echo $this->getBaseUrl() ?>"><span><?php echo __("Home") ?></span></a></li>
+				<li><a href="<?php echo $this->getBaseUrl() ?>aboutus"><span><?php echo __("About Us") ?></span></a></li>
+				<li><a href="<?php echo $this->getBaseUrl() ?>contact-us"><span><?php echo __("Contact Us") ?></span></a></li>
+			</div>
+            <div class="merchant-contact right">
+                <div class="user-login right">
+					<?php if($benefits_items['purchase_cap_id'] == 4){// Clinic Purchase?>
+						<span id="myBtn" class="hello bulk">Bulk Order |</span>
+					<?php }?>
+	                <?php if($customerSession->isLoggedIn()){?>
+	                <span class="hello">Hello, </span>
+	                <i class="bf fa fa-user"></i>
+                    <a href="<?php echo  $this->getUrl('customer/account'); ?>" class="user-name"><?php echo $customerSession->getCustomer()->getFirstname()?>!</a>
+                    <a class="logout" href="<?php echo  $this->getUrl('customer/account/logout'); ?>" id="Logout"><?php echo __("Logout") ?> </a>
+                    <?php }else{ ?>
+                    <i class="bf fa fa-user"></i>
+					<a class="some-other-class" href="<?=$baseUrl;?>" id="Login"><?php echo __("Login") ?> </a>
+					<?php }?>
+                </div>
+            </div>
+		</ul>
+	</div>
+</div>
+<script type="text/javascript">
+
+require(
+        [
+            'jquery',
+			'Magento_Ui/js/modal/modal',
+			'mage/url'
+        ],
+        function(
+            $,
+			modal,
+			url
+        ) {
+            $(".bulk").on('click',function(){
+				modal({
+					autoOpen: true,
+					responsive: true,
+					clickableOverlay: false,
+					modalClass: 'modal-bulk-order',
+					title: 'Upload CSV file',
+					keyEventHandlers: {
+						escapeKey: function (e) {
+							return false;
+						}
+					}
+				},  $("#myModal"));
+					$(".modal-footer").css("display", "none");
+					$(".btn-cancel").click(function(){
+						var _agree = confirm('Are you sure you want to cancel?')
+						if(_agree){
+							location.reload();
+						}else{
+							return false;
+						}
+					});
+					$(".modal-bulk-order").find(".action-close").click(function(){
+						// $('#bulkOrder').show();
+						// $('#successMsg').html("");
+						// $('#continueshopping').html("");
+						// $("#upload_csv").val("");
+						location.reload();
+					})
+					$("#csv-upload").click(function(e){
+						if($("#upload_csv").val() == ''){
+							alert('Required Field is missing');
+						}else{
+							var formData = new FormData($('#bulkOrder')[0]);
+							var linkUrl = '<?php echo $baseUrl.'benefits/bulkorder/bulkorder';?>';
+							$.ajax({
+								showLoader: true,
+								type:"post",
+								url: linkUrl,
+								data: formData, // serializes the form's elements.
+								processData: false,
+								contentType: false,
+								success: function(data)
+								{
+									e.preventDefault();
+									var obj = jQuery.parseJSON(data);
+									if (obj.result == 'error') {
+										$('#successMsg').html('<p style="text-align:center;font-size: 16px;">'+ obj.msg +'</p>');
+										$('#continueshopping').html('<label class="btn-cancel">Continue Shopping</label>');
+										$('#successMsg').show();
+										$('#bulkOrder').hide();
+										$('.modal-content').css('padding',0);
+										$(".btn-cancel").click(function(){
+											location.reload();
+										});
+									}
+									if (obj.result == 'success') {
+										$(".modal-bulk-order").hide();
+										window.location = '<?php echo $baseUrl?>checkout/cart';
+									}
+								}
+							})
+						}
+					});
+			});
+
+        }
+    );
+</script>
+<?php
+if($benefits_items['purchase_cap_id'] == 4){// Clinic Purchase
+	echo $this->getLayout()->createBlock("Magento\Framework\View\Element\Template")->setTemplate("Magento_Cms::clinicalorder.phtml")->toHtml();
+}
+?>

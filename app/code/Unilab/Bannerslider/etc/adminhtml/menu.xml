@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Unilab
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Unilab.com license that is
+ * available through the world-wide-web at this URL:
+ * http://www.Unilab.com/license-agreement.html
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Unilab
+ * @package     Unilab_Bannerslider
+ * @copyright   Copyright (c) 2012 Unilab (http://www.Unilab.com/)
+ * @license     http://www.Unilab.com/license-agreement.html
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+    	<add id="Unilab_Bannerslider::bannerslider" title="Banner Slider" module="Unilab_Bannerslider" sortOrder="10" resource="Unilab_Bannerslider::bannerslider" parent="Magento_Backend::content"/>
+
+        <!-- Unilab_Bannerslider::bannerslider_bannerslider -->
+
+		<add id="Unilab_Bannerslider::bannerslider_sliders" title="Manage Sliders" module="Unilab_Bannerslider" sortOrder="10" parent="Unilab_Bannerslider::bannerslider" action="bannerslideradmin/slider" resource="Unilab_Bannerslider::bannerslider_sliders"/>
+
+        <add id="Unilab_Bannerslider::bannerslider_banners" title="Manage Banners" module="Unilab_Bannerslider" sortOrder="10" parent="Unilab_Bannerslider::bannerslider" action="bannerslideradmin/banner" resource="Unilab_Bannerslider::bannerslider_banners"/>
+
+        <add id="Unilab_Bannerslider::bannerslider_coreslider" title="Preview Slider Styles" module="Unilab_Bannerslider" sortOrder="10" parent="Unilab_Bannerslider::bannerslider" action="bannerslideradmin/coreslider" resource="Unilab_Bannerslider::bannerslider_coreslider"/>
+
+        <!-- Unilab_Bannerslider::bannerslider_reports -->
+        <add id="Unilab_Bannerslider::bannerslider_reports_perslider" title="Reports Per Slider" module="Unilab_Bannerslider" sortOrder="10" parent="Unilab_Bannerslider::bannerslider" action="bannerslideradmin/report" resource="Unilab_Bannerslider::bannerslider_reports_perslider"/>
+        <add id="Unilab_Bannerslider::bannerslider_reports_allslider" title="Reports All Sliders" module="Unilab_Bannerslider" sortOrder="10" parent="Unilab_Bannerslider::bannerslider" action="bannerslideradmin/report/banner" resource="Unilab_Bannerslider::bannerslider_reports_allslider"/>
+        <!-- End Unilab_Bannerslider::bannerslider_reports -->
+
+        <add id="Unilab_Bannerslider::settings" title="Settings" module="Unilab_Bannerslider" sortOrder="20" parent="Unilab_Bannerslider::bannerslider" action="adminhtml/system_config/edit/section/bannerslider" resource="Unilab_Bannerslider::settings"/>
+
+        <!-- End Unilab_Bannerslider::bannerslider_bannerslider -->
+    </menu>
+</config>

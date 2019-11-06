@@ -1,0 +1,175 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../lib/internal/Magento/Framework/ObjectManager/etc/config.xsd">
+    <preference for="Unilab\Benefits\Api\Data\EmployeeBenefitInterface" type="Unilab\Benefits\Model\EmployeeBenefit" />
+    <type name="Unilab\Benefits\Model\ResourceModel\EmployeeBenefit\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">rra_emp_benefits</argument>
+            <argument name="eventPrefix" xsi:type="string">unilab_rra_emp_benefits_transactiontype_grid_collection</argument>
+            <argument name="eventObject" xsi:type="string">unilab_grid_collection</argument>
+            <argument name="resourceModel" xsi:type="string">Unilab\Benefits\Model\ResourceModel\EmployeeBenefit</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <!-- Grid before Collection in the path is constant -->
+                <item name="unilab_benefits_employeebenefits_listing_data_source" xsi:type="string">Unilab\Benefits\Model\ResourceModel\EmployeeBenefit\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+    <!-- Company Branches -->
+    <preference for="Unilab\Benefits\Api\Data\CompanyBranchInterface" type="Unilab\Benefits\Model\CompanyBranch" />
+    <type name="Unilab\Benefits\Model\ResourceModel\CompanyBranch\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">rra_company_branches</argument>
+            <argument name="eventPrefix" xsi:type="string">unilab_rra_company_branches_grid_collection</argument>
+            <argument name="eventObject" xsi:type="string">unilab_grid_collection</argument>
+            <argument name="resourceModel" xsi:type="string">Unilab\Benefits\Model\ResourceModel\CompanyBranch</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <!-- Grid before Collection in the path is constant -->
+                <item name="unilab_benefits_companybranch_listing_data_source" xsi:type="string">Unilab\Benefits\Model\ResourceModel\CompanyBranch\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+    <!-- Tender Types -->
+    <preference for="Unilab\Benefits\Api\Data\TenderTypeInterface" type="Unilab\Benefits\Model\TenderType" />
+    <!-- Grid before Collection in the path is constant -->
+    <virtualType name="Unilab\Benefits\Model\ResourceModel\TenderType\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">rra_tender_type</argument>
+            <argument name="resourceModel" xsi:type="string">Unilab\Benefits\Model\ResourceModel\TenderType</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <!-- Grid before Collection in the path is constant -->
+                <item name="unilab_benefits_tendertype_listing_data_source" xsi:type="string">Unilab\Benefits\Model\ResourceModel\TenderType\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+    
+
+    <!-- Transaction Types -->
+    <preference for="Unilab\Benefits\Api\Data\TransactionTypeInterface" type="Unilab\Benefits\Model\TransactionType" />
+    <type name="Unilab\Benefits\Model\ResourceModel\TransactionType\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">rra_transaction_type</argument>
+            <argument name="eventPrefix" xsi:type="string">unilab_benefits_transactiontype_grid_collection</argument>
+            <argument name="eventObject" xsi:type="string">unilab_grid_collection</argument>
+            <argument name="resourceModel" xsi:type="string">Unilab\Benefits\Model\ResourceModel\TransactionType</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <!-- Grid before Collection in the path is constant -->
+                <item name="unilab_benefits_transactiontype_listing_data_source" xsi:type="string">Unilab\Benefits\Model\ResourceModel\TransactionType\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- PurchaseCap -->
+    <preference for="Unilab\Benefits\Api\Data\PurchaseCapInterface" type="Unilab\Benefits\Model\Purchasecap" />
+    <type name="Unilab\Benefits\Model\ResourceModel\Purchasecap\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">rra_emp_purchasecap</argument>
+            <argument name="eventPrefix" xsi:type="string">unilab_benefits_purchasecap_grid_collection</argument>
+            <argument name="eventObject" xsi:type="string">unilab_grid_collection</argument>
+            <argument name="resourceModel" xsi:type="string">Unilab\Benefits\Model\ResourceModel\Purchasecap</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <!-- Grid before Collection in the path is constant -->
+                <item name="unilab_benefits_purchasecap_listing_data_source" xsi:type="string">Unilab\Benefits\Model\ResourceModel\Purchasecap\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+    <!-- Logger -->
+    <type name="Unilab\Benefits\Logger\Handler">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+    <type name="Unilab\Benefits\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">customLogHandler</argument>
+            <argument name="handlers"  xsi:type="array">
+                <item name="system" xsi:type="object">Unilab\Benefits\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Price Level -->
+    <preference for="Unilab\Benefits\Api\Data\PricelevelInterface" type="Unilab\Benefits\Model\Pricelevel" />
+
+    <type name="Unilab\Benefits\Model\ResourceModel\Pricelevel\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">rra_pricelevelmaster</argument>
+            <argument name="eventPrefix" xsi:type="string">unilab_benefits_pricelevel_grid_collection</argument>
+            <argument name="eventObject" xsi:type="string">unilab_benefits_pricelevel_grid_collection</argument>
+            <argument name="resourceModel" xsi:type="string">Unilab\Benefits\Model\ResourceModel\Pricelevel</argument>
+        </arguments>
+    </type>
+
+
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="unilab_benefits_pricelevel_listing_data_source" xsi:type="string">Unilab\Benefits\Model\ResourceModel\Pricelevel\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Unilab\Benefits\Logger\Handler">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>Benefits
+    <type name="Unilab\Benefits\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">pricelevel</argument>
+            <argument name="handlers"  xsi:type="array">
+                <item name="system" xsi:type="object">Unilab\Benefits\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </type>
+
+     <!-- Price Level -->
+    <preference for="Unilab\Benefits\Api\Data\ProductpricelistInterface" type="Unilab\Benefits\Model\Productpricelist" />
+
+    <type name="Unilab\Benefits\Model\ResourceModel\Productpricelist\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">rra_pricelistproduct</argument>
+            <argument name="eventPrefix" xsi:type="string">unilab_benefits_productpricelist_grid_collection</argument>
+            <argument name="eventObject" xsi:type="string">unilab_benefits_productpricelist_grid_collection</argument>
+            <argument name="resourceModel" xsi:type="string">Unilab\Benefits\Model\ResourceModel\Productpricelist</argument>
+        </arguments>
+    </type>
+
+
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="unilab_benefits_productpricelist_listing_data_source" xsi:type="string">Unilab\Benefits\Model\ResourceModel\Productpricelist\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Unilab\Benefits\Logger\Handler">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>Benefits
+    <type name="Unilab\Benefits\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">pricelevel</argument>
+            <argument name="handlers"  xsi:type="array">
+                <item name="system" xsi:type="object">Unilab\Benefits\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

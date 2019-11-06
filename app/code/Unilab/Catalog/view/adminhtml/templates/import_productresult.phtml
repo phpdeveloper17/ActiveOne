@@ -1,0 +1,68 @@
+
+<?php
+$data = $block->getRecordsave();
+$resData = array();
+$records = $data['records'];
+$status = $data['status'];
+$percent = $data['percent'];
+$resData = $data['resData'];
+if(!empty($resData)){
+?>
+<div class="progressBar" style="width:99%">
+    <?php 	if( $records['Savecount']  != $records['Allrecords']): ?>
+        <label style="font-family:arial; font-size:14px;">
+        <?php 
+        
+            foreach($resData as $_value):
+                echo $_value.'<br/>'; 
+            endforeach;
+        ?>
+        <br>         
+        <p style="padding:10px 5px 10px 5px; width:<?php echo $percent?>%; font-family:arial; font-size:14px; background-color:#70BE32; background-image:url(<?php echo $block->getStoreManager()->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA).'loading/animation.gif'?>); text-align:center; ">
+    <?php else: ?>
+        <label style="font-family:arial; font-size:14px;">
+        <?php 
+        
+            foreach($resData as $_value):
+                echo $_value.'<br/>'; 
+            endforeach;
+        ?>				
+        <br>
+        <p style="padding:10px 5px 10px 5px; width:100%; font-family:arial; color: #fff; border: 1px solid #000; background-color:#70BE32; text-align:center; ">
+    <?php endif; ?>
+    
+        <?php 
+            if( $records['Savecount']  != $records['Allrecords']):
+                if($percent >= 30):
+                    echo 'Uploading <b>'. $records['Savecount'].' / '.$records['Allrecords']." </b> records."; 
+                    echo ' [ '.round($percent, 1).'% ]  Please wait...';
+                elseif($percent >= 6 && $percent <= 10):
+                    echo $records['Savecount'].' / '.$records['Allrecords']; 
+                elseif($percent >= 10 && $percent <= 30):
+                    echo $records['Savecount'].' / '.$records['Allrecords']; 
+                    echo ' [ '.round($percent, 1).'% ]';
+                elseif($percent <= 1):
+                    echo '<span style="font-size:9px;">'.round($percent, 1).'%</span>';
+                else:
+                    echo '<span style="font-size:12px;">'.round($percent, 0).'%</span>';
+                endif;
+            else:
+                echo '[ '.$records['Savecount'].' / '.$records['Allrecords'].' ] '. round($percent, 2)."% DONE!"; 
+                // $block->getCoreSessionSave()->unsRecordsave();
+            endif;
+        ?> 
+    </p>
+</div>
+<?php		
+if ($records['Savecount'] != $records['Allrecords']):
+			
+    ?>
+    
+        <script>
+            document.location.reload(true);
+        </script>
+    
+    <?php
+
+endif;
+}

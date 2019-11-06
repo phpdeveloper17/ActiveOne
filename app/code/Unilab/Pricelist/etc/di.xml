@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\CatalogRule\Block\Adminhtml\Promo\Catalog" type="\Unilab\Pricelist\Block\Adminhtml\Promo\Catalog" />
+
+    <preference for="Magento\CatalogRule\Controller\Adminhtml\Promo\Catalog\Index" type="\Unilab\Pricelist\Controller\Adminhtml\Promo\Catalog\Index" />
+
+    <preference for="Magento\CatalogRule\Controller\Adminhtml\Promo\Catalog\Edit" type="Unilab\Pricelist\Controller\Adminhtml\Promo\Catalog\Edit" />
+
+    <preference for="Magento\CatalogRule\Controller\Adminhtml\Promo\Catalog\NewAction" type="Unilab\Pricelist\Controller\Adminhtml\Promo\Catalog\NewAction" />
+
+    <preference for="Magento\CatalogRule\Controller\Adminhtml\Promo\Catalog\Save" type="Unilab\Pricelist\Controller\Adminhtml\Promo\Catalog\Save" />
+
+    <preference for="Magento\CatalogRule\Block\Adminhtml\Promo\Catalog\Edit\Tab\Conditions" type="Unilab\Pricelist\Block\Adminhtml\Promo\Catalog\Edit\Tab\Conditions" />
+
+    <preference for="Magento\CatalogRule\Controller\Adminhtml\Promo\Catalog\Delete" type="Unilab\Pricelist\Controller\Adminhtml\Promo\Catalog\Delete" />
+
+    <preference for="Magento\CatalogRule\Model\ResourceModel\Grid\Collection" type="Unilab\Pricelist\Model\ResourceModel\Grid\Collection" />
+
+    <type name="Unilab\Pricelist\Logger\Handler">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+    <type name="Unilab\Pricelist\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">pricelist</argument>
+            <argument name="handlers"  xsi:type="array">
+                <item name="system" xsi:type="object">Unilab\Pricelist\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </type>
+    
+    <type name="Unilab\Pricelist\Model\ResourceModel\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">catalogrule</argument>
+            <argument name="eventPrefix" xsi:type="string">pricelist_grid_collection</argument>
+            <argument name="eventObject" xsi:type="string">pricelist_grid_collection</argument>
+            <argument name="resourceModel" xsi:type="string">Unilab\Pricelist\Model\ResourceModel\CatalogRule</argument>
+        </arguments>
+    </type>
+   <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <!-- Grid before Collection in the path is constant -->
+                <item name="pricelist_listing_data_source" xsi:type="string">Unilab\Pricelist\Model\ResourceModel\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

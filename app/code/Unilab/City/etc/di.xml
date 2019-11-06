@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Unilab\City\Api\Data\CityInterface" type="Unilab\City\Model\City" />
+
+    <type name="Unilab\City\Model\ResourceModel\City\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">unilab_cities</argument>
+            <argument name="eventPrefix" xsi:type="string">unilab_city_grid_collection</argument>
+            <argument name="eventObject" xsi:type="string">unilab_grid_collection</argument>
+            <argument name="resourceModel" xsi:type="string">Unilab\City\Model\ResourceModel\City</argument>
+        </arguments>
+    </type>
+
+    <type name="Unilab\City\Model\ResourceModel\Region\Grid\Collection">
+        <arguments>
+            <argument name="regionTable" xsi:type="string">directory_country_region</argument>
+            <argument name="eventPrefix" xsi:type="string">unilab_region_grid_collection</argument>
+            <argument name="eventObject" xsi:type="string">unilab_region_collection</argument>
+            <argument name="resourceModel" xsi:type="string">Unilab\City\Model\ResourceModel\Region</argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="manage_cities_record_city_list_data_source" xsi:type="string">Unilab\City\Model\ResourceModel\City\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Unilab\City\Logger\Handler">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+    <type name="Unilab\City\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">customLogHandler</argument>
+            <argument name="handlers"  xsi:type="array">
+                <item name="system" xsi:type="object">Unilab\City\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

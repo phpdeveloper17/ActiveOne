@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+    	<add id="Unilab_Adminlogs::adminlogs" title="Admin Logs" translate="title" module="Unilab_Adminlogs" action="adminlogs/adminlogs/index" resource="Unilab_Adminlogs::adminlogs" dependsOnModule="Unilab_Adminlogs" sortOrder="1" parent="Unilab_Extensions::others"/>    
+    </menu>
+</config>

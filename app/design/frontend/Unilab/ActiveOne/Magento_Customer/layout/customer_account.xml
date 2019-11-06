@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <attribute name="class" value="account"/>
+        <referenceContainer name="columns">
+            <container name="columns.main" htmlTag="div" htmlClass="column main" after="sidebar.main" />
+        </referenceContainer>
+         <referenceContainer name="sidebar.main" htmlTag="div" htmlClass="mydashboardside"> 
+            <block class="Magento\Framework\View\Element\Template"
+                    name="catalog.leftnav.freshipping"
+                    before="-"
+                    template="Magento_Catalog::catalog/freeshipping.phtml"
+            />
+            <block class="Magento\Framework\View\Element\Html\Links"
+                    name="catalog.leftnav.customer.account"
+                    after="catalog.leftnav.freshipping"
+                    template="Magento_Customer::account/custom-navigation.phtml"
+            />
+            
+            <block class="Magento\Framework\View\Element\Template"
+                    name="catalog.leftnav.youmaylike"
+                    after="catalog.leftnav.customer.account"
+                    template="Magento_Catalog::catalog/youmaylike.phtml"
+            />
+            <block class="Magento\Framework\View\Element\Html\Links"
+                    name="catalog.leftnav.customer.express-tracker"
+                    after="catalog.leftnav.youmaylike"
+                    template="Magento_Customer::account/dashboard/express-tracker.phtml"
+            />
+        </referenceContainer>
+        <referenceContainer name="main" htmlClass="mydashboard" />
+        <move element="main" destination="columns.main" />
+    </body>
+</page>

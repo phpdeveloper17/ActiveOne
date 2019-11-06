@@ -1,0 +1,20 @@
+{
+    "name": "mageaurigait/smtpmailer",
+    "description": "Relay all emails from your store through a SMTP server.",
+    "require": {
+      "php": "~5.6.0|7.0.2|7.0.4|~7.0.6|~7.1.0"
+    },
+    "type": "magento2-module",
+    "version": "1.0.3",
+    "license": [
+        "Auriga"
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "MageAurigaIT\\SmtpMailer\\": ""
+        }
+    }
+}

@@ -1,0 +1,132 @@
+<div class="container_wrapper">
+	<?php
+		$taxHelper = $this->helper('Magento\Catalog\Helper\Data');
+        $currencyHelper = $this->helper('Magento\Framework\Pricing\Helper\Data');
+		$productCount = 5;			
+		$storeId = 2; 
+        // $categoryId = 14;
+        $_objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+       
+
+        $this->scopeConfig = $_objectManager->create('\Magento\Framework\App\Config\ScopeConfigInterface');
+        $categoryId = $this->scopeConfig->getValue('customer/account/sidebar_category_id', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        if(empty($categoryId)){
+            $configWriter = $_objectManager->create("Magento\Framework\App\Config\Storage\WriterInterface");
+            $configWriter->save('customer/account/sidebar_category_id', '14');
+            $categoryId = 3;
+        }
+        
+        $categoryModel = $_objectManager->create('Magento\Catalog\Model\Category');
+        $category 	= $categoryModel->load($categoryId);
+        
+
+        $productCollection = $_objectManager->create('\Magento\Catalog\Model\ResourceModel\Product\Collection');
+        $products = $productCollection
+        ->addCategoryFilter($category)
+        ->addAttributeToSort('entity_id', 'DESC')
+        ->setPageSize(3)
+        ->load()
+        ;
+        
+        $productStatus = $_objectManager->create("\Magento\Catalog\Model\Product\Attribute\Source\Status");
+        $productVisibility = $_objectManager->create("\Magento\Catalog\Model\Product\Visibility");
+
+        $products->addAttributeToFilter('status', ['in' => $productStatus->getVisibleStatusIds()]);
+        $products->setVisibility($productVisibility->getVisibleInSiteIds());
+
+        $productModel = $_objectManager->create("\Magento\Catalog\Model\Product");
+        $imageHelper = $this->helper('Magento\Catalog\Helper\Image');
+        $filterManager = $_objectManager->create("\Magento\Framework\Filter\FilterManager");
+
+        $buttonTitle = 'Add to Cart';
+        $checkoutHelper = $this->helper('\Magento\Checkout\Helper\Cart');
+        
+    if(count($products->getData()) > 0):
+    ?>
+
+		<div class="block block-filter">
+			<div class="block-title you-may-also-like">			
+				<strong class="filter-title"><?php echo __('YOU MAY ALSO LIKE') ?></strong>
+			</div>
+		</div>
+        
+        
+        <div class="container_wrapper">
+    <?php
+		foreach($products->getData() as $data_value):
+			$_product = $productModel->load($data_value['entity_id']);
+			$_price 		= $taxHelper->getTaxPrice($_product, $_product->getPrice());				
+            echo '<form data-role="tocart-form" action="'.$checkoutHelper->getAddUrl($_product).'" method="post">';
+			echo '<div class="featured_items">';
+			if($_product->getUnilabRx() == 1) :
+                echo '<div class="productrx"></div>';
+            endif;
+
+			echo '<div class="featured-img"><a href="'.$_product->getProductUrl().'">';
+            echo '<img src="'.$imageHelper->init($_product, 'product_small_image')
+                ->constrainOnly(true)
+                ->keepAspectRatio(true)
+                ->keepTransparency(true)
+                ->keepFrame(false)->resize(150,150)->getUrl().'"/>';
+			echo '</a></div>';
+
+			echo '<div class="featured-details"><div class="item_name" title="'.$_product->getName().'"><strong>'.$filterManager->truncate($_product->getName(), ['length' => 50]).'<strong><br>';				
+			echo '<div class="item_price" title="'.$_product->getPrice().'"><strong>'.$currencyHelper->currency($_price, true, true).'<strong></div>';		
+			
+				if (!$_product->isAvailable())
+				{
+					echo '<p class="availability out-of-stock"><span>SOLD OUT</span></p>';
+					echo "</div><br/>";
+					echo '<a href="'.$_product->getProductUrl().'" class="button" >View more</a>';
+
+				}
+				else
+				{
+					echo "</div></div><br/>";
+
+					// $productId = $_product->getId();   // Your Product Id
+					// $_product = Mage::getModel('catalog/product')->load($productId); 
+					$xQty = $_product->getUnilabMoq() * 1;
+					
+					?>
+					<?php if($_product->getUnilabRx()):?>
+
+                        <button 
+                            type="submit" 
+                            id="btnAddToCart" 
+                            title="<?php echo $buttonTitle ?>" 
+                            class="button btn-cart askPrescription" 
+                            returnUrl="<?php echo $checkoutHelper->getAddUrl($_product);?>" 
+                            returnId="<?php echo $_product->getId();?>" 
+                            returnMoq="<?php echo $xQty;?>">
+                                <span>
+                                    <span><?php echo __('Add to Cart') ?></span>
+                                </span>
+                        </button>
+
+                    <?php else:?>
+
+                        <button 
+                            type="submit" 
+                            id="btnAddToCart" 
+                            title="<?php echo $buttonTitle ?>" 
+                            class="button btn-cart AddToCartNoRx" 
+                            returnUrl="<?php echo $checkoutHelper->getAddUrl($_product);?>" 
+                            urnId="<?php echo $_product->getId();?>" 
+                            returnMoq="<?php echo $xQty;?>">
+                                <span>
+                                    <span><?php echo __('Add to Cart') ?></span>
+                                </span>
+                        </button>
+                        <?php endif;?>
+				
+					<?php 
+				}
+				echo '</form>';
+			echo '</div>';
+
+		endforeach;
+
+	endif;
+	?>
+</div>

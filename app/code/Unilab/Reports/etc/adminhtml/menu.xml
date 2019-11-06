@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+         <add id="Unilab_Reports::countryAndCity"
+            title="Country and City"
+            translate="title"
+            module="Unilab_Reports"
+            action="reports/report_index/sales/report_id/2"
+            resource="Unilab_Reports::countryAndCity"
+            dependsOnModule="Unilab_Reports"
+            sortOrder="1"
+            parent="Unilab_Extensions::Reports"
+        />
+        <add id="Unilab_Reports::customerName"
+            title="Customer's Name"
+            translate="title"
+            module="Unilab_Reports"
+            action="reports/report_index/sales/report_id/3"
+            resource="Unilab_Reports::customerName"
+            dependsOnModule="Unilab_Reports"
+            sortOrder="2"
+            parent="Unilab_Extensions::Reports"
+        />
+        <add id="Unilab_Reports::gender"
+            title="Gender"
+            translate="title"
+            module="Unilab_Reports"
+            action="reports/report_index/sales/report_id/5"
+            resource="Unilab_Reports::gender"
+            dependsOnModule="Unilab_Reports"
+            sortOrder="3"
+            parent="Unilab_Extensions::Reports"
+        />
+        <add id="Unilab_Reports::monthlySummary"
+            title="Monthly Summary Report"
+            translate="title"
+            module="Unilab_Reports"
+            action="reports/report_index/sales/report_id/1"
+            resource="Unilab_Reports::monthlySummary"
+            dependsOnModule="Unilab_Reports"
+            sortOrder="4"
+            parent="Unilab_Extensions::Reports"
+        />
+        <add id="Unilab_Reports::orderDetails"
+            title="Order Details"
+            translate="title"
+            module="Unilab_Reports"
+            action="reports/report_index/sales/report_id/7"
+            resource="Unilab_Reports::orderDetails"
+            dependsOnModule="Unilab_Reports"
+            sortOrder="5"
+            parent="Unilab_Extensions::Reports"
+        />
+        <add id="Unilab_Reports::orderSummary"
+            title="Order Summary"
+            translate="title"
+            module="Unilab_Reports"
+            action="reports/report_index/sales/report_id/6"
+            resource="Unilab_Reports::orderSummary"
+            dependsOnModule="Unilab_Reports"
+            sortOrder="6"
+            parent="Unilab_Extensions::Reports"
+        />
+        <add id="Unilab_Reports::products"
+            title="Products"
+            translate="title"
+            module="Unilab_Reports"
+            action="reports/report_index/sales/report_id/4"
+            resource="Unilab_Reports::products"
+            dependsOnModule="Unilab_Reports"
+            sortOrder="7"
+            parent="Unilab_Extensions::Reports"
+        />
+    </menu>
+</config>

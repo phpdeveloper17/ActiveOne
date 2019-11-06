@@ -1,0 +1,105 @@
+<!-- 
+    Reference for classes v1-v2    
+    https://magento.stackexchange.com/questions/130991/magento2x-equivalent-class-for-mage-core/130997 
+
+-->
+<div class="page-title">
+    <h1>
+        <?php echo __('Contact Us') ?>
+    </h1>
+    <div>
+        <br />
+        <p>We would appreciate your comments, feedback, or queries if any, and we would be more than glad to assist
+            you.</p>
+        </br>
+
+        <p> Office Address:</p>
+
+        <p>Work-Place Pharmacy Services, Inc.</p>
+        <p>359 Dansalan St., Brgy Malamig,</p>
+        <p>Mandaluyong City, Philippines 1550
+        </p>
+        <br />
+        <strong>Contact Number:
+
+            <?php 
+		
+			$storePhone = Mage::getStoreConfig('general/store_information/phone');		
+			echo $storePhone;
+		?>
+
+        </strong>
+        <p>Operating Hours: Monday to Friday 8am to 5pm
+        </p>
+        <br />
+    </div>
+    <?php echo $this->getCmsBlockHtml() ?>
+    <?php if ($this->isFormEnabled()): ?>
+    <form action="<?php echo $this->getFormAction(); ?>" id="contactForm" method="post">
+        <div class="fieldset">
+            <h2 class="legend">
+                <?php echo __('Personal Information') ?>
+            </h2>
+            <ul class="form-list">
+                <li class="fields">
+                    <div class="field">
+                        <label for="name" class="required"><em>*</em>
+                            <?php echo __('Name') ?></label>
+                        <div class="input-box">
+                            <input name="name" id="name" title="<?php echo __('Name') ?>"
+                                value="<?php echo $this->htmlEscape($this->helper('inquiry')->getUserName()) ?>" class="input-text required-entry"
+                                type="text" <?php echo $readonly;?>/>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="email" class="required"><em>*</em>
+                            <?php echo __('Email Address') ?></label>
+                        <div class="input-box">
+                            <input name="email" id="email" title="<?php echo __('Email') ?>"
+                                value="<?php echo $this->htmlEscape($this->helper('inquiry')->getUserEmail()) ?>" class="input-text required-entry validate-email"
+                                type="text" <?php echo $readonly;?>/>
+                        </div>
+                    </div>
+                </li>
+                <li class="fields">
+                    <!--                <div class="field">                    <label for="subject"><?php echo __('Subject') ?></label>                    <div class="input-box">                        <input name="subject" id="subject" title="<?php echo __('Subject') ?>" value="<?php echo $this->htmlEscape($this->getFormData('subject')) ?>" class="input-text" type="text"/>                    </div>                </div>               -->
+                    <?php if ($departmentHtmlSelect = $this->getDepartmentHtmlSelect($this->getFormData('department'), 'validate-select')): ?>
+                    <div class="field">
+                        <label for="department" class="required"><em>*</em>
+                            <?php echo __('Reason') ?>
+                        </label>
+                        <div class="input-box">
+                            <?php echo $departmentHtmlSelect ?>
+                        </div>
+                    </div>
+                    <?php endif ?>
+                </li>
+                <li class="wide">
+                    <label for="comment" class="required"><em>*</em>
+                        <?php echo __('Message') ?></label>
+                    <div class="input-box">
+                        <textarea name="comment" id="comment" title="<?php echo __('Message') ?>"
+                            class="required-entry input-text" cols="5" rows="3"></textarea>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="buttons-set">
+
+            <button type="submit" title="<?php echo __('Submit') ?>" class="button"><span><span>
+                        <?php echo __('Submit') ?></span></span></button>
+            <p class="required">
+                <?php echo __('* Required Fields') ?>
+            </p>
+            <input type="text" name="hideit" id="hideit" value="" style="display:none !important;" />
+        </div>
+    </form>
+    <?php endif ?>
+    <script type="text/javascript">//<![CDATA[    var contactForm = new VarienForm('contactForm', true);//]]></script>
+    <style>
+        .block-layered-nav,
+        .block-title {
+            display: none;
+        }
+    </style>

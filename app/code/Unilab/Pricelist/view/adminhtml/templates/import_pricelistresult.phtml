@@ -1,0 +1,19 @@
+
+    <fieldset 
+        class="fieldset admin__fieldset no-display" 
+        id="upload_file_fieldset" 
+        style="display: block;">
+        <legend class="admin__legend legend">
+            <span>Import Result</span>
+        </legend>
+        <br>
+        <div class="messages"></div>
+        <div>
+        <?php
+        $resData = $block->getRecordsave();
+        foreach($resData as $_value):
+           echo $_value[0].'<br/>';
+        endforeach;
+        ?>
+        
+    </fieldset>

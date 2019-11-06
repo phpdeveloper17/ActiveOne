@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <referenceContainer name="content">
+        <block class="Unilab\Checkout\Block\Checkout" cacheable="false" name="checkout.root" template="Unilab_Checkout::checkout.phtml">
+            <arguments>
+                <argument name="jsLayout" xsi:type="array">
+                    <item name="components" xsi:type="array">
+                        <item name="checkout" xsi:type="array">
+                            <item name="children" xsi:type="array">
+                                <item name="steps" xsi:type="array">
+                                    <item name="children" xsi:type="array">
+                                        <item name="payments-list" xsi:type="array">
+                                            <item name="component" xsi:type="string">Magento_Checkout/js/view/payment/list</item>
+                                            <item name="displayArea" xsi:type="string">payment-methods-list</item>
+                                            <item name="config" xsi:type="array">
+                                                <item name="deps" xsi:type="array">
+                                                    <item name="0" xsi:type="string">checkout.steps.billing-step.payment.renders</item>
+                                                    <item name="1" xsi:type="string">checkout.steps.billing-step.payment.additional-payment-validators</item>
+                                                </item>
+                                            </item>
+                                            <item name="children" xsi:type="array">
+                                                <item name="before-place-order" xsi:type="array">
+                                                    <item name="component" xsi:type="string">uiComponent</item>
+                                                    <item name="displayArea" xsi:type="string">before-place-order</item>
+                                                    <item name="dataScope" xsi:type="string">before-place-order</item>
+                                                    <item name="provider" xsi:type="string">checkoutProvider</item>
+                                                    <item name="config" xsi:type="array">
+                                                        <item name="template" xsi:type="string">Magento_Checkout/payment/before-place-order</item>
+                                                    </item>
+                                                </item>
+                                            </item>
+                                        </item>
+                                    </item>
+                                </item>
+                            </item>
+                        </item>
+                    </item>
+                </argument>
+            </arguments>
+        </block>
+    </referenceContainer>
+</page>
